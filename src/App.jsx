@@ -25,7 +25,7 @@ import {
   Dashboard
 } from './components/Worker'
 
-const router = createBrowserRouter([
+/*const router = createBrowserRouter([
   {
     path: '/',
     Component: Home
@@ -80,10 +80,14 @@ const router = createBrowserRouter([
       return redirect('/')
     }
   }
-])
+])*/
 export default function App () {
-  return <RouterProvider router={router} />
-}
-function Root () {
-  return <Routes></Routes>
+  return (
+        <BrowserRouter>
+          <Routes>
+            <Route element={>
+            </Route>
+          </Routes>
+        </BrowserRouter>
+    )
 }
