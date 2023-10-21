@@ -13,8 +13,7 @@ const transactions = [
     id: 1,
     name: "Payment from Kedraband Panchayat",
     href: "#",
-    amount: "$20,000",
-    currency: "USD",
+    amount: "₹20,000",
     status: "success",
     date: "July 11, 2020",
     datetime: "2020-07-11",
@@ -25,7 +24,7 @@ const transactions = [
 const cards = [
   { name: "Attendance", href: "/attendance", icon: CalendarDaysIcon, amount: "89/100" },
   { name: "Working on", href: "/jobs", icon: BuildingOfficeIcon, amount: "Amritsarovar, Hadipur"},
-  { name: "Account balance", href: "/payment", icon: ScaleIcon, amount: "$30,659.45" },
+  { name: "Account balance", href: "/payment", icon: ScaleIcon, amount: "₹30,659.45" },
   // More items...
 ];
 

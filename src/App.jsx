@@ -21,6 +21,7 @@ import {
   Dashboard
 } from './components/Worker'
 import { useEffect, useState } from 'react'
+import { Toaster } from 'sonner'
 
 export default function App () {
   const { checkUser, user } = authStore()
