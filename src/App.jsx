@@ -1,11 +1,7 @@
 import { Worker, Auth, Home, Admin } from './pages'
-import { authLoader, workerLoader, adminLoader } from './routes/loaders'
-import {
-  createBrowserRouter,
-  redirect,
-  RouterProvider,
-  Routes
-} from 'react-router-dom'
+import { authStore } from './api/store'
+import { Protected, NotFound } from './components'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 // Admin Components
 import {
   AdminDashboard,
@@ -24,66 +20,42 @@ import {
   Attendance,
   Dashboard
 } from './components/Worker'
+import { useEffect, useState } from 'react'
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    Component: Home
-  },
-  {
-    path: '/auth',
-    Component: Auth
-  },
-  {
-    path: '/worker',
-    Component: Worker,
-    loader: workerLoader,
-    children: [
-      { path: 'dashboard', Component: Dashboard, loader: authLoader },
-      { path: 'profile', Component: Profile, loader: authLoader },
-      { path: 'jobs', Component: Jobs, loader: authLoader },
-      { path: 'payment', Component: Payment, loader: authLoader },
-      { path: 'attendance', Component: Attendance, loader: authLoader },
-      {
-        path: '*',
-        Component: Dashboard,
-        loader: () => {
-          return redirect('/worker/dashboard')
-        }
-      }
-    ]
-  },
-  {
-    path: '/admin',
-    Component: Admin,
-    loader: adminLoader,
-    children: [
-      { path: 'dashboard', Component: AdminDashboard, loader: authLoader },
-      { path: 'addjob', Component: Addjobs, loader: authLoader },
-      { path: 'attendance', Component: AdminAttendance, loader: authLoader },
-      { path: 'employee', Component: Employee, loader: authLoader },
-      { path: 'payout', Component: Payout, loader: authLoader },
-      { path: 'profile', Component: AdminProfile, loader: authLoader },
-      {
-        path: '*',
-        Component: Dashboard,
-        loader: () => {
-          return redirect('/admin/dashboard')
-        }
-      }
-    ]
-  },
-  {
-    path: '*',
-    Component: Root,
-    loader: () => {
-      return redirect('/')
-    }
-  }
-])
 export default function App () {
-  return <RouterProvider router={router} />
-}
-function Root () {
-  return <Routes></Routes>
+  const { checkUser, user } = authStore()
+  const [loggedUser, setLoggedUser] = useState(user)
+
+  useEffect(() => {
+    checkUser()
+    setLoggedUser(user)
+  }, [checkUser])
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/auth' element={<Auth />} />
+        <Route element={<Protected user={loggedUser} />}>
+          <Route path='/worker' element={<Worker />}>
+            <Route path='dashboard' element={<Dashboard />} />
+            <Route path='profile' element={<Profile />} />
+            <Route path='jobs' element={<Jobs />} />
+            <Route path='payment' element={<Payment />} />
+            <Route path='attendance' element={<Attendance />} />
+            <Route path='*' element={<NotFound path='worker' />} />
+          </Route>
+          <Route path='/admin' element={<Admin />}>
+            <Route path='dashboard' element={<AdminDashboard />} />
+            <Route path='addjob' element={<Addjobs />} />
+            <Route path='attendance' element={<AdminAttendance />} />
+            <Route path='employee' element={<Employee />} />
+            <Route path='payout' element={<Payout />} />
+            <Route path='profile' element={<AdminProfile />} />
+            <Route path='*' element={<NotFound path='admin' />} />
+          </Route>
+        </Route>
+        <Route path='*' element={<NotFound path='*' />} />
+      </Routes>
+    </BrowserRouter>
+  )
 }

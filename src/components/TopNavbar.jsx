@@ -3,14 +3,14 @@ import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { Bars3BottomLeftIcon, BellIcon } from '@heroicons/react/24/outline'
-import { useAuthStore } from '../api/store'
+import { authStore } from '../api/store'
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
   const { pathname } = useLocation()
-  const { logoutUser } = useAuthStore()
+  const { logoutUser } = authStore()
   return (
     <div className='sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white shadow'>
       <button

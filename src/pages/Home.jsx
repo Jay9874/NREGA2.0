@@ -4,7 +4,7 @@ import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
 import logo from '../assets/images/logo.png'
-import { useAuthStore } from '../api/store'
+import { authStore } from '../api/store'
 import { useNavigate } from 'react-router-dom'
 
 const navigation = [
@@ -35,7 +35,7 @@ const features = [
 
 export default function Home () {
   const navigate = useNavigate()
-  const { checkSession } = useAuthStore()
+  const { checkSession } = authStore()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
