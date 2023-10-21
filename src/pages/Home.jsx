@@ -181,7 +181,7 @@ export default function Home () {
         </div>
       </div>
 
-      <div className='bg-white'>
+      {/* <div className='bg-white'>
         <div className='mx-auto max-w-2xl py-24 px-4 sm:py-32 sm:px-6 lg:max-w-7xl lg:px-8'>
           <div className='grid grid-cols-1 items-center gap-y-16 gap-x-8 lg:grid-cols-2'>
             <div>
@@ -233,7 +233,7 @@ export default function Home () {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   )
 }

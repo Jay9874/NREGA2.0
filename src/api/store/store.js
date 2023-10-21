@@ -88,3 +88,17 @@ export const authStore = create((set, get) => ({
     }
   }
 }))
+
+export const workerStore = create((set, get) => ({
+  jobs: [],
+  payment:[],
+  attendance:[],
+  profile:[],
+  setJobs: async () => {
+    const { data } = await supabase
+      .from('jobs')
+      .select('*')
+      .eq('is_active', true)
+    set({ jobs: data })
+  },
+}))

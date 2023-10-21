@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { authStore } from '../../api/store/store'
-import formImg from '../../assets/images/bg.jpg'
+import formImg from '../../assets/images/mgn.webp'
 
 export default function SignInForm () {
   const navigate = useNavigate()
@@ -164,7 +164,8 @@ export default function SignInForm () {
         </div>
         <div className='relative hidden w-0 flex-1 lg:block'>
           <img
-            className='absolute inset-0 h-full w-full object-cover'
+            // className='absolute inset-0 h-full w-full object-cover'
+            className='absolute inset-0 -z-10 h-full w-full object-cover'
             src={formImg}
             alt='Kaamgaar'
           />
