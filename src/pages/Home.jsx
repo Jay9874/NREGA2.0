@@ -135,7 +135,7 @@ export default function Home () {
               </div>
             </Dialog.Panel>
           </Dialog>
-          <div className='mx-auto max-w-2xl py-32 sm:py-48 lg:py-56'>
+          <div className='mx-auto max-w-2xl py-32 sm:py-48 lg:py-56  overflow-auto'>
             <div className='hidden sm:mb-8 sm:flex sm:justify-center'>
               <div className='relative rounded-full py-1 px-3 text-sm leading-6 text-gray-400 ring-1 ring-white/10 hover:ring-white/20'>
                 Launching redefined way of.{' '}
@@ -162,7 +162,7 @@ export default function Home () {
                 to do unskilled manual work and for matters connected therewith
                 or incidental thereto.
               </p>
-              <div className='mt-10 flex items-center justify-center gap-x-6'>
+              <div className='mt-10 flex-wrap flex items-center justify-center gap-x-6'>
                 <Link
                   to='/auth'
                   className='rounded-md bg-indigo-500 px-3.5 py-1.5 text-base font-semibold leading-7 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400'

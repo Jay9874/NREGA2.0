@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { Dialog, Transition } from '@headlessui/react'
 import logo from '../assets/images/logo.png'
 import { XMarkIcon } from '@heroicons/react/24/outline'

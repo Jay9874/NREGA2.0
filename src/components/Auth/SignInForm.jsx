@@ -80,49 +80,6 @@ export default function SignInForm () {
                       />
                     </div>
                   </div>
-
-                  {/* <div className="flex items-center justify-between">
-                    <div className="text-sm font-medium text-gray-700">
-                      Login as
-                    </div>
-                    <div className="flex items-center gap-5">
-                      <div className="flex items-center">
-                        <input
-                          id="worker"
-                          name="worker"
-                          type="checkbox"
-                          className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                          value='worker'
-                          onChange={(e) => setLoginInfo({...loginInfo, userType: e.target.value })}
-                          checked={loginInfo.userType === 'worker'}
-                        />
-                        <label
-                          htmlFor="worker"
-                          className="ml-2 block text-sm text-gray-900"
-                        >
-                          Worker
-                        </label>
-                      </div>
-                      <div className="flex items-center">
-                        <input
-                          id="admin"
-                          name="admin"
-                          type="checkbox"
-                          className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                          value='admin'
-                          onChange={(e) => setLoginInfo({...loginInfo, userType: e.target.value })}
-                          checked={loginInfo.userType === 'admin'}
-                        />
-                        <label
-                          htmlFor="admin"
-                          className="ml-2 block text-sm text-gray-900"
-                        >
-                          Admin
-                        </label>
-                      </div>
-                    </div>
-                  </div> */}
-
                   <div className='flex items-center justify-between'>
                     <div className='flex items-center'>
                       <input
