@@ -6,7 +6,7 @@ export const authStore = create((set, get) => ({
   checkUser: async () => {
     await supabase.auth
       .getSession()
-      .then(async ({ data}) => {
+      .then(async ({ data }) => {
         if (!data.session) {
           return null
         }
@@ -28,6 +28,7 @@ export const authStore = create((set, get) => ({
           })
       })
       .catch(err => {
+        toast.error(err.message)
         return null
       })
   },
@@ -39,6 +40,10 @@ export const authStore = create((set, get) => ({
         password: password
       })
       .then(async authRes => {
+        if (authRes.error)
+          return toast.error(
+            `${authRes.error.message}. Please check internet connection`
+          )
         const authEmail = authRes.data.user.email
         await supabase
           .from('profiles')
@@ -91,14 +96,14 @@ export const authStore = create((set, get) => ({
 
 export const workerStore = create((set, get) => ({
   jobs: [],
-  payment:[],
-  attendance:[],
-  profile:[],
+  payment: [],
+  attendance: [],
+  profile: [],
   setJobs: async () => {
     const { data } = await supabase
       .from('jobs')
       .select('*')
       .eq('is_active', true)
     set({ jobs: data })
-  },
+  }
 }))
