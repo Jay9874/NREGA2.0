@@ -100,7 +100,7 @@ export const authStore = create((set, get) => ({
     } else {
       console.log(data)
       toast.success('Recovery email sent!', { duration: 750 })
-      navigate('/auth/recovery/verify')
+      navigate('/')
       return null
     }
   }
