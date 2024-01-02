@@ -93,9 +93,12 @@ export const authStore = create((set, get) => ({
     }
   },
   recoverUser: async (email, navigate) => {
-    const { data, error } = await supabase.auth.api.resetPasswordForEmail(email)
-    if (error) return toast.error(error.message)
-    else {
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email)
+    if (error) {
+      console.log(error)
+      return toast.error(error.message)
+    } else {
+      console.log(data)
       toast.success('Recovery email sent!', { duration: 750 })
       navigate('/auth/recovery/verify')
       return null
