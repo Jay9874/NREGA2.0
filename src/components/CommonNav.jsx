@@ -30,7 +30,6 @@ export default function CommonNav() {
                   />
                 </div>
                   <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                    {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
                     {commonNavigation.map((item, index) => (
                       <Link
                         key={index}
@@ -59,7 +58,6 @@ export default function CommonNav() {
 
             <Disclosure.Panel className="sm:hidden">
               <div className="space-y-1 pt-2 pb-3">
-                {/* Current: "bg-indigo-50 border-indigo-500 text-indigo-700", Default: "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700" */}
                 <Disclosure.Button
                   as="a"
                   href="/"

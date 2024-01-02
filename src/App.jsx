@@ -2,6 +2,9 @@ import { Worker, Auth, Home, Admin } from './pages'
 import { authStore } from './api/store'
 import { Protected, NotFound } from './components'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+
+
 // Admin Components
 import {
   AdminDashboard,
@@ -20,8 +23,14 @@ import {
   Attendance,
   Dashboard
 } from './components/Worker'
-import { useEffect, useState } from 'react'
-import { Toaster } from 'sonner'
+
+// Auth components
+import {
+  SignInForm,
+  ForgotPass
+} from './components/Auth'
+
+
 
 export default function App () {
   const { checkUser, user } = authStore()
@@ -35,7 +44,11 @@ export default function App () {
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/auth' element={<Auth />} />
+        <Route path='/auth' element={<Auth />}>
+          <Route path='login' element={<SignInForm />} />
+          <Route path='recovery' element={<ForgotPass />} />
+          <Route path='*' element={<NotFound path='auth' />} />
+        </Route>
         <Route element={<Protected user={loggedUser} />}>
           <Route path='/worker' element={<Worker />}>
             <Route path='dashboard' element={<Dashboard />} />

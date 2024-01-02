@@ -6,6 +6,7 @@ const NotFound = ({ path }) => {
   useEffect(() => {
     if (path == 'worker') navigate('/worker/dashboard')
     else if (path == 'admin') navigate('/admin/dashboard')
+    else if (path == 'auth') navigate('/admin/login')
     else navigate('/')
     toast.error('Please, put correct url.', { duration: 1000 })
   })

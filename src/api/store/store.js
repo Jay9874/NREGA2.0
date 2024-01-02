@@ -79,7 +79,7 @@ export const authStore = create((set, get) => ({
       toast.success('Login successful!', { duration: 500 })
       return null
     }
-    navigate('/auth')
+    navigate('/auth/login')
     return null
   },
   logoutUser: async () => {
@@ -89,6 +89,15 @@ export const authStore = create((set, get) => ({
       set({ user: { email: '', type: '' } })
       localStorage.removeItem(import.meta.env.VITE_AUTH_TOKEN)
       toast.success('Logout successful!', { duration: 750 })
+      return null
+    }
+  },
+  recoverUser: async (email, navigate) => {
+    const { data, error } = await supabase.auth.api.resetPasswordForEmail(email)
+    if (error) return toast.error(error.message)
+    else {
+      toast.success('Recovery email sent!', { duration: 750 })
+      navigate('/auth/recovery/verify')
       return null
     }
   }
