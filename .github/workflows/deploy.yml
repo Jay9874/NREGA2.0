@@ -5,7 +5,6 @@ on:
     branches:
       - main
       - auth
-
 jobs:
   build:
     name: Build
@@ -24,8 +23,33 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Zip artifact for deployment
+        run: zip release.zip ./frontend -r
+
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v3
         with:
           name: dist
-          path: ./frontend
+          path: release.zip
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+      - name: unzip artifact for deployment
+        run: unzip release.zip
+
+      - uses: amondnet/vercel-action@v20 #deploy
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional 
+          vercel-args: '--prod' #Optional
+          vercel-org-id: ${{ secrets.ORG_ID}}  #Required
+          vercel-project-id: ${{ secrets.PROJECT_ID}} #Required 
