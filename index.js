@@ -21,11 +21,14 @@ app.get('/api/recovery', (req, res) => {
 })
 
 app.get('*', (req, res) => {
-  res.sendFile('index.html', function (err) {
-    if (err) {
-      res.status(500).send(err)
+  res.sendFile(
+    path.join(__dirname, 'frontend', 'dist', 'index.html'),
+    function (err) {
+      if (err) {
+        res.status(500).send(err)
+      }
     }
-  })
+  )
 })
 
 app.listen(port, () => {
