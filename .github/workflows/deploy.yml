@@ -32,24 +32,10 @@ jobs:
           name: dist
           path: release.zip
 
-  deploy:
-    name: Deploy
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
           name: dist
+
       - name: unzip artifact for deployment
         run: unzip release.zip
-
-      - uses: actions/checkout@v2
-      - uses: amondnet/vercel-action@v20 #deploy
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
-          vercel-args: '--prod' #Optional
-          vercel-org-id: ${{ secrets.ORG_ID}}  #Required
-          vercel-project-id: ${{ secrets.PROJECT_ID}} #Required 
-          working-directory: . #Optional
