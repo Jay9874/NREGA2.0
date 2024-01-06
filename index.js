@@ -9,7 +9,9 @@ app.use(express.json({ limit: '25mb' }))
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 app.use(bodyParser.json({ limit: '50mb' }))
 app.use(cors())
-app.use(express.static(path.join('/var/task', 'frontend', 'dist')))
+app.use(express.static(path.join(__dirname, 'frontend', 'dist')))
+
+// Routes
 app.get('/api/hello', (req, res) => {
   console.log('got request on root route')
   res.send('Hello world')
@@ -21,11 +23,14 @@ app.get('/api/recovery', (req, res) => {
 })
 
 app.get('*', (req, res) => {
-  res.sendFile('/var/task/frontend/dist/index.html', function (err) {
-    if (err) {
-      res.status(500).send(err)
+  res.sendFile(
+    path.join(__dirname, 'frontend', 'dist', 'index.html'),
+    function (err) {
+      if (err) {
+        res.status(500).send(err)
+      }
     }
-  })
+  )
 })
 
 app.listen(port, () => {
