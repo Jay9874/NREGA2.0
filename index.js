@@ -16,18 +16,21 @@ app.get('/api/hello', (req, res) => {
   res.send('Hello world')
 })
 
-if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
-    res.sendFile(
-      path.resolve(__dirname, 'frontend', 'dist', 'index.html'),
-      function (err) {
-        if (err) {
-          res.status(500).send(err)
-        }
+app.get('/api/recovery', (req, res) => {
+  console.log('got request on recovery route')
+  res.send('Hello world')
+})
+
+app.get('*', (req, res) => {
+  res.sendFile(
+    path.resolve(__dirname, 'frontend', 'dist', 'index.html'),
+    function (err) {
+      if (err) {
+        res.status(500).send(err)
       }
-    )
-  })
-}
+    }
+  )
+})
 
 app.listen(port, () => {
   console.log(`Server listening at port: ${port}`)
