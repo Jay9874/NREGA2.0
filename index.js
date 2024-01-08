@@ -18,7 +18,7 @@ app.get('/api/hello', (req, res) => {
 })
 
 app.get('/api/recovery', (req, res) => {
-  res.send(req)
+  res.send('Hello')
 })
 
 app.get('*', (req, res) => {
