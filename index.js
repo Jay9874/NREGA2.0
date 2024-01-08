@@ -1,9 +1,14 @@
+require('dotenv').config()
 const express = require('express')
 const port = process.env.PORT || 8080
 const cors = require('cors')
 const path = require('path')
 const bodyParser = require('body-parser')
+const { createClient } = require('@supabase/supabase-js')
 
+const supabaseUrl = process.env.VITE_SUPABASE_URL
+const supabaseKey = process.env.VITE_SUPABASE_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
 const app = express()
 app.use(express.json({ limit: '25mb' }))
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
@@ -18,7 +23,7 @@ app.get('/api/hello', (req, res) => {
 })
 
 app.get('/api/recovery', (req, res) => {
-  res.send('Hello')
+  res.send(req)
 })
 
 app.get('*', (req, res) => {
