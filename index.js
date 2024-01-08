@@ -18,8 +18,7 @@ app.get('/api/hello', (req, res) => {
 })
 
 app.get('/api/recovery', (req, res) => {
-  console.log('got request on recovery route')
-  res.send('Hello world')
+  res.send(req)
 })
 
 app.get('*', (req, res) => {
