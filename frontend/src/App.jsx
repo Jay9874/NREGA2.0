@@ -4,7 +4,6 @@ import { Protected, NotFound } from './components'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
-
 // Admin Components
 import {
   AdminDashboard,
@@ -25,12 +24,7 @@ import {
 } from './components/Worker'
 
 // Auth components
-import {
-  SignInForm,
-  ForgotPass
-} from './components/Auth'
-
-
+import { SignInForm, ForgotPass, ResetPass } from './components/Auth'
 
 export default function App () {
   const { checkUser, user } = authStore()
@@ -47,6 +41,7 @@ export default function App () {
         <Route path='/auth' element={<Auth />}>
           <Route path='login' element={<SignInForm />} />
           <Route path='recovery' element={<ForgotPass />} />
+          <Route path='reset' element={<ResetPass />} />
           <Route path='*' element={<NotFound path='auth' />} />
         </Route>
         <Route element={<Protected user={loggedUser} />}>
