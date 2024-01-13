@@ -22,6 +22,10 @@ app.get('/api/hello', (req, res) => {
   console.log('got request on root route')
   res.send('Hello world')
 })
+app.get('/api/demo', (req, res) => {
+  console.log('got request on demo route')
+  res.send('Hello demo world')
+})
 
 app.get('*', (req, res) => {
   res.sendFile(

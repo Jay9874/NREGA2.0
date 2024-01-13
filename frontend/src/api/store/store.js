@@ -41,10 +41,7 @@ export const authStore = create((set, get) => ({
         password: password
       })
       .then(async authRes => {
-        if (authRes.error)
-          return toast.error(
-            `${authRes.error.message}. Please check internet connection`
-          )
+        if (authRes.error) return toast.error(`${authRes.error.message}`)
         const authEmail = authRes.data.user.email
         await supabase
           .from('profiles')
@@ -122,6 +119,16 @@ export const authStore = create((set, get) => ({
       navigate(`/${user.type}/dashboard`)
       return null
     }
+  },
+  demoLogin: async (email, type, navigate) => {
+    const loginUser = get().loginUser
+    let password = ''
+    if (type === 'worker') {
+      password = import.meta.env.VITE_WORKER_PASSWORD
+    } else if (type === 'admin') {
+      password = import.meta.env.VITE_ADMIN_PASSWORD
+    }
+    await loginUser(email, password, navigate)
   }
 }))
 

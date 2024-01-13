@@ -4,12 +4,15 @@ import { authStore } from '../../api/store/store'
 
 export default function SignInForm () {
   const navigate = useNavigate()
-  const { loginUser } = authStore()
+  const { loginUser, demoLogin } = authStore()
 
   const [loginInfo, setLoginInfo] = useState({
     email: '',
     password: ''
   })
+  function handleDemo (email, type) {
+    demoLogin(email, type, navigate)
+  }
 
   return (
     <div className='flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
@@ -98,6 +101,36 @@ export default function SignInForm () {
               </div>
             </form>
           </div>
+        </div>
+
+        <div className='relative mt-8'>
+          <div
+            className='absolute inset-0 flex items-center'
+            aria-hidden='true'
+          >
+            <div className='w-full border-t border-gray-300' />
+          </div>
+          <div className='relative flex justify-center'>
+            <span className='bg-white px-2 text-sm text-gray-500'>
+              Take Demo
+            </span>
+          </div>
+        </div>
+        <div className='mt-4 mb-4 '>
+          <Link
+            onClick={() => handleDemo('jayprakashsharma225@gmail.com', 'admin')}
+          >
+            <div className='text-center relative rounded-full py-1 px-3 text-sm leading-6 text-gray-600 ring-1 ring-black/10 hover:ring-black/20'>
+              as a Admin
+            </div>
+          </Link>
+        </div>
+        <div className=''>
+          <Link onClick={() => handleDemo('jay.gdsc@gmail.com', 'worker')}>
+            <div className='text-center relative rounded-full py-1 px-3 text-sm leading-6 text-gray-600 ring-1 ring-black/10 hover:ring-black/20'>
+              as a Worker
+            </div>
+          </Link>
         </div>
       </div>
     </div>

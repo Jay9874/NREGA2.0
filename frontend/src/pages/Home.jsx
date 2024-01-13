@@ -26,7 +26,7 @@ export default function Home () {
           className='absolute inset-0 -z-10 h-full w-full object-cover brightness-50'
         />
 
-        <div className='px-6 lg:px-8'>
+        <div className='px-6 lg:px-8 h-[100vh]'>
           <nav
             className='flex items-center justify-between pt-6'
             aria-label='Global'
