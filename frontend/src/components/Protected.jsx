@@ -7,5 +7,5 @@ export default function Protected () {
   const token = JSON.parse(
     localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
   )
-  return token?.userType === path ? <Outlet /> : <Navigate to='/auth' />
+  return token?.userType === path ? <Outlet /> : <Navigate to='/auth/login' />
 }

@@ -1,5 +1,6 @@
 require('dotenv').config()
 const express = require('express')
+const url = require('url')
 const port = process.env.PORT || 8080
 const cors = require('cors')
 const path = require('path')
@@ -20,10 +21,6 @@ app.use(express.static(path.join(__dirname, 'frontend', 'dist')))
 app.get('/api/hello', (req, res) => {
   console.log('got request on root route')
   res.send('Hello world')
-})
-
-app.get('/api/recovery', (req, res) => {
-  res.send(req)
 })
 
 app.get('*', (req, res) => {

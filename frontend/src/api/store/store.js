@@ -3,6 +3,7 @@ import supabase from '..'
 import { toast } from 'sonner'
 export const authStore = create((set, get) => ({
   user: { email: '', type: '' },
+  loading: false,
   checkUser: async () => {
     await supabase.auth
       .getSession()
@@ -61,8 +62,8 @@ export const authStore = create((set, get) => ({
             set({ user: { email: authEmail, type: userType } })
             toast.dismiss(verTID)
             toast.success('Login successful!', { duration: 500 })
-            if (userType === 'worker') navigate('/worker/dashboard')
-            else if (userType === 'admin') navigate('/admin/dashboard')
+            const user = get().user
+            navigate(`/${user.type}/dashboard`)
             return data
           })
         return authRes.data
@@ -93,15 +94,32 @@ export const authStore = create((set, get) => ({
     }
   },
   recoverUser: async (email, navigate) => {
+    set({ loading: true })
+    const redirectURL = 'https://nrega-2-0.vercel.app/auth/reset'
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: 'https://nrega-2-0-git-auth-jay9874.vercel.app/api/recovery'
+      redirectTo: redirectURL
     })
     if (error) {
       console.log(error)
       return toast.error(error.message)
     } else {
+      console.log(data)
+      set({ loading: false })
       toast.success('Recovery email sent!', { duration: 750 })
       navigate('/')
+      return null
+    }
+  },
+  resetPassword: async (new_password, navigate) => {
+    const { data, error } = await supabase.auth.updateUser({
+      password: new_password
+    })
+    if (error) return toast.error(error.message)
+    else {
+      console.log(data)
+      toast.success('Password reset successful!', { duration: 750 })
+      const user = get().user
+      navigate(`/${user.type}/dashboard`)
       return null
     }
   }

@@ -1,8 +1,8 @@
 import { Worker, Auth, Home, Admin } from './pages'
 import { authStore } from './api/store'
-import { Protected, NotFound } from './components'
+import { Protected, NotFound, ValidLink } from './components'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 // Admin Components
 import {
@@ -27,12 +27,10 @@ import {
 import { SignInForm, ForgotPass, ResetPass } from './components/Auth'
 
 export default function App () {
-  const { checkUser, user } = authStore()
-  const [loggedUser, setLoggedUser] = useState(user)
+  const { checkUser } = authStore()
 
   useEffect(() => {
     checkUser()
-    setLoggedUser(user)
   }, [checkUser])
   return (
     <BrowserRouter>
@@ -41,10 +39,12 @@ export default function App () {
         <Route path='/auth' element={<Auth />}>
           <Route path='login' element={<SignInForm />} />
           <Route path='recovery' element={<ForgotPass />} />
-          <Route path='reset' element={<ResetPass />} />
+          <Route element={<ValidLink />}>
+            <Route path='reset' element={<ResetPass />} />
+          </Route>
           <Route path='*' element={<NotFound path='auth' />} />
         </Route>
-        <Route element={<Protected user={loggedUser} />}>
+        <Route element={<Protected />}>
           <Route path='/worker' element={<Worker />}>
             <Route path='dashboard' element={<Dashboard />} />
             <Route path='profile' element={<Profile />} />
