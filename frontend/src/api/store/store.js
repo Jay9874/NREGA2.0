@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import supabase from '..'
+import { supabase } from '..'
 import { toast } from 'sonner'
 export const authStore = create((set, get) => ({
   user: { email: '', type: '', id: '' },

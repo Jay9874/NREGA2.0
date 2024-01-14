@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import supabase from '..'
+import { supabase } from '..'
 import { toast } from 'sonner'
 
 export const useWorkerStore = create((set, get) => ({
@@ -10,7 +10,6 @@ export const useWorkerStore = create((set, get) => ({
   attendance: [],
   profile: {},
   setProfile: async () => {
-    console.log('hello')
     let token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
     token = token ? JSON.parse(token) : {}
     set({
@@ -25,9 +24,7 @@ export const useWorkerStore = create((set, get) => ({
       console.log(error)
       return toast.error(error.message)
     }
-    console.log(data)
-    set({ profile: data })
-    console.log(get().profile)
+    set({ profile: data[0] })
     set({ loading: false })
   },
   setJobs: async () => {

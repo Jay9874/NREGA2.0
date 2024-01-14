@@ -7,9 +7,6 @@ const path = require('path')
 const bodyParser = require('body-parser')
 const { createClient } = require('@supabase/supabase-js')
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL
-const supabaseKey = process.env.VITE_SUPABASE_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
 const app = express()
 app.use(express.json({ limit: '25mb' }))
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
@@ -21,10 +18,6 @@ app.use(express.static(path.join(__dirname, 'frontend', 'dist')))
 app.get('/api/hello', (req, res) => {
   console.log('got request on root route')
   res.send('Hello world')
-})
-app.get('/api/demo', (req, res) => {
-  console.log('got request on demo route')
-  res.send('Hello demo world')
 })
 
 app.get('*', (req, res) => {
