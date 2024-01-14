@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import supabase from '..'
 import { toast } from 'sonner'
 export const authStore = create((set, get) => ({
-  user: { email: '', type: '' },
+  user: { email: '', type: '', id: '' },
   loading: false,
   checkUser: async () => {
     await supabase.auth
@@ -12,6 +12,7 @@ export const authStore = create((set, get) => ({
           return null
         }
         const authEmail = data.session.user.email
+        const userId = data.session.user.id
         await supabase
           .from('profiles')
           .select('user_type')
@@ -25,7 +26,14 @@ export const authStore = create((set, get) => ({
               import.meta.env.VITE_AUTH_TOKEN,
               JSON.stringify(token)
             )
-            set({ user: { email: authEmail, type: userType } })
+            set({
+              user: {
+                email: authEmail,
+                type: userType,
+                id: userId
+              }
+            })
+            return get().user
           })
       })
       .catch(err => {
@@ -43,6 +51,7 @@ export const authStore = create((set, get) => ({
       .then(async authRes => {
         if (authRes.error) return toast.error(`${authRes.error.message}`)
         const authEmail = authRes.data.user.email
+        const userId = authRes.data.user.id
         await supabase
           .from('profiles')
           .select('user_type')
@@ -56,7 +65,13 @@ export const authStore = create((set, get) => ({
               import.meta.env.VITE_AUTH_TOKEN,
               JSON.stringify(token)
             )
-            set({ user: { email: authEmail, type: userType } })
+            set({
+              user: {
+                email: authEmail,
+                type: userType,
+                id: userId
+              }
+            })
             toast.dismiss(verTID)
             toast.success('Login successful!', { duration: 500 })
             const user = get().user
@@ -84,7 +99,7 @@ export const authStore = create((set, get) => ({
     const { error } = await supabase.auth.signOut()
     if (error) return toast.error(error.message)
     else {
-      set({ user: { email: '', type: '' } })
+      set({ user: { email: '', type: '', id: '' } })
       localStorage.removeItem(import.meta.env.VITE_AUTH_TOKEN)
       toast.success('Logout successful!', { duration: 750 })
       return null
@@ -129,19 +144,5 @@ export const authStore = create((set, get) => ({
       password = import.meta.env.VITE_ADMIN_PASSWORD
     }
     await loginUser(email, password, navigate)
-  }
-}))
-
-export const workerStore = create((set, get) => ({
-  jobs: [],
-  payment: [],
-  attendance: [],
-  profile: [],
-  setJobs: async () => {
-    const { data } = await supabase
-      .from('jobs')
-      .select('*')
-      .eq('is_active', true)
-    set({ jobs: data })
   }
 }))

@@ -1,2 +1,3 @@
 import { authStore } from './store'
-export { authStore }
+import { useWorkerStore } from './useWorkerStore'
+export { authStore, useWorkerStore }

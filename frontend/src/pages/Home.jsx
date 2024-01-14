@@ -26,7 +26,7 @@ export default function Home () {
           className='absolute inset-0 -z-10 h-full w-full object-cover brightness-50'
         />
 
-        <div className='px-6 lg:px-8 h-[100vh]'>
+        <div className='px-6 lg:px-8 min-h-[100vh]'>
           <nav
             className='flex items-center justify-between pt-6'
             aria-label='Global'
@@ -143,17 +143,17 @@ export default function Home () {
               </p>
               <div className='mt-10 flex-wrap flex items-center justify-center gap-x-6'>
                 <Link
-                  to='/auth'
+                  to='/auth/login'
                   className='rounded-md bg-yellow-500 px-3.5 py-1.5 text-base font-semibold leading-7 text-white shadow-sm hover:bg-yellow-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-400'
                 >
                   Get started
                 </Link>
-                <Link
+                {/* <Link
                   to='#feature'
                   className='text-base font-semibold leading-7 text-white'
                 >
                   Learn more <span aria-hidden='true'>→</span>
-                </Link>
+                </Link> */}
               </div>
             </div>
           </div>

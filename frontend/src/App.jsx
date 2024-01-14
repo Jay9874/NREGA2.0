@@ -27,7 +27,7 @@ import {
 import { SignInForm, ForgotPass, ResetPass } from './components/Auth'
 
 export default function App () {
-  const { checkUser } = authStore()
+  const { checkUser, user } = authStore()
 
   useEffect(() => {
     checkUser()

@@ -1,5 +1,6 @@
 import { ScaleIcon } from "@heroicons/react/24/outline";
 import RecentPayment from "../RecentPayment";
+import { useWorkerStore } from "../../api/store";
 import {
   MapPinIcon,
   BuildingOfficeIcon,
@@ -29,6 +30,7 @@ const cards = [
 ];
 
 export default function Dashboard() {
+  const { profile } = useWorkerStore();
   return (
     <main className="flex-1 pb-8">
       {/* Page header */}
@@ -51,7 +53,7 @@ export default function Dashboard() {
                       alt=""
                     />
                     <h1 className="ml-3 text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:leading-9">
-                      Good morning, Jay Prakash
+                      Good morning, {profile.first_name}
                     </h1>
                   </div>
                   <dl className="mt-6 flex flex-col sm:ml-3 sm:mt-1 sm:flex-row sm:flex-wrap">
