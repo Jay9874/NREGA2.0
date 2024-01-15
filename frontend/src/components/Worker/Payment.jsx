@@ -1,3 +1,5 @@
+import { useWorkerStore } from '../../api/store'
+
 const stats = [
   {
     name: 'For work',
@@ -56,6 +58,8 @@ const statusStyles = {
 import RecentPayment from '../RecentPayment'
 
 export default function Payment () {
+  const { payment } = useWorkerStore()
+  console.log(payment)
   return (
     <main>
       <div className='p-6'>

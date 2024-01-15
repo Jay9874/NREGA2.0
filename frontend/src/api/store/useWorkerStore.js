@@ -36,5 +36,17 @@ export const useWorkerStore = create((set, get) => ({
     if (error) return toast.error(error.message)
     set({ jobs: data })
     set({ loading: false })
+  },
+  setPayment: async () => {
+    console.log(get().user.id)
+    set({ loading: true })
+    const { data, error } = await supabase
+      .from('payment')
+      .select('*')
+      .eq('payment_to', get().user.id)
+    if (error) return toast.error(error.message)
+    set({ payment: data[0] })
+    console.log(data)
+    set({ loading: false })
   }
 }))

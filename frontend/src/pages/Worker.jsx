@@ -10,9 +10,10 @@ import { workerTopNavigation } from '../utils/dashboard_toplink'
 
 export const Worker = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const { setProfile } = useWorkerStore()
+  const { setProfile, setPayment } = useWorkerStore()
   useEffect(() => {
     setProfile()
+    setPayment()
   }, [])
 
   return (
