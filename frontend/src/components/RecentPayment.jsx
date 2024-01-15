@@ -1,5 +1,5 @@
 import { BanknotesIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
-
+import { timestampToDate } from '../utils/convertTimestamp'
 const statusStyles = {
   success: 'bg-green-100 text-green-800',
   processing: 'bg-yellow-100 text-yellow-800',
@@ -38,10 +38,14 @@ export default function RecentPayment ({ heading, recentActivity }) {
                     <span className='flex flex-col truncate text-sm text-gray-500'>
                       <span className='truncate'>{transaction.name}</span>
                       <span className='font-medium text-gray-900'>
-                        Amount: {transaction.amount}
+                        Amount: {'₹'}
+                        {transaction.amount}
                       </span>
-                      <time className='font-medium text-gray-900' dateTime={transaction.datetime}>
-                        Date: {transaction.date}
+                      <time
+                        className='font-medium text-gray-900'
+                        dateTime={transaction.datetime}
+                      >
+                        Date: {timestampToDate(transaction?.created_at)}
                       </time>
                       <span className='font-medium text-gray-900'>
                         Status:{' '}
@@ -52,7 +56,7 @@ export default function RecentPayment ({ heading, recentActivity }) {
                           )}
                         >
                           {' '}
-                          {transaction.status}
+                          {transaction?.status}
                         </span>
                       </span>
                     </span>
@@ -68,7 +72,7 @@ export default function RecentPayment ({ heading, recentActivity }) {
         </ul>
       </div>
 
-      {/* Activity table (small breakpoint and up) */}
+      {/* Activity table (small device and up)*/}
       <div className='hidden sm:block'>
         <div className='mx-auto max-w-6xl px-4 sm:px-6 lg:px-8'>
           <div className='mt-2 flex flex-col'>
@@ -116,16 +120,16 @@ export default function RecentPayment ({ heading, recentActivity }) {
                               aria-hidden='true'
                             />
                             <p className='truncate text-gray-500 group-hover:text-gray-900'>
-                              {transaction.name}
+                              {transaction.payment_title}
                             </p>
                           </a>
                         </div>
                       </td>
                       <td className='whitespace-nowrap px-6 py-4 text-right text-sm text-gray-500'>
+                        {'₹'}
                         <span className='font-medium text-gray-900'>
                           {transaction.amount}
                         </span>
-                        {transaction.currency}
                       </td>
                       <td className='whitespace-nowrap px-6 py-4 text-sm text-gray-500 md:block'>
                         <span
@@ -139,7 +143,7 @@ export default function RecentPayment ({ heading, recentActivity }) {
                       </td>
                       <td className='whitespace-nowrap px-6 py-4 text-right text-sm text-gray-500'>
                         <time dateTime={transaction.datetime}>
-                          {transaction.date}
+                          {timestampToDate(transaction?.created_at)}
                         </time>
                       </td>
                     </tr>

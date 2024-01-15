@@ -10,19 +10,6 @@ import {
 } from '@heroicons/react/20/solid'
 import { Link } from 'react-router-dom'
 
-const transactions = [
-  {
-    id: 1,
-    name: 'Payment from Kedraband Panchayat',
-    href: '#',
-    amount: '₹20,000',
-    status: 'success',
-    date: 'July 11, 2020',
-    datetime: '2020-07-11'
-  }
-  // More transactions...
-]
-
 const cards = [
   {
     name: 'Attendance',
@@ -46,7 +33,7 @@ const cards = [
 ]
 
 export default function Dashboard () {
-  const { profile } = useWorkerStore()
+  const { profile, payment } = useWorkerStore()
   return (
     <main className='flex-1 pb-8'>
       {/* Page header */}
@@ -150,7 +137,7 @@ export default function Dashboard () {
         {/* Recent activity */}
         <RecentPayment
           heading={'Recent Activity'}
-          recentActivity={transactions}
+          recentActivity={payment}
         />
       </div>
     </main>
