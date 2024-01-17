@@ -67,7 +67,7 @@ export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
                 <span className='sr-only'>Open user menu</span>
                 <img
                   className='h-8 w-8 rounded-full'
-                  src={profile.photo}
+                  src={profile?.photo}
                   alt='profile_image'
                 />
               </Menu.Button>

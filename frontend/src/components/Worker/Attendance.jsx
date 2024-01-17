@@ -3,6 +3,7 @@ import { useState } from "react";
 import { dropDown } from "../../utils/locationDrops";
 import { TableRow } from "../TableRow";
 const cards = [
+  { name: "State" },
   { name: "District" },
   { name: "Block" },
   { name: "Panchayat" },

@@ -18,7 +18,7 @@ export const useWorkerStore = create((set, get) => ({
     })
     const { data, error } = await supabase
       .from('worker')
-      .select('*')
+      .select(`*, address(*)`)
       .eq('id', get().user.id)
     if (error) {
       return toast.error(error.message)

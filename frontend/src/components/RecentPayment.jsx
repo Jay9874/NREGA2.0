@@ -36,7 +36,7 @@ export default function RecentPayment ({ heading, recentActivity }) {
                       aria-hidden='true'
                     />
                     <span className='flex flex-col truncate text-sm text-gray-500'>
-                      <span className='truncate'>{transaction.name}</span>
+                      <span className='truncate'>{transaction.payment_title}</span>
                       <span className='font-medium text-gray-900'>
                         Amount: {'₹'}
                         {transaction.amount}

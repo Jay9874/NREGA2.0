@@ -67,7 +67,11 @@ export default function Dashboard () {
                         className='mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400'
                         aria-hidden='true'
                       />
-                      {profile.address}
+                      {profile?.address?.panchayat}
+                      {', '}
+                      {profile?.address?.district}
+                      {', '}
+                      {profile?.address?.state}
                     </dd>
                     <dt className='sr-only'>Account status</dt>
                     <dd className='mt-3 flex items-center text-sm font-medium capitalize text-gray-500 sm:mr-6 sm:mt-0'>
@@ -135,10 +139,7 @@ export default function Dashboard () {
         </div>
 
         {/* Recent activity */}
-        <RecentPayment
-          heading={'Recent Activity'}
-          recentActivity={payment}
-        />
+        <RecentPayment heading={'Recent Activity'} recentActivity={payment} />
       </div>
     </main>
   )
