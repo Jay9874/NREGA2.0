@@ -5,20 +5,20 @@ import {
   HomeIcon,
   UserGroupIcon,
   UsersIcon,
-} from "@heroicons/react/24/outline";
+  WrenchScrewdriverIcon
+} from '@heroicons/react/24/outline'
 
 export const workerNavigation = [
-  { name: "Dashboard", href: "dashboard", icon: HomeIcon},
-  { name: "Attendance", href: "attendance", icon: UsersIcon},
-  { name: "Jobs", href: "jobs", icon: FolderIcon},
-  { name: "Payment", href: "payment", icon: CalendarIcon},
-];
-
+  { name: 'Dashboard', href: 'dashboard', icon: HomeIcon },
+  { name: 'Attendance', href: 'attendance', icon: CalendarIcon },
+  { name: 'Jobs', href: 'jobs', icon: WrenchScrewdriverIcon },
+  { name: 'Payment', href: 'payment', icon:  CurrencyRupeeIcon}
+]
 
 export const adminNavigation = [
-  { name: "Dashboard", href: "dashboard", icon: HomeIcon},
-  { name: "Add Job", href: "addjob", icon: FolderIcon},
-  { name: "Attendance", href: "attendance", icon: CalendarIcon},
-  { name: "Employees", href: "employee", icon: UserGroupIcon},
-  { name: "Payout", href: "payout", icon: CurrencyRupeeIcon},
+  { name: 'Dashboard', href: 'dashboard', icon: HomeIcon },
+  { name: 'Add Job', href: 'addjob', icon: WrenchScrewdriverIcon },
+  { name: 'Attendance', href: 'attendance', icon: CalendarIcon },
+  { name: 'Employees', href: 'employee', icon: UserGroupIcon },
+  { name: 'Payout', href: 'payout', icon: CurrencyRupeeIcon }
 ]

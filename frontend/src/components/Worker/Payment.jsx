@@ -27,7 +27,7 @@ function classNames (...classes) {
 }
 
 const statusStyles = {
-  paid: 'bg-green-100 text-green-800',
+  success: 'bg-green-100 text-green-800',
   processing: 'bg-yellow-100 text-yellow-800',
   failed: 'bg-red-100 text-gray-800'
 }
@@ -85,7 +85,7 @@ export default function Payment () {
                 <span
                   className={classNames(
                     statusStyles[payment[0]?.status],
-                    'px-6 py-1 rounded-3xl'
+                    'px-6 py-1 rounded-3xl capitalize'
                   )}
                 >
                   {payment[0]?.status}
