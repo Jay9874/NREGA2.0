@@ -1,10 +1,8 @@
 import {
   CalendarIcon,
   CurrencyRupeeIcon,
-  FolderIcon,
   HomeIcon,
   UserGroupIcon,
-  UsersIcon,
   WrenchScrewdriverIcon
 } from '@heroicons/react/24/outline'
 
