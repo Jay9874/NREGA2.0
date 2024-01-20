@@ -1,26 +1,5 @@
-import { useEffect, useState } from 'react'
 import { useWorkerStore } from '../../api/store'
 import { timestampToDate } from '../../utils/convertTimestamp'
-
-const transactions = [
-  {
-    id: 1,
-    name: 'Payment from Kedraband Panchayat',
-    href: '#',
-    amount: '₹20,000',
-    status: 'success',
-    date: 'July 11, 2020'
-  },
-  {
-    id: 2,
-    name: 'Payment from Kedraband Panchayat',
-    href: '#',
-    amount: '₹20,000',
-    status: 'processing',
-    date: 'July 11, 2020'
-  }
-  // More transactions...
-]
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
