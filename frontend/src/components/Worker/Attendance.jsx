@@ -3,7 +3,6 @@ import { useEffect } from 'react'
 import { dropDown } from '../../utils/locationDrops'
 import { TableRow } from '../TableRow'
 import { useWorkerStore } from '../../api/store'
-import { timestampToDate } from '../../utils/convertTimestamp'
 const cards = [
   { name: 'State' },
   { name: 'District' },
@@ -17,16 +16,10 @@ const statusStyles = {
 }
 
 const Attendance = () => {
-  const { attendance, getAttendance } = useWorkerStore()
+  const { attendances, getAttendance } = useWorkerStore()
   const tableHeading = [{ name: 'Work' }, { name: 'Date' }, { name: 'Status' }]
   async function getJobs () {
-    const res = await getAttendance()
-    if (res === null) return res
-    res.forEach(att => {
-      att.Work = att.jobs.job_name
-      att.Date = timestampToDate(att.created_at)
-      att.Status = att.status
-    })
+    await getAttendance()
   }
   useEffect(() => {
     getJobs()
@@ -51,20 +44,20 @@ const Attendance = () => {
               <Dropdown options={dropDown[`${card.name}`]} label={card.name} />
             </div>
           ))}
-          <button
+          {/* <button
             type='button'
             // onClick={() => getAttendance()}
             className='inline-flex items-center rounded-md border border-transparent bg-cyan-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2'
           >
             Get works
-          </button>
+          </button> */}
         </div>
       </div>
       <h2 className='mx-auto mt-8 max-w-6xl px-4 text-lg font-medium leading-6 text-gray-900 sm:px-6 lg:px-8'>
         Found Attendance
       </h2>
 
-      {attendance.length === 0 ? (
+      {attendances.length === 0 ? (
         <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
           <div className='rounded-xl border-0 ring-1 ring-gray-100 h-24 flex items-center justify-center'>
             <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
@@ -75,7 +68,7 @@ const Attendance = () => {
       ) : (
         <TableRow
           tableHeading={tableHeading}
-          tableData={attendance}
+          tableData={attendances}
           statusStyles={statusStyles}
         />
       )}

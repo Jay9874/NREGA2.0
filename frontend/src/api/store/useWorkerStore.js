@@ -1,13 +1,14 @@
 import { create } from 'zustand'
 import { supabase } from '..'
 import { toast } from 'sonner'
+import { timestampToDate } from '../../utils/convertTimestamp'
 
 export const useWorkerStore = create((set, get) => ({
   user: { email: '', type: '', id: '' },
   loading: false,
   jobs: [],
   payment: [],
-  attendance: [],
+  attendances: [],
   profile: {},
   setProfile: async () => {
     set({ loading: true })
@@ -59,7 +60,15 @@ export const useWorkerStore = create((set, get) => ({
       toast.error(error.message)
       return null
     }
-    set({ attendance: attendance })
+    const newAttendace = attendance.map(object => {
+      return {
+        ...object,
+        Work: object.jobs.job_name,
+        Date: timestampToDate(object.created_at),
+        Status: object.status
+      }
+    })
+    set({ attendances: newAttendace })
     set({ loading: false })
     return attendance
   }
