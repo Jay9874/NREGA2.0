@@ -34,7 +34,6 @@ export default function Dashboard () {
       icon: ScaleIcon,
       amount: `₹${balance?.toFixed(2)}`
     }
-    // More items...
   ]
   useEffect(() => {
     setBalance(() => {
@@ -42,7 +41,7 @@ export default function Dashboard () {
         return accumulator + currentValue.amount
       }, 0)
     })
-  }, [])
+  }, [payment])
   return (
     <main className='flex-1 pb-8'>
       {/* Page header */}
