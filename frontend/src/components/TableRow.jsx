@@ -1,4 +1,5 @@
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
+import { useEffect } from 'react'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
@@ -13,7 +14,7 @@ export const TableRow = ({ tableHeading, tableData, statusStyles }) => {
           role='list'
           className='mt-2 divide-y divide-gray-200 overflow-hidden shadow sm:hidden'
         >
-          {tableData.map(transaction => (
+          {tableData?.map(transaction => (
             <li key={transaction.id}>
               <a
                 href={transaction.href}
@@ -28,7 +29,7 @@ export const TableRow = ({ tableHeading, tableData, statusStyles }) => {
                             {heading.name}
                             {': '}
                           </span>
-                          {heading.name === 'Status' ? (
+                          {heading.name.toUpperCase() === 'STATUS' ? (
                             <span
                               className={classNames(
                                 statusStyles[transaction[heading.name]],
@@ -75,7 +76,7 @@ export const TableRow = ({ tableHeading, tableData, statusStyles }) => {
                   </tr>
                 </thead>
                 <tbody className='divide-y divide-gray-200 bg-white  overflow-auto'>
-                  {tableData.map(transaction => (
+                  {tableData?.map(transaction => (
                     <tr key={transaction.id} className='bg-white'>
                       {tableHeading.map((heading, index) =>
                         heading.name === 'Status' ? (

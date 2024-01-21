@@ -8,6 +8,12 @@ function classNames(...classes) {
 
 export default function Dropdown({ options, label }) {
   const [selected, setSelected] = useState(options[0]);
+  const [location, setLocation] = useState({
+    state: '',
+    district: '',
+    block: '',
+    panchayat: ''
+  })
 
   return (
     <Listbox value={selected} onChange={setSelected}>

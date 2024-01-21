@@ -47,5 +47,20 @@ export const useWorkerStore = create((set, get) => ({
     }
     set({ payment: payments })
     set({ loading: false })
+  },
+  getAttendance: async () => {
+    await get().setProfile()
+    const { data: attendance, error } = await supabase
+      .from('attendance')
+      .select(`*, jobs(*)`)
+      .eq('worker_id', get().user.id)
+      .order('created_at', { ascending: false })
+    if (error) {
+      toast.error(error.message)
+      return null
+    }
+    set({ attendance: attendance })
+    set({ loading: false })
+    return attendance
   }
 }))
