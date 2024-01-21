@@ -50,6 +50,7 @@ export const useWorkerStore = create((set, get) => ({
     set({ loading: false })
   },
   getAttendance: async () => {
+    set({ loading: true })
     await get().setProfile()
     const { data: attendance, error } = await supabase
       .from('attendance')
@@ -57,19 +58,29 @@ export const useWorkerStore = create((set, get) => ({
       .eq('worker_id', get().user.id)
       .order('created_at', { ascending: false })
     if (error) {
-      toast.error(error.message)
-      return null
+      console.log(error)
+      return toast.error(error.message)
     }
-    const newAttendace = attendance.map(object => {
-      return {
-        ...object,
-        Work: object.jobs.job_name,
-        Date: timestampToDate(object.created_at),
-        Status: object.status
-      }
+    set(async () => {
+      const result = await Promise.all(attendance.map(get().getLocation))
+      set({ attendances: result })
     })
-    set({ attendances: newAttendace })
     set({ loading: false })
-    return attendance
+  },
+  getLocation: async item => {
+    const { data: location, error } = await supabase
+      .from('locations')
+      .select(`*`)
+      .eq('id', item.jobs.location_id)
+    if (error) {
+      return error
+    }
+    return {
+      ...item,
+      Date: timestampToDate(item.created_at),
+      Work: item.jobs.job_name,
+      Status: item.status,
+      Location: location[0]
+    }
   }
 }))

@@ -15,7 +15,6 @@ import RecentPayment from '../RecentPayment'
 
 export default function Payment () {
   const { payment } = useWorkerStore()
-
   return (
     <main>
       <div className='p-6'>

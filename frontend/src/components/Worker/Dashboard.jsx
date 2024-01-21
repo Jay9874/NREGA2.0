@@ -2,6 +2,7 @@ import { ScaleIcon } from '@heroicons/react/24/outline'
 import RecentPayment from '../RecentPayment'
 import { useWorkerStore } from '../../api/store'
 import { GreetUserWithTime } from '../../api'
+import { useEffect, useState } from 'react'
 import {
   MapPinIcon,
   BuildingOfficeIcon,
@@ -10,30 +11,38 @@ import {
 } from '@heroicons/react/20/solid'
 import { Link } from 'react-router-dom'
 
-const cards = [
-  {
-    name: 'Attendance',
-    href: '/worker/attendance',
-    icon: CalendarDaysIcon,
-    amount: '89/100'
-  },
-  {
-    name: 'Working on',
-    href: '/worker/jobs',
-    icon: BuildingOfficeIcon,
-    amount: 'Amritsarovar, Hadipur'
-  },
-  {
-    name: 'Account balance',
-    href: '/worker/payment',
-    icon: ScaleIcon,
-    amount: '₹30,659.45'
-  }
-  // More items...
-]
-
 export default function Dashboard () {
-  const { profile, payment } = useWorkerStore()
+  const { profile, payment, attendances } = useWorkerStore()
+  const [balance, setBalance] = useState(0)
+
+  const cards = [
+    {
+      name: 'Attendance',
+      href: '/worker/attendance',
+      icon: CalendarDaysIcon,
+      amount: `${attendances.length}/100`
+    },
+    {
+      name: 'Working on',
+      href: '/worker/jobs',
+      icon: BuildingOfficeIcon,
+      amount: `${attendances[0]?.jobs?.job_name}, ${attendances[0]?.Location?.panchayat}`
+    },
+    {
+      name: 'Account balance',
+      href: '/worker/payment',
+      icon: ScaleIcon,
+      amount: `₹${balance?.toFixed(2)}`
+    }
+    // More items...
+  ]
+  useEffect(() => {
+    setBalance(() => {
+      return payment.reduce((accumulator, currentValue) => {
+        return accumulator + currentValue.amount
+      }, 0)
+    })
+  }, [])
   return (
     <main className='flex-1 pb-8'>
       {/* Page header */}
