@@ -37,8 +37,8 @@ const statusStyles = {
 const Jobs = ({ jobs }) => {
   const { setJobs } = useWorkerStore()
   useEffect(() => {
-    setJobs()
-  }, [setJobs])
+    // setJobs()
+  }, [])
 
   const [foundAttendance, setFoundAttendance] = useState(tableData) //worker state
   const cards = [
@@ -59,7 +59,7 @@ const Jobs = ({ jobs }) => {
             Nahar Widening, Amristsar, Punjab
           </p>
         </div>
-        <div className=' bg-white pb-1 sm:pb-4 border-b border-gray-200'>
+        <div className=' bg-white pb-1 sm:pb-4 border-gray-200'>
           <div className='relative'>
             <div className='relative mx-auto max-w-7xl px-6 lg:px-8'>
               <div className='mx-auto max-w-100 px-6'>
@@ -67,12 +67,12 @@ const Jobs = ({ jobs }) => {
                   {cards.map((card, index) => (
                     <div
                       key={index}
-                      className='first:rounded-t-2xl sm:first:rounded-tr-none last:rounded-b-2xl sm:last:rounded-bl-none sm:first:rounded-tl-2xl lg:first:rounded-l-2xl sm: lg:last:rounded-r-2xl sm:last:rounded-br-2xl flex flex-col bg-gray-100 p-6 text-center'
+                      className='first:rounded-t-2xl sm:first:rounded-tr-none last:rounded-b-2xl sm:last:rounded-bl-none sm:first:rounded-tl-2xl lg:first:rounded-l-2xl sm: lg:last:rounded-r-2xl sm:last:rounded-br-2xl flex flex-col bg-white border p-6 text-center'
                     >
-                      <dt className='order-2 mt-2 text-lg font-medium leading-6 text-gray-900'>
+                      <dt className='truncate text-md font-medium text-gray-500 order-1 mt-2leading-6 '>
                         {card.label}
                       </dt>
-                      <dd className='order-1 text-3xl font-bold tracking-tight text-black-500'>
+                      <dd className='text-lg font-medium text-gray-900 order-2 tracking-tight'>
                         {card.value}
                       </dd>
                     </div>

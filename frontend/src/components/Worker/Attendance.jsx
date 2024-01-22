@@ -46,8 +46,8 @@ export default function Attendance () {
       </h2>
 
       {attendances?.length === 0 ? (
-        <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
-          <div className='rounded-xl border-0 ring-1 ring-gray-100 h-24 flex items-center justify-center'>
+        <div className='mx-auto max-w-7xl px-12 text-center pt-4'>
+          <div className='rounded-xl border ring-gray-100 h-24 flex items-center justify-center'>
             <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
               Seems nothing here, try changing filters.
             </p>

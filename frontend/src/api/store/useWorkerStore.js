@@ -31,6 +31,7 @@ export const useWorkerStore = create((set, get) => ({
     set({ loading: true })
     const { data, error } = await supabase.from('jobs').select('*')
     if (error) return toast.error(error.message)
+    console.log(data)
     set({ jobs: data })
     set({ loading: false })
   },
