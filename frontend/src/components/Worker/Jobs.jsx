@@ -9,7 +9,7 @@ const tableData = [
     Duration: '3 months',
     href: '#',
     Status: 'enrolled',
-    Start: 'July 11, 2020'
+    Started: 'July 11, 2020'
   },
   {
     id: 2,
@@ -18,14 +18,14 @@ const tableData = [
     Location: 'Amristsar, Punjab',
     Duration: '2 months',
     Status: 'unenrolled',
-    Start: 'Aug, 12, 2023'
+    Started: 'Aug, 12, 2023'
   }
 ]
 const tableHeading = [
   { name: 'Work' },
   { name: 'Location' },
   { name: 'Duration' },
-  { name: 'Start' },
+  { name: 'Started' },
   { name: 'Status' }
 ]
 
@@ -34,18 +34,22 @@ const statusStyles = {
   unenrolled: 'bg-red-100 text-gray-800'
 }
 
-const Jobs = ({ jobs }) => {
-  const { setJobs } = useWorkerStore()
-  useEffect(() => {
-    // setJobs()
-  }, [])
-
+const Jobs = () => {
+  const { lastWork, setLoading, setLastWork } = useWorkerStore()
+  async function fetchJobs () {
+    setLoading(true)
+    await setLastWork()
+    setLoading(false)
+  }
   const [foundAttendance, setFoundAttendance] = useState(tableData) //worker state
   const cards = [
-    { label: 'Your presence', value: '8/10 Day' },
-    { label: 'Labours', value: '20' },
-    { label: 'Completion', value: '80%' },
-    { label: 'Deadline', value: '12th Dec' }
+    {
+      label: 'Your presence',
+      value: `${lastWork.presence}/${lastWork.duration} day`
+    },
+    { label: 'Labours', value: lastWork.labours },
+    { label: 'Completion', value: `${lastWork.completion}%` },
+    { label: 'Deadline', value: lastWork.deadline }
   ]
   // console.log(jobs)
   return (
@@ -56,7 +60,8 @@ const Jobs = ({ jobs }) => {
             Your working site
           </h3>
           <p className='mt-2 max-w-4xl text-sm text-gray-500'>
-            Nahar Widening, Amristsar, Punjab
+            {lastWork.name}, {lastWork.location.district},{' '}
+            {lastWork.location.panchayat}
           </p>
         </div>
         <div className=' bg-white pb-1 sm:pb-4 border-gray-200'>

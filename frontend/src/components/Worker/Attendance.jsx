@@ -2,7 +2,6 @@ import Dropdown from '../Dropdown'
 import { dropDown } from '../../utils/locationDrops'
 import { TableRow } from '../TableRow'
 import { useWorkerStore } from '../../api/store'
-import { useEffect, useState } from 'react'
 const cards = [
   { name: 'State' },
   { name: 'District' },

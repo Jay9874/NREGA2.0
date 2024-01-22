@@ -38,4 +38,15 @@ function getMonth (num) {
   return months[num]
 }
 
-export { timestampToDate }
+function jobDuration (startDate, endDate) {
+  const start = new Date(startDate)
+  const end = new Date(endDate)
+  const timestamp = Date.now()
+  const diff = Math.abs(end - start)
+  const spent = Math.abs(timestamp - start)
+  const days = Math.ceil(diff / (1000 * 60 * 60 * 24))
+  const spentDays = Math.ceil(spent / (1000 * 60 * 60 * 24))
+  const percentage = spentDays >= days ? 100 : (spentDays / days) * 100
+  return { days, percentage }
+}
+export { timestampToDate, jobDuration }
