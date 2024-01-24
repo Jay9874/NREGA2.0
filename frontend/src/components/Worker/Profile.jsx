@@ -1,7 +1,9 @@
+import { useEffect } from 'react'
 import '../../App.css'
 import { useWorkerStore } from '../../api/store'
 export default function Profile () {
   const { profile, user } = useWorkerStore()
+
   return (
     <main>
       <div className='overflow-hidden bg-white shadow sm:rounded-lg'>
@@ -43,7 +45,10 @@ export default function Profile () {
             </div>
             <div className='sm:col-span-1'>
               <dt className='text-sm font-medium text-gray-500'>Village</dt>
-              <dd className='mt-1 text-sm text-gray-900'>{profile.address}</dd>
+              <dd className='mt-1 text-sm text-gray-900'>
+                {profile?.address?.state}, {profile?.address?.district},{' '}
+                {profile?.address?.block}, {profile?.address?.panchayat}
+              </dd>
             </div>
             <div className='sm:col-span-1'>
               <dt className='text-sm font-medium text-gray-500'>
