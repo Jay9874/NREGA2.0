@@ -1,5 +1,5 @@
 import { useWorkerStore } from '../../api/store'
-import { timestampToDate } from '../../utils/convertTimestamp'
+import { timestampToDate } from '../../utils/dataFormating'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')

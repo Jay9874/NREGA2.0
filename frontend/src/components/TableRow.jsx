@@ -14,8 +14,8 @@ export const TableRow = ({ tableHeading, tableData, statusStyles }) => {
           role='list'
           className='mt-2 divide-y divide-gray-200 overflow-hidden shadow sm:hidden'
         >
-          {tableData?.map(transaction => (
-            <li key={transaction.id}>
+          {tableData?.map((transaction, index) => (
+            <li key={index}>
               <a
                 href={transaction.href}
                 className='block bg-white px-4 py-4 hover:bg-gray-50'
@@ -76,8 +76,8 @@ export const TableRow = ({ tableHeading, tableData, statusStyles }) => {
                   </tr>
                 </thead>
                 <tbody className='divide-y divide-gray-200 bg-white  overflow-auto'>
-                  {tableData?.map(transaction => (
-                    <tr key={transaction.id} className='bg-white'>
+                  {tableData?.map((transaction, index) => (
+                    <tr key={index} className='bg-white'>
                       {tableHeading.map((heading, index) =>
                         heading.name === 'Status' ? (
                           <td

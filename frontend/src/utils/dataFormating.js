@@ -49,4 +49,7 @@ function jobDuration (startDate, endDate) {
   const percentage = spentDays >= days ? 100 : (spentDays / days) * 100
   return { days, percentage }
 }
-export { timestampToDate, jobDuration }
+function formatLocation (locationObj) {
+  return `${locationObj.state}, ${locationObj.district}, ${locationObj.block}, ${locationObj.panchayat}`
+}
+export { timestampToDate, jobDuration, formatLocation }

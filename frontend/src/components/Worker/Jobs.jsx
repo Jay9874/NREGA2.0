@@ -35,14 +35,9 @@ const statusStyles = {
 }
 
 const Jobs = () => {
-  const { lastWork, setLoading, setLastWork } = useWorkerStore()
-  async function fetchJobs () {
-    setLoading(true)
-    await setLastWork()
-    setLoading(false)
-  }
+  const { lastWork, jobs } = useWorkerStore()
   const [foundAttendance, setFoundAttendance] = useState(tableData) //worker state
-  const cards = [
+  const highlight = [
     {
       label: 'Your presence',
       value: `${lastWork.presence}/${lastWork.duration} day`
@@ -69,7 +64,7 @@ const Jobs = () => {
             <div className='relative mx-auto max-w-7xl px-6 lg:px-8'>
               <div className='mx-auto max-w-100 px-6'>
                 <div className='sm:[&>*:nth-child(2)]:rounded-tr-2xl lg:[&>*:nth-child(3)]:rounded-none lg:[&>*:nth-child(2)]:rounded-none sm:[&>*:nth-child(3)]:rounded-bl-2xl mt-2 grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-4'>
-                  {cards.map((card, index) => (
+                  {highlight.map((card, index) => (
                     <div
                       key={index}
                       className='first:rounded-t-2xl sm:first:rounded-tr-none last:rounded-b-2xl sm:last:rounded-bl-none sm:first:rounded-tl-2xl lg:first:rounded-l-2xl sm: lg:last:rounded-r-2xl sm:last:rounded-br-2xl flex flex-col bg-white border p-6 text-center'
@@ -104,7 +99,7 @@ const Jobs = () => {
       ) : (
         <TableRow
           tableHeading={tableHeading}
-          tableData={tableData}
+          tableData={jobs}
           statusStyles={statusStyles}
         />
       )}

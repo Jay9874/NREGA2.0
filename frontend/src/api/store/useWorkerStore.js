@@ -1,7 +1,11 @@
 import { create } from 'zustand'
 import { supabase } from '..'
 import { toast } from 'sonner'
-import { timestampToDate, jobDuration } from '../../utils/convertTimestamp'
+import {
+  timestampToDate,
+  jobDuration,
+  formatLocation
+} from '../../utils/dataFormating'
 
 export const useWorkerStore = create((set, get) => ({
   user: { email: '', type: '', id: '' },
@@ -40,39 +44,17 @@ export const useWorkerStore = create((set, get) => ({
   setJobs: async () => {
     set({ loading: true })
     await get().setProfile()
-    const { id } = get().profile.address
-    // console.log(get().user)
-    const { data, error } = await supabase
+    const id = get().profile?.address?.id
+    const { data: jobs, error } = await supabase
       .from('jobs')
-      .select('*')
+      .select(`*, location_id(*)`)
       .eq('location_id', id)
-    console.log(data)
     if (error) return toast.error(error.message)
-    console.log(data)
-    set(() => {
-      const result = data.map(async item => {
-        const started = timestampToDate(item.created_at)
-        const { days, percentage } = jobDuration(
-          item.created_at,
-          item.job_deadline
-        )
-        const { data: enrollment, error } = await supabase
-          .from('workers_jobs')
-          .select(`*`)
-          .eq('worker_id', get().user.id)
-          .eq('')
-        console.log(enrollment)
-        return {
-          ...item,
-          Started: started,
-          duration: days
-        }
-      })
+    set(async () => {
+      const result = await Promise.all(jobs.map(get().getEnrollment))
       set({ jobs: result })
       set({ loading: false })
     })
-    // set({ jobs: data })
-    // set({ loading: false })
   },
   setPayment: async () => {
     set({ loading: true })
@@ -187,6 +169,25 @@ export const useWorkerStore = create((set, get) => ({
       Work: item.jobs.job_name,
       Status: item.status,
       Location: location[0]
+    }
+  },
+  getEnrollment: async item => {
+    const { data, error } = await supabase
+      .from('workers_jobs')
+      .select(`*`)
+      .eq('job_id', item.job_id)
+      .eq('worker_id', get().user.id)
+    if (error) {
+      return error
+    }
+    const hasEnrolled = data.length > 0 ? true : false
+    return {
+      ...item,
+      Work: item.job_name,
+      Location: formatLocation(item.location_id),
+      Status: hasEnrolled ? 'enrolled' : 'unenrolled',
+      Started: timestampToDate(item.created_at),
+      Duration: `${jobDuration(item.created_at, item.job_deadline).days} Day`
     }
   }
 }))

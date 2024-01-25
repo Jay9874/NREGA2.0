@@ -1,5 +1,5 @@
 import { BanknotesIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
-import { timestampToDate } from '../utils/convertTimestamp'
+import { timestampToDate } from '../utils/dataFormating'
 const statusStyles = {
   success: 'bg-green-100 text-green-800',
   processing: 'bg-yellow-100 text-yellow-800',
