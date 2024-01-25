@@ -39,11 +39,40 @@ export const useWorkerStore = create((set, get) => ({
   },
   setJobs: async () => {
     set({ loading: true })
-    const { data, error } = await supabase.from('jobs').select('*')
+    await get().setProfile()
+    const { id } = get().profile.address
+    // console.log(get().user)
+    const { data, error } = await supabase
+      .from('jobs')
+      .select('*')
+      .eq('location_id', id)
+    console.log(data)
     if (error) return toast.error(error.message)
     console.log(data)
-    set({ jobs: data })
-    set({ loading: false })
+    set(() => {
+      const result = data.map(async item => {
+        const started = timestampToDate(item.created_at)
+        const { days, percentage } = jobDuration(
+          item.created_at,
+          item.job_deadline
+        )
+        const { data: enrollment, error } = await supabase
+          .from('workers_jobs')
+          .select(`*`)
+          .eq('worker_id', get().user.id)
+          .eq('')
+        console.log(enrollment)
+        return {
+          ...item,
+          Started: started,
+          duration: days
+        }
+      })
+      set({ jobs: result })
+      set({ loading: false })
+    })
+    // set({ jobs: data })
+    // set({ loading: false })
   },
   setPayment: async () => {
     set({ loading: true })
