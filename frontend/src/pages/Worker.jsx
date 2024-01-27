@@ -13,7 +13,7 @@ export const Worker = () => {
   const {
     setProfile,
     setPayment,
-    getAttendance,
+    setAttendance,
     setJobs,
     loading,
     setLoading,
@@ -24,10 +24,10 @@ export const Worker = () => {
     setLoading(true)
     await setProfile()
     await setPayment()
-    await getAttendance()
+    await setAttendance()
     await setLastWork()
-    // await setJobs()
-    // await setLocations()
+    await setJobs()
+    await setLocations()
     setLoading(false)
   }
   useEffect(() => {

@@ -1,26 +1,7 @@
 import { useEffect, useState } from 'react'
 import { TableRow } from '../TableRow'
 import { useWorkerStore } from '../../api/store'
-const tableData = [
-  {
-    id: 1,
-    Work: 'Amristsrovar',
-    Location: 'Bachhwara, Bihar',
-    Duration: '3 months',
-    href: '#',
-    Status: 'enrolled',
-    Started: 'July 11, 2020'
-  },
-  {
-    id: 2,
-    Work: 'Nahar widening',
-    href: '#',
-    Location: 'Amristsar, Punjab',
-    Duration: '2 months',
-    Status: 'unenrolled',
-    Started: 'Aug, 12, 2023'
-  }
-]
+
 const tableHeading = [
   { name: 'Work' },
   { name: 'Location' },
@@ -35,8 +16,7 @@ const statusStyles = {
 }
 
 const Jobs = () => {
-  const { lastWork, jobs, setLastWork, setJobs, setLoading } = useWorkerStore()
-  const [foundAttendance, setFoundAttendance] = useState(tableData) //worker state
+  const { lastWork, jobs } = useWorkerStore()
   const highlight = [
     {
       label: 'Your presence',
@@ -46,16 +26,7 @@ const Jobs = () => {
     { label: 'Completion', value: `${lastWork.completion}%` },
     { label: 'Deadline', value: lastWork.deadline }
   ]
-  // console.log(jobs)
-  async function fetchData () {
-    setLoading(true)
-    await setLastWork()
-    await setJobs()
-    setLoading(false)
-  }
-  useEffect(() => {
-    fetchData()
-  }, [])
+
   return (
     <main>
       <div className='px-4 pt-6 pb-1 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8 '>
@@ -97,11 +68,11 @@ const Jobs = () => {
         Jobs near You
       </h2>
 
-      {foundAttendance.length === 0 ? (
+      {jobs.length === 0 ? (
         <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
           <div className='rounded-xl border-0 ring-1 ring-gray-100 h-24 flex items-center justify-center'>
             <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
-              Seems nothing here, try changing filters.
+              Seems nothing here, Please check back soon.
             </p>
           </div>
         </div>

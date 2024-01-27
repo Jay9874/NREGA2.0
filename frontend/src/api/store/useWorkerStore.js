@@ -31,7 +31,7 @@ export const useWorkerStore = create((set, get) => ({
     set({
       user: { email: token.user.email, type: token.userType, id: token.user.id }
     })
-    const { data, error } = await supabase
+    await supabase
       .from('worker')
       .select(`*, address(*)`)
       .eq('id', get().user.id)
@@ -44,20 +44,20 @@ export const useWorkerStore = create((set, get) => ({
       })
   },
   setJobs: async () => {
-    await get().setProfile()
-    const id = get().profile?.address?.id
-    const { data: jobs, error } = await supabase
+    const locationId = get().profile.address.id
+    await supabase
       .from('jobs')
       .select(`*, location_id(*)`)
-      .eq('location_id', id)
-    if (error) return toast.error(error.message)
-    set(async () => {
-      const result = await Promise.all(jobs.map(get().getEnrollment))
-      set({ jobs: result })
-    })
+      .eq('location_id', locationId)
+      .then(async ({ data, error }) => {
+        if (error) {
+          return toast.error(error.message)
+        }
+        const result = await Promise.all(data.map(get().getEnrollment))
+        set({ jobs: result })
+      })
   },
   setPayment: async () => {
-    await get().setProfile()
     const { data: payments, error } = await supabase
       .from('payments')
       .select(`*, payment_for(*)`)
@@ -69,22 +69,30 @@ export const useWorkerStore = create((set, get) => ({
     }
     set({ payment: payments })
   },
-  getAttendance: async () => {
-    await get().setProfile()
-    const { data, error } = await supabase
+  setAttendance: async () => {
+    await supabase
       .from('attendance')
       .select(`*, jobs(*), attendance_for(location_id(*))`)
       .eq('worker_id', get().user.id)
       .order('created_at', { ascending: false })
-    if (error) {
-      console.log(error)
-      return toast.error(error.message)
-    }
-    console.log(data)
+      .then(({ data, error }) => {
+        if (error) {
+          return toast.error(error.message)
+        }
+        const result = data.map(item => {
+          return {
+            ...item,
+            Date: timestampToDate(item.created_at),
+            Work: item.jobs.job_name,
+            Status: item.status,
+            Location: formatLocation(item.attendance_for.location_id)
+          }
+        })
+        set({ attendances: result })
+      })
   },
   setLastWork: async () => {
     try {
-      await get().setProfile()
       const { data: attendance, error } = await supabase
         .from('attendance')
         .select(`*, jobs(*)`)
@@ -125,17 +133,20 @@ export const useWorkerStore = create((set, get) => ({
     }
   },
   setLocations: async () => {
-    await get().setProfile()
-    const { data: jobs, error } = await supabase
+    await supabase
       .from('workers_jobs')
       .select(`*, job_id(location_id(*))`)
       .eq('worker_id', get().user.id)
-    if (error) {
-      console.log(error)
-      return toast.error(error.message)
-    }
-    set({ locations: jobs })
+      .then(({ data, error }) => {
+        if (error) {
+          return toast.error(error.message)
+        }
+        const result = data.map(item => item.job_id.location_id)
+        set({ locations: result })
+      })
   },
+
+  // Helping functions
   getLocation: async item => {
     const { data: location, error } = await supabase
       .from('locations')

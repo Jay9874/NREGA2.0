@@ -20,13 +20,13 @@ export default function Dashboard () {
       name: 'Attendance',
       href: '/worker/attendance',
       icon: CalendarDaysIcon,
-      amount: `${attendances.length}/100`
+      amount: `${attendances.length}/100 Day`
     },
     {
       name: 'Working on',
       href: '/worker/jobs',
       icon: BuildingOfficeIcon,
-      amount: `${attendances[0]?.jobs?.job_name}, ${attendances[0]?.Location?.panchayat}`
+      amount: `${attendances[0]?.jobs?.job_name} at ${attendances[0]?.Location}`
     },
     {
       name: 'Account balance',
