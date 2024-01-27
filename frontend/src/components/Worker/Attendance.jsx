@@ -2,6 +2,7 @@ import Dropdown from '../Dropdown'
 import { dropDown } from '../../utils/locationDrops'
 import { TableRow } from '../TableRow'
 import { useWorkerStore } from '../../api/store'
+import { useEffect } from 'react'
 const cards = [
   { name: 'State' },
   { name: 'District' },
@@ -15,9 +16,9 @@ const statusStyles = {
 }
 
 export default function Attendance () {
-  const { attendances } = useWorkerStore()
+  const { attendances, setLocations, locations } = useWorkerStore()
   const tableHeading = [{ name: 'Work' }, { name: 'Date' }, { name: 'Status' }]
-
+  
   return (
     <main className='flex-1 pb-8'>
       <div className='px-4 py-6 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8'>

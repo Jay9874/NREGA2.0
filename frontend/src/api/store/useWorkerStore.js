@@ -20,12 +20,12 @@ export const useWorkerStore = create((set, get) => ({
     deadline: '',
     duration: ''
   },
+  locations: [],
   payment: [],
   attendances: [],
   profile: {},
   setLoading: loading => set({ loading }),
   setProfile: async () => {
-    set({ loading: true })
     let token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
     token = token ? JSON.parse(token) : {}
     set({
@@ -35,14 +35,15 @@ export const useWorkerStore = create((set, get) => ({
       .from('worker')
       .select(`*, address(*)`)
       .eq('id', get().user.id)
-    if (error) {
-      return toast.error(error.message)
-    }
-    set({ profile: data[0] })
-    set({ loading: false })
+      .then(({ data, error }) => {
+        if (error) {
+          return toast.error(error.message)
+        }
+        set({ profile: data[0] })
+        return { data, error }
+      })
   },
   setJobs: async () => {
-    set({ loading: true })
     await get().setProfile()
     const id = get().profile?.address?.id
     const { data: jobs, error } = await supabase
@@ -53,11 +54,9 @@ export const useWorkerStore = create((set, get) => ({
     set(async () => {
       const result = await Promise.all(jobs.map(get().getEnrollment))
       set({ jobs: result })
-      set({ loading: false })
     })
   },
   setPayment: async () => {
-    set({ loading: true })
     await get().setProfile()
     const { data: payments, error } = await supabase
       .from('payments')
@@ -69,29 +68,22 @@ export const useWorkerStore = create((set, get) => ({
       return toast.error(error.message)
     }
     set({ payment: payments })
-    set({ loading: false })
   },
   getAttendance: async () => {
-    set({ loading: true })
     await get().setProfile()
-    const { data: attendance, error } = await supabase
+    const { data, error } = await supabase
       .from('attendance')
-      .select(`*, jobs(*)`)
+      .select(`*, jobs(*), attendance_for(location_id(*))`)
       .eq('worker_id', get().user.id)
       .order('created_at', { ascending: false })
     if (error) {
       console.log(error)
       return toast.error(error.message)
     }
-    set(async () => {
-      const result = await Promise.all(attendance.map(get().getLocation))
-      set({ attendances: result })
-      set({ loading: false })
-    })
+    console.log(data)
   },
   setLastWork: async () => {
     try {
-      set({ loading: true })
       await get().setProfile()
       const { data: attendance, error } = await supabase
         .from('attendance')
@@ -105,55 +97,44 @@ export const useWorkerStore = create((set, get) => ({
         return toast.error(error.message)
       }
       const job = attendance[0].jobs
-      set(async () => {
-        const deadline = timestampToDate(job.job_deadline)
-        const { days, percentage } = jobDuration(
-          job.created_at,
-          job.job_deadline
-        )
-        try {
-          const { data: attendance, error } = await supabase
-            .from('attendance')
-            .select(`*, jobs(*)`)
-            .eq('worker_id', get().user.id)
-            .eq('status', 'present')
-            .eq('id', job.job_id)
-          if (error) {
-            console.log(error)
-            return toast.error(error.message)
-          }
-          const presence = attendance.length
-          const { data } = await supabase
-            .from('workers_jobs')
-            .select(`*`)
-            .eq('job_id', job.job_id)
-          const { data: work } = await supabase
-            .from('jobs')
-            .select(`*, location_id(*)`)
-            .eq('job_id', job.job_id)
-          set({
-            lastWork: {
-              location: work[0].location_id,
-              name: job.job_name,
-              presence: presence,
-              labours: data.length,
-              deadline: deadline,
-              duration: days,
-              completion: percentage
-            }
-          })
-          set({ loading: false })
-        } catch (err) {
-          console.log(err)
-          toast.error(err.message)
+      const deadline = timestampToDate(job.job_deadline)
+      const { days, percentage } = jobDuration(job.created_at, job.job_deadline)
+      const presence = attendance.length
+      const { data } = await supabase
+        .from('workers_jobs')
+        .select(`*`)
+        .eq('job_id', job.job_id)
+      const { data: work } = await supabase
+        .from('jobs')
+        .select(`*, location_id(*)`)
+        .eq('job_id', job.job_id)
+      set({
+        lastWork: {
+          location: work[0].location_id,
+          name: job.job_name,
+          presence: presence,
+          labours: data.length,
+          deadline: deadline,
+          duration: days,
+          completion: percentage
         }
       })
-      return get().lastWork
-    } catch (err) {
-      console.log(err)
-      toast.error(err.message)
-      return null
+    } catch (error) {
+      console.log(error)
+      return toast.error(error.message)
     }
+  },
+  setLocations: async () => {
+    await get().setProfile()
+    const { data: jobs, error } = await supabase
+      .from('workers_jobs')
+      .select(`*, job_id(location_id(*))`)
+      .eq('worker_id', get().user.id)
+    if (error) {
+      console.log(error)
+      return toast.error(error.message)
+    }
+    set({ locations: jobs })
   },
   getLocation: async item => {
     const { data: location, error } = await supabase

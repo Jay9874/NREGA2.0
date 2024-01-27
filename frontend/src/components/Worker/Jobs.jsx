@@ -35,7 +35,7 @@ const statusStyles = {
 }
 
 const Jobs = () => {
-  const { lastWork, jobs } = useWorkerStore()
+  const { lastWork, jobs, setLastWork, setJobs, setLoading } = useWorkerStore()
   const [foundAttendance, setFoundAttendance] = useState(tableData) //worker state
   const highlight = [
     {
@@ -47,6 +47,15 @@ const Jobs = () => {
     { label: 'Deadline', value: lastWork.deadline }
   ]
   // console.log(jobs)
+  async function fetchData () {
+    setLoading(true)
+    await setLastWork()
+    await setJobs()
+    setLoading(false)
+  }
+  useEffect(() => {
+    fetchData()
+  }, [])
   return (
     <main>
       <div className='px-4 pt-6 pb-1 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8 '>

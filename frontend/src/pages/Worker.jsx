@@ -16,14 +16,22 @@ export const Worker = () => {
     getAttendance,
     setJobs,
     loading,
-    setLastWork
+    setLoading,
+    setLastWork,
+    setLocations
   } = useWorkerStore()
+  async function handleSetup () {
+    setLoading(true)
+    await setProfile()
+    await setPayment()
+    await getAttendance()
+    await setLastWork()
+    // await setJobs()
+    // await setLocations()
+    setLoading(false)
+  }
   useEffect(() => {
-    setProfile()
-    setPayment()
-    getAttendance()
-    setLastWork()
-    setJobs()
+    handleSetup()
   }, [])
 
   return (
