@@ -10,6 +10,7 @@ import {
 export const useWorkerStore = create((set, get) => ({
   user: { email: '', type: '', id: '' },
   loading: false,
+  dataLoaded: false,
   jobs: [],
   lastWork: {
     location: {},
@@ -24,6 +25,7 @@ export const useWorkerStore = create((set, get) => ({
   payment: [],
   attendances: [],
   profile: {},
+  setDataLoaded: dataLoaded => set({ dataLoaded }),
   setLoading: loading => set({ loading }),
   setProfile: async () => {
     let token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
@@ -110,15 +112,11 @@ export const useWorkerStore = create((set, get) => ({
       const presence = attendance.length
       const { data } = await supabase
         .from('workers_jobs')
-        .select(`*`)
-        .eq('job_id', job.job_id)
-      const { data: work } = await supabase
-        .from('jobs')
-        .select(`*, location_id(*)`)
+        .select(`*, job_id(location_id(*))`)
         .eq('job_id', job.job_id)
       set({
         lastWork: {
-          location: work[0].location_id,
+          location: data[0].job_id.location_id,
           name: job.job_name,
           presence: presence,
           labours: data.length,

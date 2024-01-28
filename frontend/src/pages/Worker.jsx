@@ -17,6 +17,7 @@ export const Worker = () => {
     setJobs,
     loading,
     setLoading,
+    setDataLoaded,
     setLastWork,
     setLocations
   } = useWorkerStore()
@@ -29,6 +30,7 @@ export const Worker = () => {
     await setJobs()
     await setLocations()
     setLoading(false)
+    setDataLoaded(true)
   }
   useEffect(() => {
     handleSetup()
