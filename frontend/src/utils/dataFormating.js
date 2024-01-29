@@ -52,4 +52,7 @@ function jobDuration (startDate, endDate) {
 function formatLocation (locationObj) {
   return `${locationObj.state}, ${locationObj.district}, ${locationObj.block}, ${locationObj.panchayat}`
 }
-export { timestampToDate, jobDuration, formatLocation }
+function formatLocationShort (locationObj) {
+  return `${locationObj.block}, ${locationObj.panchayat}`
+}
+export { timestampToDate, jobDuration, formatLocation, formatLocationShort }

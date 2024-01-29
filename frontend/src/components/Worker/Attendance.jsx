@@ -1,22 +1,17 @@
 import Dropdown from '../Dropdown'
-import { dropDown } from '../../utils/locationDrops'
 import { TableRow } from '../TableRow'
 import { useWorkerStore } from '../../api/store'
 import { useEffect, useState } from 'react'
-const cards = [
-  { name: 'State' },
-  { name: 'District' },
-  { name: 'Block' },
-  { name: 'Panchayat' }
-]
+import { supabase } from '../../api'
+
 const statusStyles = {
   present: 'bg-green-100 text-green-800',
   absent: 'bg-red-100 text-gray-800'
 }
+const tableHeading = [{ name: 'Work' }, { name: 'Date' }, { name: 'Status' }]
 
 export default function Attendance () {
   const { attendances, locations, dataLoaded } = useWorkerStore()
-  const tableHeading = [{ name: 'Work' }, { name: 'Date' }, { name: 'Status' }]
   const [states, setStates] = useState([])
   const [districts, setDistricts] = useState([])
   const [blocks, setBlocks] = useState([])
@@ -27,61 +22,57 @@ export default function Attendance () {
     block: '',
     panchayat: ''
   })
-  async function getStates () {
-    const fetchedState = await Promise.all(
-      locations.map(location => location.state)
-    )
-    return fetchedState
-  }
-  async function getDistricts (state) {
-    const fetchedDistricts = await Promise.all(
-      locations.map(location => {
-        if (location.state === state) return location.district
+
+  async function getLandmarkData (landmark, landmarkValue, callback, toFetch) {
+    const fetchedLandmarkData = await Promise.all(
+      locations.map((location, index) => {
+        if (!landmarkValue || location[landmark] === landmarkValue)
+          return { id: index, value: location[toFetch] }
         else return null
       })
     )
-    return fetchedDistricts
+    callback(fetchedLandmarkData)
+    setSelected(prev => ({ ...prev, [toFetch]: fetchedLandmarkData[0].value }))
+    return fetchedLandmarkData
   }
-  async function getBlocks (district) {
-    const fetchedBlocks = await Promise.all(
-      locations.map(location => {
-        if (location.district === district) return location.block
-        else return null
-      })
+
+  async function initializeFilter () {
+    const stateData = await getLandmarkData('state', '', setStates, 'state')
+    const districtData = await getLandmarkData(
+      'state',
+      stateData[0].value,
+      setDistricts,
+      'district'
     )
-    return fetchedBlocks
-  }
-  async function getPanchayats (block) {
-    const fetchedPanchayats = await Promise.all(
-      locations.map(location => {
-        if (location.block === block) return location.panchayat
-        else return null
-      })
+    const blockData = await getLandmarkData(
+      'district',
+      districtData[0].value,
+      setBlocks,
+      'block'
     )
-    return fetchedPanchayats
+    await getLandmarkData(
+      'block',
+      blockData[0].value,
+      setPanchayats,
+      'panchayat'
+    )
   }
 
-  async function setupFilter (address) {
-    const stateData = await getStates()
-    setStates(stateData)
-    setSelected((prev) => ({...prev, state: stateData[0]}))
-
-    const districtData = await getDistricts(stateData[0])
-    setDistricts(districtData)
-    setSelected((prev) => ({...prev, district: districtData[0]}))
-
-    const blockData = await getBlocks(districtData[0])
-    setBlocks(blockData)
-    setSelected((prev) => ({...prev, block: blockData[0]}))
-
-    const panchayatData = await getPanchayats(blockData[0])
-    setPanchayats(panchayatData)
-    setSelected((prev) => ({...prev, panchayat: panchayatData[0]}))
+  function handleChange (label, id) {
+    console.log('changed', id, label)
   }
+
+  // async function test () {
+  //   await supabase
+  //     .from('attendance')
+  //     .select()
+  //     .eq('user_id', userId)
+  //     .then(({ data, error }) => console.log(data))
+  // }
 
   useEffect(() => {
     if (dataLoaded) {
-      setupFilter()
+      initializeFilter()
     }
   }, [dataLoaded])
 
@@ -106,30 +97,33 @@ export default function Attendance () {
             <div>
               <Dropdown
                 options={states}
-                label='State'
+                label='state'
                 selected={selected.state}
-
+                onChange={handleChange}
               />
             </div>
             <div>
               <Dropdown
                 options={districts}
-                label='District'
+                label='district'
                 selected={selected.district}
+                onChange={handleChange}
               />
             </div>
             <div>
               <Dropdown
                 options={blocks}
-                label='Block'
+                label='block'
                 selected={selected.block}
+                onChange={handleChange}
               />
             </div>
             <div>
               <Dropdown
                 options={panchayats}
-                label='Panchayat'
+                label='panchayat'
                 selected={selected.panchayat}
+                // onChange={getLocationAttendance}
               />
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
@@ -6,12 +6,17 @@ function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Dropdown ({ options, label, selected }) {
+export default function Dropdown ({ options, label, selected, onChange }) {
   return (
-    <Listbox value={selected}>
+    <Listbox
+      value={selected}
+      onChange={option => {
+        onChange(label, option)
+      }}
+    >
       {({ open }) => (
         <>
-          <Listbox.Label className='block text-sm font-medium text-gray-700'>
+          <Listbox.Label className='capitalize block text-sm font-medium text-gray-700'>
             {label}
           </Listbox.Label>
           <div className='relative mt-1'>
@@ -34,10 +39,10 @@ export default function Dropdown ({ options, label, selected }) {
             >
               <Listbox.Options className='absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
                 {options.map(
-                  (option, index) =>
+                  option =>
                     option !== null && (
                       <Listbox.Option
-                        key={index}
+                        key={option.id}
                         className={({ active }) =>
                           classNames(
                             active
@@ -46,20 +51,20 @@ export default function Dropdown ({ options, label, selected }) {
                             'relative cursor-default select-none py-2 pl-3 pr-9'
                           )
                         }
-                        value={option}
+                        value={option.value}
                       >
                         {({ selected, active }) => (
                           <>
                             <span
                               className={classNames(
                                 selected ? 'font-semibold' : 'font-normal',
-                                'block truncate'
+                                'block truncate capitalize'
                               )}
                             >
-                              {option}
+                              {option.value}
                             </span>
 
-                            {selected ? (
+                            {selected && (
                               <span
                                 className={classNames(
                                   active ? 'text-white' : 'text-indigo-600',
@@ -71,7 +76,7 @@ export default function Dropdown ({ options, label, selected }) {
                                   aria-hidden='true'
                                 />
                               </span>
-                            ) : null}
+                            )}
                           </>
                         )}
                       </Listbox.Option>

@@ -4,7 +4,8 @@ import { toast } from 'sonner'
 import {
   timestampToDate,
   jobDuration,
-  formatLocation
+  formatLocation,
+  formatLocationShort
 } from '../../utils/dataFormating'
 
 export const useWorkerStore = create((set, get) => ({
@@ -87,7 +88,7 @@ export const useWorkerStore = create((set, get) => ({
             Date: timestampToDate(item.created_at),
             Work: item.jobs.job_name,
             Status: item.status,
-            Location: formatLocation(item.attendance_for.location_id)
+            Location: formatLocationShort(item.attendance_for.location_id)
           }
         })
         set({ attendances: result })
