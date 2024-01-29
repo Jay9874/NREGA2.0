@@ -17,7 +17,7 @@ const statusStyles = {
 export default function Attendance () {
   const { attendances, locations, dataLoaded } = useWorkerStore()
   const tableHeading = [{ name: 'Work' }, { name: 'Date' }, { name: 'Status' }]
-  const [states, setStates] = useState(null)
+  const [states, setStates] = useState([])
   const [districts, setDistricts] = useState([])
   const [blocks, setBlocks] = useState([])
   const [panchayats, setPanchayats] = useState([])
@@ -31,56 +31,61 @@ export default function Attendance () {
     const fetchedState = await Promise.all(
       locations.map(location => location.state)
     )
-    setStates(prevStates => {
-      console.log(prevStates)
-      return [...prevStates, fetchedState]
-    })
-    // console.log(fetchedState, states)
-    return states
+    return fetchedState
   }
   async function getDistricts (state) {
-    const districts = await Promise.all(
+    const fetchedDistricts = await Promise.all(
       locations.map(location => {
-        if (location.state === state) return location.state
+        if (location.state === state) return location.district
         else return null
       })
     )
-    console.log(districts)
-    return districts
+    return fetchedDistricts
   }
-  function getBlocks (district) {
-    setBlocks([])
-    locations.forEach(location => {
-      if (location.district === district) {
-        setBlocks(prevValue => [...prevValue, location.block])
-      }
-    })
-    console.log(blocks)
-    return blocks
+  async function getBlocks (district) {
+    const fetchedBlocks = await Promise.all(
+      locations.map(location => {
+        if (location.district === district) return location.block
+        else return null
+      })
+    )
+    return fetchedBlocks
   }
-  function getPanchayats (block) {
-    setPanchayats([])
-    locations.forEach(location => {
-      if (location.block === block) {
-        setPanchayats(prevValue => [...prevValue, location.panchayat])
-      }
-    })
-    console.log(panchayats)
-    return panchayats
+  async function getPanchayats (block) {
+    const fetchedPanchayats = await Promise.all(
+      locations.map(location => {
+        if (location.block === block) return location.panchayat
+        else return null
+      })
+    )
+    return fetchedPanchayats
   }
 
-  async function setupFilter () {
-    await getStates()
-    await getDistricts(states[0])
+  async function setupFilter (address) {
+    const stateData = await getStates()
+    setStates(stateData)
+    setSelected((prev) => ({...prev, state: stateData[0]}))
+
+    const districtData = await getDistricts(stateData[0])
+    setDistricts(districtData)
+    setSelected((prev) => ({...prev, district: districtData[0]}))
+
+    const blockData = await getBlocks(districtData[0])
+    setBlocks(blockData)
+    setSelected((prev) => ({...prev, block: blockData[0]}))
+
+    const panchayatData = await getPanchayats(blockData[0])
+    setPanchayats(panchayatData)
+    setSelected((prev) => ({...prev, panchayat: panchayatData[0]}))
   }
+
   useEffect(() => {
     if (dataLoaded) {
-      console.log('setup called')
       setupFilter()
     }
   }, [dataLoaded])
+
   return (
-    
     <main className='flex-1 pb-8'>
       <div className='px-4 py-6 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8'>
         <div className='border-b border-gray-200 pb-5'>
@@ -95,43 +100,41 @@ export default function Attendance () {
       </div>
 
       {/* Filtering seletions */}
+      {dataLoaded && (
+        <div className='mx-auto max-w-6xl px-4 sm:px-6 lg:px-8'>
+          <div className='mt-2 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3'>
+            <div>
+              <Dropdown
+                options={states}
+                label='State'
+                selected={selected.state}
 
-      <div className='mx-auto max-w-6xl px-4 sm:px-6 lg:px-8'>
-        <div className='mt-2 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3'>
-          <div>
-            {/* State */}
-            <Dropdown
-              options={states}
-              label='State'
-              selected={selected.state}
-            />
-          </div>
-          <div>
-            {/* District */}
-            <Dropdown
-              options={districts}
-              label='District'
-              selected={selected.district}
-            />
-          </div>
-          <div>
-            {/* Block */}
-            <Dropdown
-              options={blocks}
-              label='Block'
-              selected={selected.block}
-            />
-          </div>
-          <div>
-            {/* Panchayat */}
-            <Dropdown
-              options={panchayats}
-              label='Panchayat'
-              selected={selected.panchayat}
-            />
+              />
+            </div>
+            <div>
+              <Dropdown
+                options={districts}
+                label='District'
+                selected={selected.district}
+              />
+            </div>
+            <div>
+              <Dropdown
+                options={blocks}
+                label='Block'
+                selected={selected.block}
+              />
+            </div>
+            <div>
+              <Dropdown
+                options={panchayats}
+                label='Panchayat'
+                selected={selected.panchayat}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Filter Results */}
       <h2 className='mx-auto mt-8 max-w-6xl px-4 text-lg font-medium leading-6 text-gray-900 sm:px-6 lg:px-8'>

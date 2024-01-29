@@ -23,14 +23,20 @@ export const Worker = () => {
   } = useWorkerStore()
   async function handleSetup () {
     setLoading(true)
-    await setProfile()
-    await setPayment()
-    await setAttendance()
-    await setLastWork()
-    await setJobs()
-    await setLocations()
-    setLoading(false)
-    setDataLoaded(true)
+    await Promise.all([
+      setProfile(),
+      setPayment(),
+      setAttendance(),
+      setLastWork(),
+      setLocations()
+    ])
+      .then(() => {
+        setJobs()
+      })
+      .finally(() => {
+        setLoading(false)
+        setDataLoaded(true)
+      })
   }
   useEffect(() => {
     handleSetup()

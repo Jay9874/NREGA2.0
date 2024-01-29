@@ -106,6 +106,7 @@ export const useWorkerStore = create((set, get) => ({
         console.log(error)
         return toast.error(error.message)
       }
+      // if (!attendance) return '';
       const job = attendance[0].jobs
       const deadline = timestampToDate(job.job_deadline)
       const { days, percentage } = jobDuration(job.created_at, job.job_deadline)
