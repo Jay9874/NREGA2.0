@@ -1,4 +1,5 @@
 import Dropdown from '../Dropdown'
+import { filterLoop } from '../../utils/locationDrops'
 import { TableRow } from '../TableRow'
 import { useWorkerStore } from '../../api/store'
 import { useEffect, useState } from 'react'
@@ -22,46 +23,50 @@ export default function Attendance () {
     block: '',
     panchayat: ''
   })
+  const filterLoopcallback = [
+    { callback: setStates },
+    { callback: setDistricts },
+    { callback: setBlocks },
+    { callback: setPanchayats }
+  ]
 
-  async function getLandmarkData (landmark, landmarkValue, callback, toFetch) {
-    const fetchedLandmarkData = await Promise.all(
-      locations.map((location, index) => {
-        if (!landmarkValue || location[landmark] === landmarkValue)
-          return { id: index, value: location[toFetch] }
-        else return null
-      })
-    )
-    callback(fetchedLandmarkData)
-    setSelected(prev => ({ ...prev, [toFetch]: fetchedLandmarkData[0].value }))
-    return fetchedLandmarkData
-  }
+  async function getLandmarkData (id, value) {
+    filterLoop[id].landmarkValue = value
+    filterLoop[id].callback = filterLoopcallback[id].callback
+    console.log(filterLoop[id])
+    for (let i = id; i < 4; i++) {
+      const landmarkValue = i === id ? value : filterLoop[i - 1].landmarkValue
+      const fetchedLandmarkData = await Promise.all(
+        locations.map((location, index) => {
+          if (
+            !landmarkValue ||
+            location[filterLoop[i].landmark] === landmarkValue
+          )
+            return { id: index, value: location[filterLoop[i].toFetch] }
+          else return null
+        })
+      )
+      if (i - id > 0) {
+        filterLoopcallback[i].callback(fetchedLandmarkData)
+        console.log(fetchedLandmarkData)
+        setSelected(prev => ({
+          ...prev,
+          [filterLoop[i].toFetch]: fetchedLandmarkData[0].value
+        }))
+      }
 
-  async function initializeFilter () {
-    const stateData = await getLandmarkData('state', '', setStates, 'state')
-    const districtData = await getLandmarkData(
-      'state',
-      stateData[0].value,
-      setDistricts,
-      'district'
-    )
-    const blockData = await getLandmarkData(
-      'district',
-      districtData[0].value,
-      setBlocks,
-      'block'
-    )
-    await getLandmarkData(
-      'block',
-      blockData[0].value,
-      setPanchayats,
-      'panchayat'
-    )
+      filterLoop[i].fetchedDatas = fetchedLandmarkData
+      filterLoop[i].landmarkValue = fetchedLandmarkData[0].value
+    }
+    setSelected(prev => ({
+      ...prev,
+      [filterLoop[id].toFetch]: filterLoop[id].fetchedDatas[id].value
+    }))
   }
 
   function handleChange (label, id) {
     console.log('changed', id, label)
   }
-
   // async function test () {
   //   await supabase
   //     .from('attendance')
@@ -72,7 +77,7 @@ export default function Attendance () {
 
   useEffect(() => {
     if (dataLoaded) {
-      initializeFilter()
+      getLandmarkData(0, '')
     }
   }, [dataLoaded])
 
@@ -99,7 +104,8 @@ export default function Attendance () {
                 options={states}
                 label='state'
                 selected={selected.state}
-                onChange={handleChange}
+                onChange={getLandmarkData}
+                id={0}
               />
             </div>
             <div>
@@ -107,7 +113,8 @@ export default function Attendance () {
                 options={districts}
                 label='district'
                 selected={selected.district}
-                onChange={handleChange}
+                onChange={getLandmarkData}
+                id={1}
               />
             </div>
             <div>
@@ -115,7 +122,8 @@ export default function Attendance () {
                 options={blocks}
                 label='block'
                 selected={selected.block}
-                onChange={handleChange}
+                onChange={getLandmarkData}
+                id={2}
               />
             </div>
             <div>
@@ -123,7 +131,8 @@ export default function Attendance () {
                 options={panchayats}
                 label='panchayat'
                 selected={selected.panchayat}
-                // onChange={getLocationAttendance}
+                id={3}
+                onChange={getLandmarkData}
               />
             </div>
           </div>

@@ -6,12 +6,12 @@ function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Dropdown ({ options, label, selected, onChange }) {
+export default function Dropdown ({ options, label, selected, onChange, id }) {
   return (
     <Listbox
       value={selected}
       onChange={option => {
-        onChange(label, option)
+        onChange(id, option)
       }}
     >
       {({ open }) => (
