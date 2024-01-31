@@ -11,6 +11,7 @@ export default function Dropdown ({ options, label, selected, onChange, id }) {
     <Listbox
       value={selected}
       onChange={option => {
+        // const value = id === 0 ? '' : option
         onChange(id, option)
       }}
     >

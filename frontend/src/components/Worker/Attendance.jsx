@@ -33,51 +33,40 @@ export default function Attendance () {
   async function getLandmarkData (id, value) {
     filterLoop[id].landmarkValue = value
     filterLoop[id].callback = filterLoopcallback[id].callback
+    // const result = locations.filter(
+    //   location => location[filterLoop[id].landmark] === value
+    // )
     console.log(filterLoop[id])
     for (let i = id; i < 4; i++) {
       const landmarkValue = i === id ? value : filterLoop[i - 1].landmarkValue
       const fetchedLandmarkData = await Promise.all(
         locations.map((location, index) => {
-          if (
-            !landmarkValue ||
-            location[filterLoop[i].landmark] === landmarkValue
-          )
+          console.log(location, filterLoop[i].landmark, landmarkValue)
+          if (location[filterLoop[i].landmark] === landmarkValue)
             return { id: index, value: location[filterLoop[i].toFetch] }
           else return null
         })
       )
-      if (i - id > 0) {
-        filterLoopcallback[i].callback(fetchedLandmarkData)
-        console.log(fetchedLandmarkData)
-        setSelected(prev => ({
-          ...prev,
-          [filterLoop[i].toFetch]: fetchedLandmarkData[0].value
-        }))
-      }
-
+      filterLoopcallback[i].callback(fetchedLandmarkData)
+      console.log(fetchedLandmarkData)
+      setSelected(prev => ({
+        ...prev,
+        [filterLoop[i].toFetch]: fetchedLandmarkData[0]?.value
+      }))
       filterLoop[i].fetchedDatas = fetchedLandmarkData
       filterLoop[i].landmarkValue = fetchedLandmarkData[0].value
     }
-    setSelected(prev => ({
-      ...prev,
-      [filterLoop[id].toFetch]: filterLoop[id].fetchedDatas[id].value
-    }))
   }
 
-  function handleChange (label, id) {
-    console.log('changed', id, label)
+  function handleChange (id, value) {
+    console.log('hello')
+    console.log(selected, states, districts, blocks, panchayats)
+    console.log('changed', id, value)
   }
-  // async function test () {
-  //   await supabase
-  //     .from('attendance')
-  //     .select()
-  //     .eq('user_id', userId)
-  //     .then(({ data, error }) => console.log(data))
-  // }
 
   useEffect(() => {
     if (dataLoaded) {
-      getLandmarkData(0, '')
+      getLandmarkData(1, 'West Bengal')
     }
   }, [dataLoaded])
 
