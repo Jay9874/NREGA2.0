@@ -3,7 +3,6 @@ import { filterLoop } from '../../utils/locationDrops'
 import { TableRow } from '../TableRow'
 import { useWorkerStore } from '../../api/store'
 import { useEffect, useState } from 'react'
-import { supabase } from '../../api'
 
 const statusStyles = {
   present: 'bg-green-100 text-green-800',
@@ -33,22 +32,19 @@ export default function Attendance () {
   async function getLandmarkData (id, value) {
     filterLoop[id].landmarkValue = value
     filterLoop[id].callback = filterLoopcallback[id].callback
-    // const result = locations.filter(
-    //   location => location[filterLoop[id].landmark] === value
-    // )
-    console.log(filterLoop[id])
+    // console.log(filterLoop[id])
     for (let i = id; i < 4; i++) {
       const landmarkValue = i === id ? value : filterLoop[i - 1].landmarkValue
       const fetchedLandmarkData = await Promise.all(
         locations.map((location, index) => {
-          console.log(location, filterLoop[i].landmark, landmarkValue)
+          // console.log(location, filterLoop[i].landmark, landmarkValue)
           if (location[filterLoop[i].landmark] === landmarkValue)
             return { id: index, value: location[filterLoop[i].toFetch] }
           else return null
         })
       )
       filterLoopcallback[i].callback(fetchedLandmarkData)
-      console.log(fetchedLandmarkData)
+      // console.log(fetchedLandmarkData)
       setSelected(prev => ({
         ...prev,
         [filterLoop[i].toFetch]: fetchedLandmarkData[0]?.value
