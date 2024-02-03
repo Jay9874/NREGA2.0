@@ -1,5 +1,4 @@
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
-import { useEffect, useState } from 'react'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')

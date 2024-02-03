@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { TableRow } from '../TableRow'
 import { useWorkerStore } from '../../api/store'
 
