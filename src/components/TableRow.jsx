@@ -1,10 +1,14 @@
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
+import { useEffect } from 'react'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 export const TableRow = ({ tableHeading, tableData, statusStyles }) => {
+  useEffect(() => {
+    console.log(tableData)
+  }, [])
   return (
     <>
       {/* Activity list (smallest breakpoint only) */}
