@@ -13,6 +13,7 @@ const tableHeading = [{ name: 'Work' }, { name: 'Presence' }]
 
 export default function Attendance () {
   const { attendances, setAttendance, locations, dataLoaded } = useWorkerStore()
+  const [filterInitialized, setFilterInitialized] = useState(false)
   const [states, setStates] = useState([])
   const [districts, setDistricts] = useState([])
   const [blocks, setBlocks] = useState([])
@@ -40,6 +41,12 @@ export default function Attendance () {
     return new Promise(async (resolve, reject) => {
       filterLoop[id].landmarkValue = value
       filterLoop[id].callback = filterLoopcallback[id].callback
+      var selection = {
+        state: '',
+        district: '',
+        block: '',
+        panchayat: ''
+      }
       for (let i = id; i < 3; i++) {
         const landmarkValue = i === id ? value : filterLoop[i - 1].landmarkValue
         const newLocations = await filterData(i, landmarkValue)
@@ -47,6 +54,7 @@ export default function Attendance () {
           newLocations.map(location => location[filterLoop[i].toFetch])
         )
         filterLoopcallback[i].callback([...new Set(fetchedLandmarkData)])
+        selection[filterLoop[i].toFetch] = fetchedLandmarkData[0]
         setSelected(prev => ({
           ...prev,
           [filterLoop[i].toFetch]: fetchedLandmarkData[0]
@@ -54,7 +62,7 @@ export default function Attendance () {
         filterLoop[i].fetchedDatas = fetchedLandmarkData
         filterLoop[i].landmarkValue = fetchedLandmarkData[0]
       }
-      resolve(filterLoop)
+      resolve(selection)
     })
   }
 
@@ -65,7 +73,9 @@ export default function Attendance () {
         const fetchedStates = locations.map(location => location.state)
         setStates([...new Set(fetchedStates)])
         setSelected(prev => ({ ...prev, state: fetchedStates[0] }))
-        const result = await getLandmarkData(0, fetchedStates[0])
+        var result = await getLandmarkData(0, fetchedStates[0])
+        result.state = fetchedStates[0]
+        setAttendance(result)
         resolve(result)
       } catch (error) {
         reject(error)
@@ -73,9 +83,10 @@ export default function Attendance () {
     })
   }
   // Handle filter change
-  function handleChange (id, value) {
+  async function handleChange (id, value) {
     setSelected(prev => ({ ...prev, [filterLoop[id].landmark]: value }))
-    getLandmarkData(id, value)
+    var result = await getLandmarkData(id, value)
+    result[filterLoop[id].landmark] = value
   }
 
   // fill the attendances
@@ -89,17 +100,9 @@ export default function Attendance () {
     }
   }
 
-  async function getInitData () {
-    await initFilter().then(result=>{
-      c
-    })
-    // console.log(selected)
-    await handlePanchayatChange(2, filterLoop[2].fetchedDatas[0])
-  }
-
   useEffect(() => {
-    if (dataLoaded) {
-      getInitData()
+    if (dataLoaded && !filterInitialized) {
+      initFilter()
     }
   }, [dataLoaded, setSelected])
 
