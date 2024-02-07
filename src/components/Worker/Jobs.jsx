@@ -15,7 +15,7 @@ const statusStyles = {
 }
 
 const Jobs = () => {
-  const { lastWork, jobs } = useWorkerStore()
+  const { lastWork, nearbyJobs } = useWorkerStore()
   const highlight = [
     {
       label: 'Your presence',
@@ -67,7 +67,7 @@ const Jobs = () => {
         Jobs near You
       </h2>
 
-      {jobs.length === 0 ? (
+      {nearbyJobs.length === 0 ? (
         <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
           <div className='rounded-xl border-0 ring-1 ring-gray-100 h-24 flex items-center justify-center'>
             <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
@@ -78,7 +78,7 @@ const Jobs = () => {
       ) : (
         <TableRow
           tableHeading={tableHeading}
-          tableData={jobs}
+          tableData={nearbyJobs}
           statusStyles={statusStyles}
         />
       )}

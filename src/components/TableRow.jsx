@@ -6,10 +6,15 @@ function classNames (...classes) {
 }
 
 export const TableRow = ({ tableHeading, tableData, statusStyles }) => {
-  useEffect(() => {
-    console.log(tableData)
-  }, [])
-  return (
+  return tableData.length === 0 ? (
+    <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
+      <div className='rounded-xl border-0 ring-1 ring-gray-100 h-24 flex items-center justify-center'>
+        <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
+          Seems nothing here, Please try again!
+        </p>
+      </div>
+    </div>
+  ) : (
     <>
       {/* Activity list (smallest breakpoint only) */}
       <div className='shadow sm:hidden'>
@@ -17,7 +22,7 @@ export const TableRow = ({ tableHeading, tableData, statusStyles }) => {
           role='list'
           className='mt-2 divide-y divide-gray-200 overflow-hidden shadow sm:hidden'
         >
-          {tableData?.map((transaction, index) => (
+          {tableData.map((transaction, index) => (
             <li key={index}>
               <a
                 href={transaction.href}
@@ -79,7 +84,7 @@ export const TableRow = ({ tableHeading, tableData, statusStyles }) => {
                   </tr>
                 </thead>
                 <tbody className='divide-y divide-gray-200 bg-white  overflow-auto'>
-                  {tableData?.map((transaction, index) => (
+                  {tableData.map((transaction, index) => (
                     <tr key={index} className='bg-white'>
                       {tableHeading.map((heading, index) =>
                         heading.name === 'Status' ? (

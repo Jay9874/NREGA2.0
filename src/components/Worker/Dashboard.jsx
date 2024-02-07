@@ -12,7 +12,7 @@ import {
 import { Link } from 'react-router-dom'
 
 export default function Dashboard () {
-  const { profile, payment, attendances } = useWorkerStore()
+  const { profile, payment, lastAttendance, totalPresent } = useWorkerStore()
   const [balance, setBalance] = useState(0)
 
   const cards = [
@@ -20,13 +20,13 @@ export default function Dashboard () {
       name: 'Attendance',
       href: '/worker/attendance',
       icon: CalendarDaysIcon,
-      amount: `${attendances.length}/100 Day`
+      amount: `${totalPresent}/100 Day`
     },
     {
       name: 'Working on',
       href: '/worker/jobs',
       icon: BuildingOfficeIcon,
-      amount: `${attendances[0]?.jobs?.job_name} at ${attendances[0]?.Location}`
+      amount: `${lastAttendance.work_name} at ${lastAttendance.location}`
     },
     {
       name: 'Account balance',

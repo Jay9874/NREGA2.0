@@ -50,9 +50,9 @@ function jobDuration (startDate, endDate) {
   return { days, percentage }
 }
 function formatLocation (locationObj) {
-  return `${locationObj.state}, ${locationObj.district}, ${locationObj.block}, ${locationObj.panchayat}`
+  return `${locationObj.panchayat}, ${locationObj.block}, ${locationObj.district}, ${locationObj.state}`
 }
 function formatLocationShort (locationObj) {
-  return `${locationObj.block}, ${locationObj.panchayat}`
+  return `${locationObj.panchayat}, ${locationObj.block}`
 }
 export { timestampToDate, jobDuration, formatLocation, formatLocationShort }

@@ -9,11 +9,16 @@ const statusStyles = {
   present: 'bg-green-100 text-green-800',
   absent: 'bg-red-100 text-gray-800'
 }
-const tableHeading = [{ name: 'Work' }, { name: 'Presence' }]
+const tableHeading = [
+  { name: 'Work' },
+  { name: 'Location' },
+  { name: 'Presence' }
+]
 
 export default function Attendance () {
   const { attendances, setAttendance, locations, dataLoaded } = useWorkerStore()
   const [filterInitialized, setFilterInitialized] = useState(false)
+  const [fetchedData, setFetchedData] = useState(false)
   const [states, setStates] = useState([])
   const [districts, setDistricts] = useState([])
   const [blocks, setBlocks] = useState([])
@@ -76,6 +81,7 @@ export default function Attendance () {
         var result = await getLandmarkData(0, fetchedStates[0])
         result.state = fetchedStates[0]
         setAttendance(result)
+        setFilterInitialized(true)
         resolve(result)
       } catch (error) {
         reject(error)
@@ -86,7 +92,14 @@ export default function Attendance () {
   async function handleChange (id, value) {
     setSelected(prev => ({ ...prev, [filterLoop[id].landmark]: value }))
     var result = await getLandmarkData(id, value)
-    result[filterLoop[id].landmark] = value
+    result = {
+      ...selected,
+      ...result,
+      [filterLoop[id].landmark]: value
+    }
+    console.log('result of selection change: ', result)
+    const fetchedAttendances = await setAttendance(result)
+    console.log('after change attendances: ', fetchedAttendances)
   }
 
   // fill the attendances
@@ -172,6 +185,7 @@ export default function Attendance () {
         tableHeading={tableHeading}
         tableData={attendances}
         statusStyles={statusStyles}
+        fetchedData={fetchedData}
       />
     </main>
   )

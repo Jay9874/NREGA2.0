@@ -7,39 +7,37 @@ import { Sidebar, TopNavbar } from '../components'
 // Constants imports
 import { workerNavigation } from '../utils/sidelinks'
 import { workerTopNavigation } from '../utils/dashboard_toplink'
-import { toast } from 'sonner'
 
 export const Worker = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const {
     setProfile,
     setPayment,
-    setJobs,
+    setAllJobs,
+    setNearbyJobs,
     loading,
     setLoading,
     setDataLoaded,
     setLastWork,
-    setLocations
+    setLocations,
+    setLastAttendance
   } = useWorkerStore()
 
   async function handleSetup () {
-    setLoading(true)
-    await Promise.all([
-      setProfile(),
-      setPayment(),
-      setLastWork(),
-      setLocations()
-    ])
-      .then(() => {
-        setJobs()
-      })
-      .finally(() => {
-        setLoading(false)
-        setDataLoaded(true)
-      })
-      .catch(error => {
-        return toast.error(error.message)
-      })
+    try {
+      setLoading(true)
+      const profile = await setProfile()
+      const payment = await setPayment()
+      const location = await setLocations()
+      const lastWork = await setLastWork()
+      const lastAttendance = await setLastAttendance()
+      const allJobs = await setAllJobs()
+      const nearbyJobs = await setNearbyJobs()
+      setLoading(false)
+      setDataLoaded(true)
+    } catch (error) {
+      return error
+    }
   }
 
   useEffect(() => {
