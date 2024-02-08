@@ -34,7 +34,7 @@ export const useWorkerStore = create((set, get) => ({
   profile: {},
   setDataLoaded: dataLoaded => set({ dataLoaded }),
   setLoading: loading => set({ loading }),
-  setProfile: async () => {
+  setProfile: async (navigate) => {
     try {
       let token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
       if (!token) throw new Error('No session found!')
@@ -143,7 +143,7 @@ export const useWorkerStore = create((set, get) => ({
         filteredJobs.forEach(async job => {
           const { data } = await supabase
             .from('attendance')
-            .select(`*`)
+            .select(`*, attendance_for(*, location_id(*))`)
             .eq('worker_id', get().user.id)
             .eq('attendance_for', job.job_id)
             .order('created_at', { ascending: false })

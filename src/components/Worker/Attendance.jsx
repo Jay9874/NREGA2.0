@@ -18,7 +18,7 @@ const tableHeading = [
 export default function Attendance () {
   const { attendances, setAttendance, locations, dataLoaded } = useWorkerStore()
   const [filterInitialized, setFilterInitialized] = useState(false)
-  const [fetchedData, setFetchedData] = useState(false)
+  const [loadFilter, setLoadFilter] = useState(false)
   const [states, setStates] = useState([])
   const [districts, setDistricts] = useState([])
   const [blocks, setBlocks] = useState([])
@@ -44,30 +44,32 @@ export default function Attendance () {
   // looping to fill child filters
   async function getLandmarkData (id, value) {
     return new Promise(async (resolve, reject) => {
-      filterLoop[id].landmarkValue = value
-      filterLoop[id].callback = filterLoopcallback[id].callback
-      var selection = {
-        state: '',
-        district: '',
-        block: '',
-        panchayat: ''
+      try {
+        filterLoop[id].landmarkValue = value
+        filterLoop[id].callback = filterLoopcallback[id].callback
+        var selection = {
+          state: '',
+          district: '',
+          block: '',
+          panchayat: ''
+        }
+        for (let i = id; i < 3; i++) {
+          const landmarkValue =
+            i === id ? value : filterLoop[i - 1].landmarkValue
+          const newLocations = await filterData(i, landmarkValue)
+          const fetchedLandmarkData = await Promise.all(
+            newLocations.map(location => location[filterLoop[i].toFetch])
+          )
+          filterLoopcallback[i].callback([...new Set(fetchedLandmarkData)])
+          selection[filterLoop[i].toFetch] = fetchedLandmarkData[0]
+          filterLoop[i].fetchedDatas = fetchedLandmarkData
+          filterLoop[i].landmarkValue = fetchedLandmarkData[0]
+        }
+        resolve(selection)
+      } catch (error) {
+        toast.error(error.message)
+        reject(error)
       }
-      for (let i = id; i < 3; i++) {
-        const landmarkValue = i === id ? value : filterLoop[i - 1].landmarkValue
-        const newLocations = await filterData(i, landmarkValue)
-        const fetchedLandmarkData = await Promise.all(
-          newLocations.map(location => location[filterLoop[i].toFetch])
-        )
-        filterLoopcallback[i].callback([...new Set(fetchedLandmarkData)])
-        selection[filterLoop[i].toFetch] = fetchedLandmarkData[0]
-        setSelected(prev => ({
-          ...prev,
-          [filterLoop[i].toFetch]: fetchedLandmarkData[0]
-        }))
-        filterLoop[i].fetchedDatas = fetchedLandmarkData
-        filterLoop[i].landmarkValue = fetchedLandmarkData[0]
-      }
-      resolve(selection)
     })
   }
 
@@ -77,10 +79,9 @@ export default function Attendance () {
       try {
         const fetchedStates = locations.map(location => location.state)
         setStates([...new Set(fetchedStates)])
-        setSelected(prev => ({ ...prev, state: fetchedStates[0] }))
         var result = await getLandmarkData(0, fetchedStates[0])
         result.state = fetchedStates[0]
-        setAttendance(result)
+        setSelected(result)
         setFilterInitialized(true)
         resolve(result)
       } catch (error) {
@@ -91,28 +92,22 @@ export default function Attendance () {
   // Handle filter change
   async function handleChange (id, label, value) {
     var result = await getLandmarkData(id, value)
-    setSelected(prev => ({ ...prev, [label]: value }))
-    console.log('selected: ', selected)
-    const fetchedAttendances = await setAttendance(selected)
-    console.log('after change attendances: ', fetchedAttendances)
-  }
-
-  // fill the attendances
-  async function handlePanchayatChange (id, value) {
-    try {
-      setSelected(prev => ({ ...prev, panchayat: value }))
-      await setAttendance({ ...selected, panchayat: value })
-    } catch (err) {
-      toast.error(err.message)
-      throw err
-    }
+    console.log('previous result', result)
+    result = { [label]: value, ...result }
+    console.log('result', result[label])
+    setSelected(prev => {
+      console.log(prev)
+      console.log(result)
+      return { ...prev, ...result }
+    })
   }
 
   useEffect(() => {
     if (dataLoaded && !filterInitialized) {
       initFilter()
     }
-  }, [dataLoaded])
+    setAttendance(selected)
+  }, [dataLoaded, selected])
 
   return (
     <main className='flex-1 pb-8'>
@@ -165,7 +160,7 @@ export default function Attendance () {
                 label='panchayat'
                 selected={selected.panchayat}
                 id={3}
-                onChange={handlePanchayatChange}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -180,7 +175,6 @@ export default function Attendance () {
         tableHeading={tableHeading}
         tableData={attendances}
         statusStyles={statusStyles}
-        fetchedData={fetchedData}
       />
     </main>
   )

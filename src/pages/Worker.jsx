@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useWorkerStore } from '../api/store'
 // Importing all the components
@@ -9,6 +9,7 @@ import { workerNavigation } from '../utils/sidelinks'
 import { workerTopNavigation } from '../utils/dashboard_toplink'
 
 export const Worker = () => {
+  const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const {
     setProfile,
@@ -26,7 +27,7 @@ export const Worker = () => {
   async function handleSetup () {
     try {
       setLoading(true)
-      const profile = await setProfile()
+      const profile = await setProfile(navigate)
       const payment = await setPayment()
       const location = await setLocations()
       const lastWork = await setLastWork()
