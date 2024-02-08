@@ -89,16 +89,11 @@ export default function Attendance () {
     })
   }
   // Handle filter change
-  async function handleChange (id, value) {
-    setSelected(prev => ({ ...prev, [filterLoop[id].landmark]: value }))
+  async function handleChange (id, label, value) {
     var result = await getLandmarkData(id, value)
-    result = {
-      ...selected,
-      ...result,
-      [filterLoop[id].landmark]: value
-    }
-    console.log('result of selection change: ', result)
-    const fetchedAttendances = await setAttendance(result)
+    setSelected(prev => ({ ...prev, [label]: value }))
+    console.log('selected: ', selected)
+    const fetchedAttendances = await setAttendance(selected)
     console.log('after change attendances: ', fetchedAttendances)
   }
 
@@ -117,7 +112,7 @@ export default function Attendance () {
     if (dataLoaded && !filterInitialized) {
       initFilter()
     }
-  }, [dataLoaded, setSelected])
+  }, [dataLoaded])
 
   return (
     <main className='flex-1 pb-8'>

@@ -11,7 +11,7 @@ export default function Dropdown ({ options, label, selected, onChange, id }) {
     <Listbox
       value={selected}
       onChange={option => {
-        onChange(id, option)
+        onChange(id, label, option)
       }}
     >
       {({ open }) => (

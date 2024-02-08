@@ -46,7 +46,7 @@ function jobDuration (startDate, endDate) {
   const spent = Math.abs(timestamp - start)
   const days = Math.ceil(diff / (1000 * 60 * 60 * 24))
   const spentDays = Math.ceil(spent / (1000 * 60 * 60 * 24))
-  const percentage = spentDays >= days ? 100 : (spentDays / days) * 100
+  const percentage = spentDays >= days ? 100 : ((spentDays / days) * 100).toFixed(2)
   return { days, percentage }
 }
 function formatLocation (locationObj) {
