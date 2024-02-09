@@ -130,7 +130,7 @@ export default function Dashboard() {
       </div>
 
       {/* Recent activity */}
-      <RecentPayment heading={"Recent Activity"} recentActivity={transactions} />
+      {/* <RecentPayment heading={"Recent Activity"} recentActivity={transactions} /> */}
     </div>
   </main>
   )

@@ -20,8 +20,8 @@ export const Admin = () => {
           setSidebarOpen={setSidebarOpen}
           userNavigation={adminTopNavigation}
         />
-        <div>Working on it. Check Worker section for current work.</div>
-        {/* <Outlet /> */}
+        {/* <div>Working on it. Check Worker section for current work.</div> */}
+        <Outlet />
       </div>
     </>
   )
