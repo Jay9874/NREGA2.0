@@ -12,6 +12,7 @@ export const useWorkerStore = create((set, get) => ({
   user: { email: '', type: '', id: '' },
   loading: false,
   dataLoaded: false,
+  loadingAttendance: false,
   nearbyJobs: [],
   allJobs: [],
   lastWork: {
@@ -127,6 +128,7 @@ export const useWorkerStore = create((set, get) => ({
   setAttendance: async locationSelected => {
     try {
       set({ attendances: [] })
+      set({ loadingAttendance: true })
       return new Promise(async (resolve, reject) => {
         const jobs = get().allJobs
         const { data: locations } = await supabase
@@ -160,11 +162,13 @@ export const useWorkerStore = create((set, get) => ({
               }
             ]
           })
+          set({ loadingAttendance: false })
           resolve(get().attendances)
         })
       })
     } catch (err) {
       toast.error(err.message)
+      set({ loadingAttendance: false })
       reject(err)
     }
   },

@@ -16,7 +16,13 @@ const tableHeading = [
 ]
 
 export default function Attendance () {
-  const { attendances, setAttendance, locations, dataLoaded } = useWorkerStore()
+  const {
+    attendances,
+    setAttendance,
+    locations,
+    dataLoaded,
+    loadingAttendance
+  } = useWorkerStore()
   const [filterInitialized, setFilterInitialized] = useState(false)
   const [loadFilter, setLoadFilter] = useState(false)
   const [states, setStates] = useState([])
@@ -62,6 +68,10 @@ export default function Attendance () {
           )
           filterLoopcallback[i].callback([...new Set(fetchedLandmarkData)])
           selection[filterLoop[i].toFetch] = fetchedLandmarkData[0]
+          setSelected(prev => ({
+            ...prev,
+            [filterLoop[i].toFetch]: fetchedLandmarkData[0]
+          }))
           filterLoop[i].fetchedDatas = fetchedLandmarkData
           filterLoop[i].landmarkValue = fetchedLandmarkData[0]
         }
@@ -83,6 +93,7 @@ export default function Attendance () {
         result.state = fetchedStates[0]
         setSelected(result)
         setFilterInitialized(true)
+        setLoadFilter(true)
         resolve(result)
       } catch (error) {
         reject(error)
@@ -91,23 +102,25 @@ export default function Attendance () {
   }
   // Handle filter change
   async function handleChange (id, label, value) {
-    var result = await getLandmarkData(id, value)
-    console.log('previous result', result)
-    result = { [label]: value, ...result }
-    console.log('result', result[label])
-    setSelected(prev => {
-      console.log(prev)
-      console.log(result)
-      return { ...prev, ...result }
-    })
+    setSelected(prev => ({ ...prev, [label]: value }))
+    await getLandmarkData(id, value)
+    setLoadFilter(true)
+  }
+  async function handlePanchayatChange (id, label, value) {
+    setSelected(prev => ({ ...prev, [label]: value }))
+    setLoadFilter(true)
   }
 
   useEffect(() => {
     if (dataLoaded && !filterInitialized) {
       initFilter()
+      setLoadFilter(false)
     }
-    setAttendance(selected)
-  }, [dataLoaded, selected])
+    if (loadFilter) {
+      setAttendance(selected)
+      setLoadFilter(false)
+    }
+  }, [dataLoaded, loadFilter])
 
   return (
     <main className='flex-1 pb-8'>
@@ -160,7 +173,7 @@ export default function Attendance () {
                 label='panchayat'
                 selected={selected.panchayat}
                 id={3}
-                onChange={handleChange}
+                onChange={handlePanchayatChange}
               />
             </div>
           </div>
@@ -171,11 +184,22 @@ export default function Attendance () {
       <h2 className='mx-auto mt-8 max-w-6xl px-4 text-lg font-medium leading-6 text-gray-900 sm:px-6 lg:px-8'>
         Found Attendance
       </h2>
-      <TableRow
-        tableHeading={tableHeading}
-        tableData={attendances}
-        statusStyles={statusStyles}
-      />
+      {loadingAttendance ? (
+        <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
+          <div className='rounded-xl border-0 ring-1 ring-gray-100 h-24 flex items-center justify-center'>
+            <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
+              Fetching Attendance...
+            </p>
+          </div>
+        </div>
+      ) : (
+        <TableRow
+          tableHeading={tableHeading}
+          tableData={attendances}
+          statusStyles={statusStyles}
+          loading={loadingAttendance}
+        />
+      )}
     </main>
   )
 }
