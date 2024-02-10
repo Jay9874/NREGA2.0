@@ -23,7 +23,7 @@ export default function Home () {
     <>
       <div className='relative isolate overflow-hidden bg-gray-900'>
         <div className='min-h-[100vh]'>
-          <div className='relative px-6'>
+          <div className='relative px-6 min-h-[100vh]'>
             <img
               src={img1}
               alt=''
@@ -118,7 +118,7 @@ export default function Home () {
               </Dialog.Panel>
             </Dialog>
             {/* The intro section */}
-            <div className='mx-auto max-w-2xl py-32 sm:py-48 lg:py-56  overflow-auto'>
+            <div className='mx-auto max-w-2xl py-32 py-56 overflow-auto'>
               <div className='hidden sm:mb-8 sm:flex sm:justify-center'>
                 <div className='relative rounded-full py-1 px-3 text-sm leading-6 text-gray-400 ring-1 ring-white/10 hover:ring-white/20'>
                   Launching redefined way of.{' '}
@@ -148,7 +148,7 @@ export default function Home () {
                 <div className='mt-10 flex-wrap flex items-center justify-center gap-x-6'>
                   <Link
                     to='/auth/login'
-                    className='rounded-md bg-yellow-500 px-3.5 py-1.5 text-base font-semibold leading-7 text-white shadow-sm hover:bg-yellow-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-400'
+                    className='rounded-3xl bg-green-500 px-8 py-1.5 text-base font-semibold leading-7  shadow-sm hover:bg-green-400 text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-400'
                   >
                     Get started
                   </Link>
