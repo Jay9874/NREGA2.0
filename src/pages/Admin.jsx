@@ -1,13 +1,24 @@
 import { Outlet } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Sidebar, TopNavbar } from '../components'
+import { useAdminStore } from '../api/store'
 // Constants imports
 import { adminTopNavigation } from '../utils/dashboard_toplink'
 import { adminNavigation } from '../utils/sidelinks'
 
 export const Admin = () => {
+  const { setProfile, loading } = useAdminStore()
   const [sidebarOpen, setSidebarOpen] = useState(false)
-
+  async function handleSetup () {
+    try {
+      await setProfile()
+    } catch (error) {
+      return error
+    }
+  }
+  useEffect(() => {
+    handleSetup()
+  }, [])
   return (
     <>
       <Sidebar
@@ -20,8 +31,8 @@ export const Admin = () => {
           setSidebarOpen={setSidebarOpen}
           userNavigation={adminTopNavigation}
         />
-        <div>Working on it. Check Worker section for current work.</div>
-        {/* <Outlet /> */}
+        {/* <div>Working on it. Check Worker section for current work.</div> */}
+        <Outlet />
       </div>
     </>
   )

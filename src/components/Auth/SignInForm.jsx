@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { authStore } from '../../api/store/store'
+import { authStore } from '../../api/store/authStore'
 
 export default function SignInForm () {
   const navigate = useNavigate()

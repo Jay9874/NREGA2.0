@@ -49,7 +49,7 @@ export default function Contact () {
               action='mailto:jayprakashsharma225@gmail.com'
               method='POST'
               className='grid grid-cols-1 gap-y-6'
-              enctype='text/plain'
+              encType='text/plain'
             >
               <div>
                 <label htmlFor='full-name' className='sr-only'>

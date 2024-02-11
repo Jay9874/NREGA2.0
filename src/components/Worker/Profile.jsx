@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-import '../../App.css'
 import { useWorkerStore } from '../../api/store'
 export default function Profile () {
   const { profile, user } = useWorkerStore()

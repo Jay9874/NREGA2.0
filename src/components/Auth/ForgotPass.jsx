@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { authStore } from '../../api/store/store'
+import { authStore } from '../../api/store/authStore'
 
 export default function ForgotPass () {
   const navigate = useNavigate()
   const { recoverUser, loading } = authStore()
 
   const [loginInfo, setLoginInfo] = useState({
-    email: '',
+    email: ''
   })
   return (
     <div className='flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
@@ -55,8 +55,11 @@ export default function ForgotPass () {
                     to='/auth/login'
                     className='flex justify-center items-center gap-2 font-medium text-indigo-600 hover:text-indigo-500'
                   >
-                    <ion-icon size="large" name='arrow-back-circle-outline'></ion-icon>Go
-                    Back
+                    <ion-icon
+                      size='large'
+                      name='arrow-back-circle-outline'
+                    ></ion-icon>
+                    Go Back
                   </Link>
                 </div>
               </div>

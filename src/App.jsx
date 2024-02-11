@@ -9,7 +9,7 @@ import {
   AdminDashboard,
   AdminAttendance,
   Addjobs,
-  Employee,
+  Employees,
   Payout,
   AdminProfile
 } from './components/Admin'
@@ -57,7 +57,7 @@ export default function App () {
             <Route path='dashboard' element={<AdminDashboard />} />
             <Route path='addjob' element={<Addjobs />} />
             <Route path='attendance' element={<AdminAttendance />} />
-            <Route path='employee' element={<Employee />} />
+            <Route path='employee' element={<Employees />} />
             <Route path='payout' element={<Payout />} />
             <Route path='profile' element={<AdminProfile />} />
             <Route path='*' element={<NotFound path='admin' />} />

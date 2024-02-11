@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { authStore } from '../../api/store/store'
+import { authStore } from '../../api/store/authStore'
 import { toast } from 'sonner'
 
 export default function ResetPass () {
