@@ -92,14 +92,14 @@ export default function Home () {
                   <div className='-my-6 divide-y divide-gray-500/25'>
                     <div className='space-y-2 py-6'>
                       {navigation.map(item => (
-                        <Link
+                        <a
                           key={item.name}
                           href={item.href}
                           onClick={() => setMobileMenuOpen(false)}
                           className='-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-white hover:bg-gray-400/10'
                         >
                           {item.name}
-                        </Link>
+                        </a>
                       ))}
                     </div>
                     <div className='py-6'>
@@ -152,12 +152,12 @@ export default function Home () {
                   >
                     Get started
                   </Link>
-                  {/* <Link
-                  to='#feature'
+                  <a
+                  href='#feature'
                   className='text-base font-semibold leading-7 text-white'
                 >
                   Learn more <span aria-hidden='true'>→</span>
-                </Link> */}
+                </a>
                 </div>
               </div>
             </div>
