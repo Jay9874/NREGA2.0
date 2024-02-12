@@ -11,12 +11,11 @@ import { authStore } from '.'
 
 export const useAdminStore = create((set, get) => ({
   user: { email: '', type: '', id: '' },
-  loading: authStore.getState().loading,
+  dataLoaded: false,
   profile: {},
   employees: [],
-  setLoading: loading => set({ loading }),
+  setDataLoaded: loading => set({ dataLoaded: loading }),
   setProfile: async navigate => {
-    // console.log(get().loading)
     try {
       let token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
       if (!token) throw new Error('No session found!')
@@ -37,7 +36,6 @@ export const useAdminStore = create((set, get) => ({
       }
 
       set({ profile: profile[0] })
-      console.log(get().profile)
       return profile
     } catch (error) {
       toast.error(error.message)
@@ -46,14 +44,16 @@ export const useAdminStore = create((set, get) => ({
   },
   setEmployees: async () => {
     try {
-      const { data, error } = await supabase
+      const { data: employees, error } = await supabase
         .from('worker')
         .select('*')
-        .eq('location_id', get().profile.location_id)
+        .eq('address', get().profile.location_id.id)
       if (error) {
+        toast.error(error.message)
         throw error
       }
-      set({ employees: data })
+      set({ employees: employees })
+      console.log(get().employees)
     } catch (error) {
       toast.error(error.message)
       throw error

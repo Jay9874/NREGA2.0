@@ -9,9 +9,12 @@ import {
   AdminDashboard,
   AdminAttendance,
   Addjobs,
-  Employees,
+  ViewEmployees,
+  EditEmployee,
+  Employee,
   Payout,
-  AdminProfile
+  AdminProfile,
+  AddEmployee
 } from './components/Admin'
 
 // Worker Components
@@ -57,7 +60,11 @@ export default function App () {
             <Route path='dashboard' element={<AdminDashboard />} />
             <Route path='addjob' element={<Addjobs />} />
             <Route path='attendance' element={<AdminAttendance />} />
-            <Route path='employee' element={<Employees />} />
+            <Route path='employee' element={<Employee />}>
+              <Route index element={<ViewEmployees />} />
+              <Route path='add' element={<AddEmployee />} />
+              <Route path='edit/:id' element={<EditEmployee />} />
+            </Route>
             <Route path='payout' element={<Payout />} />
             <Route path='profile' element={<AdminProfile />} />
             <Route path='*' element={<NotFound path='admin' />} />
