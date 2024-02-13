@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
+import { PhotoIcon, ArrowLongLeftIcon } from '@heroicons/react/24/solid'
 import { useAdminStore } from '../../../api/store'
 
 export default function AddEmployee () {
@@ -8,7 +8,15 @@ export default function AddEmployee () {
   return (
     <main>
       {/* Bread crumbing to last url */}
-      <Link to='..'>Back</Link>
+      <Link to='..'>
+        <span className='px-24 py-12'>
+          <ArrowLongLeftIcon
+            className='h-12 w-12 text-indigo-600'
+            aria-hidden='true'
+            title='Back to Employees List'
+          />
+        </span>
+      </Link>
       <form className='flex items-center justify-center'>
         <div className='space-y-12'>
           <div className='border-b border-gray-900/10 pb-12'>
