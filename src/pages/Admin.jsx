@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import { useState } from 'react'
-import { Sidebar, TopNavbar } from '../components'
+import { Sidebar, TopNavbar, Banner } from '../components'
 // Constants imports
 import { adminTopNavigation } from '../utils/dashboard_toplink'
 import { adminNavigation } from '../utils/sidelinks'
@@ -16,11 +16,11 @@ export const Admin = () => {
         navigation={adminNavigation}
       />
       <div className='flex flex-1 flex-col md:pl-64'>
-        <TopNavbar
+        <Banner />
+        {/* <TopNavbar
           setSidebarOpen={setSidebarOpen}
           userNavigation={adminTopNavigation}
-        />
-        <div>Working on it. Check Worker section for current work.</div>
+        /> */}
         {/* <Outlet /> */}
       </div>
     </>
