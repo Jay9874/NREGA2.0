@@ -7,7 +7,7 @@ import { adminTopNavigation } from '../utils/dashboard_toplink'
 import { adminNavigation } from '../utils/sidelinks'
 
 export const Admin = () => {
-  const { setProfile, loading, setEmployees, dataLoaded, setDataLoaded } =
+  const { setProfile, setEmployees, dataLoaded, setDataLoaded } =
     useAdminStore()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   async function handleSetup () {
