@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAdminStore } from '../../../api/store'
-import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
+import { toast } from 'sonner'
 
-export default function AddUser () {
+export default function AddUser ({ onUserCreation }) {
   const { addUser } = useAdminStore()
   const [user, setUser] = useState({
     email: '',
@@ -13,9 +13,19 @@ export default function AddUser () {
     const { name, value } = e.target
     setUser(prev => ({ ...prev, [name]: value }))
   }
-  function handleSubmit (e) {
-    e.preventDefault()
-    addUser(user)
+  async function handleSubmit (e) {
+    try {
+      e.preventDefault()
+      if (!user.email) {
+        throw new Error('Please enter a valid Email ID.')
+      }
+      if (user.password.length < 8)
+        throw new Error('Password must be atleast 8 digit long.')
+      const newUser = await addUser(user)
+      onUserCreation(newUser)
+    } catch (error) {
+      toast.error(error.message)
+    }
   }
   return (
     <main>
@@ -70,7 +80,7 @@ export default function AddUser () {
               value={user.password}
               onChange={handleChange}
               className='block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
-              placeholder='atleast 6 digit'
+              placeholder='atleast 8 digit'
               aria-describedby='password-description'
             />
           </div>

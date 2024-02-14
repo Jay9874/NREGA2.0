@@ -43,8 +43,18 @@ export const useAdminStore = create((set, get) => ({
       throw error
     }
   },
-  addUser: async (user) => {
-    console.log(user)
+  addUser: async user => {
+    try {
+      const { data: newUser, error } = await supabase.auth.signUp({
+        email: user.email,
+        password: user.password
+      })
+      if (error) throw error
+      set({ lastAddedUser: newUser.user })
+      return newUser
+    } catch (error) {
+      throw error
+    }
   },
   setEmployees: async () => {
     try {
@@ -57,7 +67,6 @@ export const useAdminStore = create((set, get) => ({
         throw error
       }
       set({ employees: employees })
-      console.log(get().employees)
     } catch (error) {
       toast.error(error.message)
       throw error

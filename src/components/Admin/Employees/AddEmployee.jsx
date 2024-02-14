@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { useAdminStore } from '../../../api/store'
 
 export default function AddEmployee () {
-  const { profile } = useAdminStore()
+  const { lastAddedUser } = useAdminStore()
+  console.log(lastAddedUser)
   return (
     <main>
       {/* The Form with all the fields. */}
@@ -22,21 +23,22 @@ export default function AddEmployee () {
             <div className='mt-10'>
               <div className='sm:col-span-4'>
                 <label
-                  htmlFor='username'
+                  htmlFor='uuid'
                   className='block text-sm font-medium leading-6 text-gray-900'
                 >
-                  MGNREGA ID
+                  Worker ID
                 </label>
                 <div className='mt-2'>
                   <div className='flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md'>
-                    <input
-                      type='text'
-                      name='username'
-                      id='username'
-                      autoComplete='username'
-                      className='block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6'
-                      placeholder='MG....'
-                    />
+                  <input
+                    type='uuid'
+                    name='uuid'
+                    id='uuid'
+                    value={lastAddedUser.id}
+                    disabled
+                    className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
+                    placeholder='id'
+                  />
                   </div>
                 </div>
               </div>

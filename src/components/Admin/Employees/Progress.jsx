@@ -20,8 +20,11 @@ export default function Progress () {
     fetchedDetails: null
   })
 
-  function handleActive () {
-    console.log(this)
+  function onUserCreation (user) {
+    steps[active].status = 'complete'
+    steps[active + 1].status = 'current'
+    setNewUser(prev => ({ ...prev, fetchedDetails: user }))
+    setActive(1)
   }
   return (
     <>
@@ -54,9 +57,11 @@ export default function Progress () {
                   </div>
                   <button
                     onClick={() => {
-                      steps[active].status = 'upcoming'
+                      if (steps[active].status !== 'complete')
+                        steps[active].status = 'upcoming'
                       setActive(stepIdx)
-                      steps[stepIdx].status = 'current'
+                      if (steps[stepIdx].status !== 'complete')
+                        steps[stepIdx].status = 'current'
                     }}
                     className='relative flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 hover:bg-indigo-900'
                   >
@@ -77,9 +82,11 @@ export default function Progress () {
                   </div>
                   <button
                     onClick={() => {
-                      steps[active].status = 'upcoming'
+                      if (steps[active].status !== 'complete')
+                        steps[active].status = 'upcoming'
                       setActive(stepIdx)
-                      steps[stepIdx].status = 'current'
+                      if (steps[stepIdx].status !== 'complete')
+                        steps[stepIdx].status = 'current'
                     }}
                     className='relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-indigo-600 bg-white'
                     aria-current='step'
@@ -101,9 +108,11 @@ export default function Progress () {
                   </div>
                   <button
                     onClick={() => {
-                      steps[active].status = 'upcoming'
+                      if (steps[active].status !== 'complete')
+                        steps[active].status = 'upcoming'
                       setActive(stepIdx)
-                      steps[stepIdx].status = 'current'
+                      if (steps[stepIdx].status !== 'complete')
+                        steps[stepIdx].status = 'current'
                     }}
                     className='group relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-gray-300 bg-white hover:border-gray-400'
                   >
@@ -119,7 +128,7 @@ export default function Progress () {
           ))}
         </ol>
       </nav>
-      {active === 0 && <AddUser />}
+      {active === 0 && <AddUser onUserCreation={onUserCreation} />}
       {active === 1 && <AddEmployee />}
     </>
   )
