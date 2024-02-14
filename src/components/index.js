@@ -7,4 +7,14 @@ import Dropdown from './Dropdown'
 import Protected from './Protected'
 import NotFound from './NotFound'
 import ValidLink from './ValidLink'
-export { Sidebar, TableRow, TopNavbar, CommonNav, RecentPayment, Dropdown, Protected, NotFound, ValidLink }
+export {
+  Sidebar,
+  TableRow,
+  TopNavbar,
+  CommonNav,
+  RecentPayment,
+  Dropdown,
+  Protected,
+  NotFound,
+  ValidLink
+}

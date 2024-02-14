@@ -14,6 +14,7 @@ export const useAdminStore = create((set, get) => ({
   dataLoaded: false,
   profile: {},
   employees: [],
+  lastAddedUser: {},
   setDataLoaded: loading => set({ dataLoaded: loading }),
   setProfile: async navigate => {
     try {
@@ -41,6 +42,9 @@ export const useAdminStore = create((set, get) => ({
       toast.error(error.message)
       throw error
     }
+  },
+  addUser: async (user) => {
+    console.log(user)
   },
   setEmployees: async () => {
     try {

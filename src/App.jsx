@@ -9,6 +9,7 @@ import {
   AdminDashboard,
   AdminAttendance,
   Addjobs,
+  Progress,
   ViewEmployees,
   EditEmployee,
   Employee,
@@ -57,12 +58,12 @@ export default function App () {
             <Route path='*' element={<NotFound path='worker' />} />
           </Route>
           <Route path='/admin' element={<Admin />}>
-            <Route path='dashboard' element={<AdminDashboard />} />
+            <Route path='dashboard' index element={<AdminDashboard />} />
             <Route path='addjob' element={<Addjobs />} />
             <Route path='attendance' element={<AdminAttendance />} />
             <Route path='employee' element={<Employee />}>
               <Route index element={<ViewEmployees />} />
-              <Route path='add' element={<AddEmployee />} />
+              <Route path='add' element={<Progress />} />
               <Route path='edit/:id' element={<EditEmployee />} />
             </Route>
             <Route path='payout' element={<Payout />} />
