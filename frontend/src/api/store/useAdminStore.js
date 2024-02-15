@@ -8,10 +8,12 @@ import {
   formatLocationShort
 } from '../../utils/dataFormating'
 import { authStore } from '.'
+const NODE_ENV = import.meta.env.MODE
 
 export const useAdminStore = create((set, get) => ({
   user: { email: '', type: '', id: '' },
   dataLoaded: false,
+  base: NODE_ENV === 'development' ? 'http://localhost:8080' : '',
   profile: {},
   employees: [],
   lastAddedUser: {},
@@ -44,16 +46,32 @@ export const useAdminStore = create((set, get) => ({
     }
   },
   addUser: async user => {
+    //This data will be sent to the server with the POST request.
+    const userData = {
+      email: user.email,
+      password: user.password,
+      userType: 'worker'
+    }
+    const options = {
+      method: 'POST',
+      body: JSON.stringify(userData),
+      headers: { 'Content-Type': 'application/json' }
+    }
+    const url = `${get().base}/api/admin/create`
     try {
-      const { data: newUser, error } = await supabase.auth.signUp({
-        email: user.email,
-        password: user.password
-      })
-      if (error) throw error
-      set({ lastAddedUser: newUser.user })
-      return newUser
-    } catch (error) {
-      throw error
+      const toastID = toast.loading('Adding User...')
+      const response = await fetch(url, options)
+      toast.dismiss(toastID)
+      if (!response.ok) {
+        throw new Error('Failed to add User')
+      }
+      toast.success('User Added Successfully')
+      const jsonResponse = await response.json()
+      set({ lastAddedUser: jsonResponse })
+    } catch (err) {
+      toast.error(err.message)
+      console.log('ERROR', err)
+      throw err
     }
   },
   setEmployees: async () => {

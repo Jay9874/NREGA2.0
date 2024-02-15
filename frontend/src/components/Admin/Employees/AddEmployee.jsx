@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAdminStore } from '../../../api/store'
 
 export default function AddEmployee () {
-  const { lastAddedUser } = useAdminStore()
-  console.log(lastAddedUser)
+  const { lastAddedUser, profile } = useAdminStore()
   return (
     <main>
       {/* The Form with all the fields. */}
@@ -21,7 +20,7 @@ export default function AddEmployee () {
         <div className='space-y-12 px-12'>
           <div className='border-b border-gray-900/10 pb-12'>
             <div className='mt-10'>
-              <div className='sm:col-span-4'>
+              <div className='sm:col-span-3 sm:col-start-1'>
                 <label
                   htmlFor='uuid'
                   className='block text-sm font-medium leading-6 text-gray-900'
@@ -30,15 +29,15 @@ export default function AddEmployee () {
                 </label>
                 <div className='mt-2'>
                   <div className='flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md'>
-                  <input
-                    type='uuid'
-                    name='uuid'
-                    id='uuid'
-                    value={lastAddedUser.id}
-                    disabled
-                    className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
-                    placeholder='id'
-                  />
+                    <input
+                      type='text'
+                      name='uuid'
+                      id='uuid'
+                      value={lastAddedUser.id}
+                      disabled
+                      className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm sm:leading-6'
+                      placeholder='id'
+                    />
                   </div>
                 </div>
               </div>
@@ -158,28 +157,28 @@ export default function AddEmployee () {
                 </div>
               </div>
               {/* Aadhaar number */}
-              <div className='col-span-full'>
+              <div className='sm:col-span-2'>
                 <label
                   htmlFor='aadhaar'
-                  className='block text-sm font-medium text-gray-700'
+                  className='block text-sm font-medium leading-6 text-gray-900'
                 >
                   Aadhaar Number
                 </label>
-                <div className='mt-1'>
+                <div className='mt-2'>
                   <input
                     type='text'
                     name='aadhaar'
                     id='aadhaar'
-                    className='block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
+                    className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                     placeholder='0000-0000-0000'
                   />
                 </div>
               </div>
               {/* Age */}
-              <div className='col-span-full'>
+              <div className='sm:col-span-1'>
                 <label
                   htmlFor='age'
-                  className='block text-sm font-medium text-gray-700'
+                  className='block text-sm font-medium leading-6 text-gray-900'
                 >
                   Age
                 </label>
@@ -188,16 +187,16 @@ export default function AddEmployee () {
                     type='text'
                     name='age'
                     id='age'
-                    className='block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
+                    className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                     placeholder='00'
                   />
                 </div>
               </div>
               {/* Bank Account Number */}
-              <div className='col-span-full'>
+              <div className='sm:col-span-2'>
                 <label
                   htmlFor='acc'
-                  className='block text-sm font-medium text-gray-700'
+                  className='block text-sm font-medium leading-6 text-gray-900'
                 >
                   Bank Acc. No
                 </label>
@@ -206,7 +205,7 @@ export default function AddEmployee () {
                     type='text'
                     name='acc'
                     id='acc'
-                    className='block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
+                    className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                     placeholder='12 or 16 digit'
                   />
                 </div>
@@ -242,9 +241,9 @@ export default function AddEmployee () {
                     type='text'
                     name='location_id'
                     id='location_id'
+                    value={profile.location_id.id}
                     disabled
                     className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
-                    placeholder='id'
                   />
                   <p className='mt-2 invisible peer-disabled:visible text-gray-600 text-sm'>
                     Autofilled

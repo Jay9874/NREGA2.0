@@ -9,6 +9,7 @@ export default function AddUser ({ onUserCreation }) {
     email: '',
     password: ''
   })
+  const [lockInput, setLockInput] = useState(false)
   function handleChange (e) {
     const { name, value } = e.target
     setUser(prev => ({ ...prev, [name]: value }))
@@ -22,6 +23,7 @@ export default function AddUser ({ onUserCreation }) {
       if (user.password.length < 8)
         throw new Error('Password must be atleast 8 digit long.')
       const newUser = await addUser(user)
+      setLockInput(true)
       onUserCreation(newUser)
     } catch (error) {
       toast.error(error.message)
@@ -58,6 +60,7 @@ export default function AddUser ({ onUserCreation }) {
               placeholder='you@example.com'
               aria-invalid='true'
               aria-describedby='email-error'
+              {...(lockInput && { disabled: true })}
             />
           </div>
           <p className='mt-2 text-sm text-yellow-500' id='email-error'>
@@ -82,6 +85,8 @@ export default function AddUser ({ onUserCreation }) {
               className='block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
               placeholder='atleast 8 digit'
               aria-describedby='password-description'
+              autoComplete='new-password'
+              {...(lockInput && { disabled: true })}
             />
           </div>
           <p className='mt-2 text-sm text-yellow-500' id='email-description'>
