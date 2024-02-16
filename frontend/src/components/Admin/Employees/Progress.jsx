@@ -55,13 +55,16 @@ export default function Progress () {
                   >
                     <div className='h-0.5 w-full bg-indigo-600' />
                   </div>
-                  <button disabled className='relative flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 hover:bg-indigo-900'>
+                  <div
+                    disabled
+                    className='relative flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 hover:bg-indigo-900'
+                  >
                     <CheckIcon
                       className='h-5 w-5 text-white'
                       aria-hidden='true'
                     />
                     <span className='sr-only'>{step.name}</span>
-                  </button>
+                  </div>
                 </>
               ) : step.status === 'current' ? (
                 <>
@@ -72,13 +75,6 @@ export default function Progress () {
                     <div className='h-0.5 w-full bg-gray-200' />
                   </div>
                   <button
-                    onClick={() => {
-                      if (steps[active].status !== 'complete')
-                        steps[active].status = 'upcoming'
-                      setActive(stepIdx)
-                      if (steps[stepIdx].status !== 'complete')
-                        steps[stepIdx].status = 'current'
-                    }}
                     className='relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-indigo-600 bg-white'
                     aria-current='step'
                   >
