@@ -1,7 +1,7 @@
 // Requiring all the packages
 const express = require('express')
 const router = express.Router()
-const { create } = require('../controller/admin')
+const { create, fetchAadhaar } = require('../controller/admin')
 
 // Defining the routes
 /**
@@ -11,11 +11,11 @@ const { create } = require('../controller/admin')
  **/
 router.post('/create', create)
 
-// /**
-//  * @route POST api/auth/sigin
-//  * @description login user
-//  * @access public
-//  **/
-// router.post('/login', signin)
+/**
+ * @route POST api/auth/sigin
+ * @description login user
+ * @access public
+ **/
+router.post('/aadhaar', fetchAadhaar)
 
 module.exports = router

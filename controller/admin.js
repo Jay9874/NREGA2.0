@@ -16,9 +16,23 @@ exports.create = async (req, res) => {
       email: email,
       password: password
     })
-    if (error) res.status(500).json(reject(error))
+    if (error) res.status(500).json(error)
     res.status(201).json(newUser.user)
   } catch (error) {
-    res.status(500).json(reject(error))
+    res.status(500).json(error)
+  }
+}
+
+exports.fetchAadhaar = async (req, res) => {
+  try {
+    const { aadhaarNo } = req.body
+    const { data: aadhaar, error } = await supabase
+      .from('aadhaar_db')
+      .select(`*`)
+      .eq('aadhaar_no', aadhaarNo)
+    if (error) res.status(500).json(error)
+    res.status(200).json(aadhaar)
+  } catch (error) {
+    res.status(500).json(error)
   }
 }
