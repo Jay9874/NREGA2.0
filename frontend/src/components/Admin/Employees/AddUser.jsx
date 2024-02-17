@@ -60,7 +60,7 @@ export default function AddUser ({ onUserCreation }) {
               placeholder='you@example.com'
               aria-invalid='true'
               aria-describedby='email-error'
-              {...(lockInput && { disabled: true })}
+              disabled={lockInput}
             />
           </div>
           <p className='mt-2 text-sm text-yellow-500' id='email-error'>
@@ -86,7 +86,7 @@ export default function AddUser ({ onUserCreation }) {
               placeholder='atleast 8 digit'
               aria-describedby='password-description'
               autoComplete='new-password'
-              {...(lockInput && { disabled: true })}
+              disabled={lockInput}
             />
           </div>
           <p className='mt-2 text-sm text-yellow-500' id='email-description'>

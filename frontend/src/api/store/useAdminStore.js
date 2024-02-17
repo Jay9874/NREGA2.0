@@ -17,6 +17,7 @@ export const useAdminStore = create((set, get) => ({
   profile: {},
   employees: [],
   lastAddedUser: {},
+  lastAadhaarData: {},
   setDataLoaded: loading => set({ dataLoaded: loading }),
   setProfile: async navigate => {
     try {
@@ -68,6 +69,32 @@ export const useAdminStore = create((set, get) => ({
       toast.success('User Added Successfully')
       const jsonResponse = await response.json()
       set({ lastAddedUser: jsonResponse })
+    } catch (err) {
+      toast.error(err.message)
+      console.log('ERROR', err)
+      throw err
+    }
+  },
+  setAadhaarData: async (aadhaarNo) => {
+    const userData = {
+      aadhaar: aadhaarNo
+    }
+    const options = {
+      method: 'POST',
+      body: JSON.stringify(userData),
+      headers: { 'Content-Type': 'application/json' }
+    }
+    const url = `${get().base}/api/admin/fetchAadhaar`
+    try {
+      const toastID = toast.loading('Getting Aadhaar Data...')
+      const response = await fetch(url, options)
+      toast.dismiss(toastID)
+      if (!response.ok) {
+        throw new Error('Failed to add User')
+      }
+      toast.success('User Added Successfully')
+      const jsonResponse = await response.json()
+      set({ lastAadhaarData: jsonResponse })
     } catch (err) {
       toast.error(err.message)
       console.log('ERROR', err)

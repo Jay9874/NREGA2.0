@@ -43,7 +43,7 @@ export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
             </div>
           </form>
         </div>
-        <div className='ml-4 flex items-center md:ml-6'>
+        <div className='ml-4 flex items-center md:ml-6' title='View Notifications'>
           <button
             type='button'
             className='rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
@@ -54,7 +54,7 @@ export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
 
           {/* Profile dropdown */}
           <Menu as='div' className='relative ml-3'>
-            <div>
+            <div className='profile-menu' title='Open Profile Menu'>
               <Menu.Button
                 className={classNames(
                   pathname === '/worker/profile' ||

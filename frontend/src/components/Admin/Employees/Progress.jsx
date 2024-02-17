@@ -2,6 +2,7 @@ import { CheckIcon, ArrowLongLeftIcon } from '@heroicons/react/20/solid'
 import { Link } from 'react-router-dom'
 import { AddEmployee, AddUser } from '.'
 import { useState } from 'react'
+import { useAdminStore } from '../../../api/store'
 
 // Helping functions
 var steps = [
@@ -13,6 +14,7 @@ function classNames (...classes) {
 }
 
 export default function Progress () {
+  const { lastAddedUesr } = useAdminStore()
   const [active, setActive] = useState(0)
   const [newUser, setNewUser] = useState({
     email: '',
@@ -29,7 +31,7 @@ export default function Progress () {
   return (
     <>
       {/* Bread crumbing to last url */}
-      <Link to='..'>
+      <Link to='..' className='w-fit'>
         <ArrowLongLeftIcon
           className='h-12 w-12 text-indigo-600'
           aria-hidden='true'
