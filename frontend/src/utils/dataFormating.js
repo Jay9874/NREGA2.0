@@ -46,7 +46,8 @@ function jobDuration (startDate, endDate) {
   const spent = Math.abs(timestamp - start)
   const days = Math.ceil(diff / (1000 * 60 * 60 * 24))
   const spentDays = Math.ceil(spent / (1000 * 60 * 60 * 24))
-  const percentage = spentDays >= days ? 100 : ((spentDays / days) * 100).toFixed(2)
+  const percentage =
+    spentDays >= days ? 100 : ((spentDays / days) * 100).toFixed(2)
   return { days, percentage }
 }
 function formatLocation (locationObj) {
@@ -55,4 +56,9 @@ function formatLocation (locationObj) {
 function formatLocationShort (locationObj) {
   return `${locationObj.panchayat}, ${locationObj.block}`
 }
-export { timestampToDate, jobDuration, formatLocation, formatLocationShort }
+function calculateAge (birthday) {
+  const ageDifMs = Date.now() - birthday.getTime()
+  const ageDate = new Date(ageDifMs) // miliseconds from epoch
+  return Math.abs(ageDate.getUTCFullYear() - 1970)
+}
+export { timestampToDate, jobDuration, formatLocation, formatLocationShort, calculateAge }

@@ -57,7 +57,7 @@ export default function Progress () {
                   </div>
                   <div
                     disabled
-                    className='relative flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 hover:bg-indigo-900'
+                    className='relative flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600'
                   >
                     <CheckIcon
                       className='h-5 w-5 text-white'

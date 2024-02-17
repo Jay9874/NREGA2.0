@@ -16,10 +16,10 @@ export default function AddEmployee () {
           change worker's Bank, Aadhaar and other personal details.
         </p>
       </div>
-      <form className=''>
+      <form>
         <div className='space-y-12 px-12'>
           <div className='border-b border-gray-900/10 pb-12'>
-            <div className='mt-10'>
+            <div className='mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6'>
               <div className='sm:col-span-3 sm:col-start-1'>
                 <label
                   htmlFor='uuid'
@@ -35,13 +35,50 @@ export default function AddEmployee () {
                       id='uuid'
                       value={lastAddedUser.id}
                       disabled
-                      className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm sm:leading-6'
+                      className='block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm sm:leading-6'
                       placeholder='id'
                     />
                   </div>
                 </div>
               </div>
-              <div className='mt-8 sm:col-span-4'>
+              {/* Aadhaar Number */}
+              <div className='mt-2 sm:col-span-2'>
+                <label
+                  htmlFor='aadhaar'
+                  className='block text-sm font-medium leading-6 text-gray-900 whitespace-nowrap'
+                >
+                  Aadhaar Number
+                </label>
+                <div>
+                  <input
+                    type='text'
+                    name='aadhaar'
+                    id='aadhaar'
+                    className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                    placeholder='0000-0000-0000'
+                  />
+                </div>
+              </div>
+              {/* MGNREGA ID */}
+              <div className='mt-2 sm:col-span-2 sm:col-start-1'>
+                <label
+                  htmlFor='aadhaar'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  MGNREGA ID
+                </label>
+                <div>
+                  <input
+                    type='text'
+                    name='aadhaar'
+                    id='aadhaar'
+                    className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                    placeholder='MG-00-00'
+                  />
+                </div>
+              </div>
+              {/* Profile Picture */}
+              <div className='mt-8 sm:col-start-1 sm:col-span-4'>
                 <label
                   htmlFor='cover-photo'
                   className='block text-sm font-medium leading-6 text-gray-900'
@@ -121,21 +158,25 @@ export default function AddEmployee () {
                 </div>
               </div>
               {/* Father's Name */}
-              <div className='sm:col-span-3'>
+              <div className='sm:col-span-2 sm:col-start-1'>
                 <label
-                  htmlFor='father-name'
+                  htmlFor='father_name'
                   className='block text-sm font-medium leading-6 text-gray-900'
                 >
-                  Father Name
+                  Father's Name
                 </label>
                 <div className='mt-2'>
                   <input
                     type='text'
-                    name='fatherName'
-                    id='father-name'
-                    autoComplete='family-name'
-                    className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                    name='father_name'
+                    id='father_name'
+                    value='Father Name'
+                    disabled
+                    className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
                   />
+                  <p className='mt-2 invisible peer-disabled:visible text-gray-400 text-sm'>
+                    Prefilled with Aadhaar Data
+                  </p>
                 </div>
               </div>
               {/* Email address */}
@@ -156,58 +197,49 @@ export default function AddEmployee () {
                   />
                 </div>
               </div>
-              {/* Aadhaar number */}
+
+              {/* Age/ DOB */}
               <div className='sm:col-span-2'>
-                <label
-                  htmlFor='aadhaar'
-                  className='block text-sm font-medium leading-6 text-gray-900'
-                >
-                  Aadhaar Number
-                </label>
-                <div className='mt-2'>
-                  <input
-                    type='text'
-                    name='aadhaar'
-                    id='aadhaar'
-                    className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                    placeholder='0000-0000-0000'
-                  />
-                </div>
-              </div>
-              {/* Age */}
-              <div className='sm:col-span-1'>
                 <label
                   htmlFor='age'
                   className='block text-sm font-medium leading-6 text-gray-900'
                 >
-                  Age
+                  Age / DOB
                 </label>
-                <div className='mt-1'>
+                <div className='mt-2'>
                   <input
                     type='text'
                     name='age'
                     id='age'
-                    className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                    placeholder='00'
+                    value='22 / 12-12-2001'
+                    disabled
+                    className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
                   />
+                  <p className='mt-2 invisible peer-disabled:visible text-gray-400 text-sm'>
+                    Prefilled with Aadhaar Data
+                  </p>
                 </div>
               </div>
-              {/* Bank Account Number */}
+              {/* Bank Account Number*/}
               <div className='sm:col-span-2'>
                 <label
-                  htmlFor='acc'
+                  htmlFor='account-number'
                   className='block text-sm font-medium leading-6 text-gray-900'
                 >
-                  Bank Acc. No
+                  Bank Account Number
                 </label>
-                <div className='mt-1'>
+                <div className='mt-2'>
                   <input
                     type='text'
-                    name='acc'
-                    id='acc'
-                    className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                    placeholder='12 or 16 digit'
+                    name='account-number'
+                    id='account-number'
+                    value='1234567890'
+                    disabled
+                    className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
                   />
+                  <p className='mt-2 invisible peer-disabled:visible text-gray-400 text-sm'>
+                    Prefilled with Aadhaar Data
+                  </p>
                 </div>
               </div>
               {/* Street Address */}
@@ -245,8 +277,8 @@ export default function AddEmployee () {
                     disabled
                     className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
                   />
-                  <p className='mt-2 invisible peer-disabled:visible text-gray-600 text-sm'>
-                    Autofilled
+                  <p className='mt-2 invisible peer-disabled:visible text-gray-400 text-sm'>
+                    Autofilled with Sachiva Data
                   </p>
                 </div>
               </div>
