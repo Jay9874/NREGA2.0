@@ -11,6 +11,7 @@
 
 /* body css */
 body {
+  scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent;
   font-family: 'Courier New', Courier, monospace, sans-serif;
 }
