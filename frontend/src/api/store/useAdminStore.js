@@ -63,19 +63,23 @@ export const useAdminStore = create((set, get) => ({
       const toastID = toast.loading('Adding User...')
       const response = await fetch(url, options)
       toast.dismiss(toastID)
+      console.log(response)
       if (!response.ok) {
+        console.log(response)
         throw new Error('Failed to add User')
       }
       toast.success('User Added Successfully')
       const jsonResponse = await response.json()
+      console.log(jsonResponse)
       set({ lastAddedUser: jsonResponse })
     } catch (err) {
       toast.error(err.message)
-      console.log('ERROR', err)
+      console.log(err)
       throw err
     }
   },
   setAadhaarData: async (aadhaarNo) => {
+    console.log('Aadhaar No:', aadhaarNo)
     const userData = {
       aadhaar: aadhaarNo
     }

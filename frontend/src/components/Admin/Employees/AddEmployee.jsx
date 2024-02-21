@@ -15,15 +15,33 @@ export default function AddEmployee () {
     mgnrega_id: '',
     address: '',
     photo: '',
-    street: ''
+    street: '',
+    mobile: ''
   })
-
+  console.log(lastAddedUser)
+  async function handleSubmit () {
+    console.log('Cant change')
+  }
+  function handleChange (e) {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+    console.log(name, value)
+  }
+  function cantChange (e) {
+    e.preventDefault()
+  }
+  async function handleAadhaarClick (e) {
+    e.preventDefault()
+    console.log('clicked aadhaar button')
+    await setAadhaarData(aadhaarNo)
+  }
   useEffect(() => {
-    setLoading(false)
-    if (lastAddedUser && lastAadhaarData) {
-      setAadhaarNo(lastAddedUser.aadhaar)
+    if (lastAddedUser) {
       setLoading(true)
-      console.log(aadhaarNo)
+      ;async () => {
+        console.log('hello')
+      }
+      setLoading(false)
     }
   }, [aadhaarNo])
   return (
@@ -38,7 +56,7 @@ export default function AddEmployee () {
           <strong>All fields are required.</strong>
         </p>
       </div>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className='space-y-6 px-12'>
           <div className='border-b border-gray-900/10 pb-6'>
             <div className='mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6'>
@@ -56,6 +74,7 @@ export default function AddEmployee () {
                       name='uuid'
                       id='uuid'
                       value={lastAddedUser.id}
+                      onChange={cantChange}
                       disabled
                       className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm sm:leading-6'
                       placeholder='id'
@@ -74,15 +93,26 @@ export default function AddEmployee () {
                 >
                   Aadhaar Number
                 </label>
-                <div className='mt-2 '>
+                <div className='mt-2 flex items-center rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md'>
                   <input
                     type='text'
                     name='aadhaar'
                     id='aadhaar'
+                    value={aadhaarNo}
+                    onChange={e => setAadhaarNo(e.target.value)}
                     className='block w-full border-gray-300 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                     placeholder='0000-0000-0000'
                     required
                   />
+                  <button onClick={handleAadhaarClick}>
+                    <p className='flex px-6'>
+                      <ion-icon
+                        style={{ color: 'red' }}
+                        size='large'
+                        name='cloud-download-outline'
+                      ></ion-icon>
+                    </p>
+                  </button>
                 </div>
               </div>
             </div>
@@ -114,6 +144,8 @@ export default function AddEmployee () {
                         type='text'
                         name='aadhaar'
                         id='aadhaar'
+                        value={formData.mgnrega_id}
+                        onChange={handleChange}
                         className='block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                         placeholder='MG-00-00'
                         required
@@ -144,6 +176,10 @@ export default function AddEmployee () {
                         <span className='sr-only'>Choose profile photo</span>
                         <input
                           type='file'
+                          name='photo'
+                          id='photo'
+                          value={formData.photo}
+                          onChange={handleChange}
                           className='block w-full text-sm text-slate-500
                   file:mr-4 file:py-2 file:px-4
                   file:rounded-full file:border-0
@@ -167,6 +203,8 @@ export default function AddEmployee () {
                         type='text'
                         name='first-name'
                         id='first-name'
+                        value={formData.first_name}
+                        onChange={handleChange}
                         autoComplete='given-name'
                         className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                         required
@@ -186,6 +224,8 @@ export default function AddEmployee () {
                         type='text'
                         name='last-name'
                         id='last-name'
+                        value={formData.last_name}
+                        onChange={handleChange}
                         autoComplete='family-name'
                         className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                         required
@@ -205,7 +245,9 @@ export default function AddEmployee () {
                         type='text'
                         name='father_name'
                         id='father_name'
-                        value='Ram Singh'
+                        value={lastAadhaarData.father_name}
+                        onChange={cantChange}
+                        placeholder="Worker's Father Name"
                         disabled
                         className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
                         required
@@ -228,10 +270,16 @@ export default function AddEmployee () {
                         id='email'
                         name='email'
                         type='email'
+                        value={lastAddedUser.email}
+                        onChange={cantChange}
+                        disabled
                         autoComplete='email'
-                        className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                        className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
                         required
                       />
+                      <p className='mt-2 invisible peer-disabled:visible text-gray-400 text-sm'>
+                        Prefilled with Worker's Data
+                      </p>
                     </div>
                   </div>
 
@@ -248,7 +296,9 @@ export default function AddEmployee () {
                         type='text'
                         name='age'
                         id='age'
-                        value='00 / DD-MM-YYYY'
+                        value={`${lastAadhaarData.dob}`}
+                        onChange={cantChange}
+                        placeholder='00 / DD-MM-YYYY'
                         disabled
                         className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
                         required
@@ -271,7 +321,8 @@ export default function AddEmployee () {
                         type='text'
                         name='account-number'
                         id='account-number'
-                        value='0000 0000 0000'
+                        value={lastAadhaarData.bank_account}
+                        onChange={cantChange}
                         disabled
                         className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
                         required
@@ -294,6 +345,8 @@ export default function AddEmployee () {
                         type='text'
                         name='mobile'
                         id='mobile'
+                        value={formData.mobile}
+                        onChange={handleChange}
                         autoComplete='family-name'
                         placeholder='10 Digits'
                         className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
@@ -314,6 +367,8 @@ export default function AddEmployee () {
                         type='text'
                         name='street-address'
                         id='street-address'
+                        value={formData.street}
+                        onChange={handleChange}
                         cols={20}
                         rows={3}
                         autoComplete='street-address'
@@ -336,6 +391,7 @@ export default function AddEmployee () {
                         name='location_id'
                         id='location_id'
                         value={profile.location_id.id}
+                        onChange={cantChange}
                         disabled
                         className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
                         required

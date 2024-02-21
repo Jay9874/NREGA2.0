@@ -16,9 +16,12 @@ exports.create = async (req, res) => {
       email: email,
       password: password
     })
-    if (error) res.status(500).json(error)
+    if (error) {
+      res.status(500).json(error)
+    }
     res.status(201).json(newUser.user)
   } catch (error) {
+    console.log(error)
     res.status(500).json(error)
   }
 }
