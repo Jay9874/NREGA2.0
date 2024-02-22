@@ -49,7 +49,7 @@ export const authStore = create((set, get) => ({
       .signInWithPassword({
         email: email,
         password: password,
-        options: { captchaToken }
+        options: { captchaToken: get().captchaToken }
       })
       .then(async authRes => {
         if (authRes.error) return toast.error(`${authRes.error.message}`)
