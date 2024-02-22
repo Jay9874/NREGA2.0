@@ -128,20 +128,24 @@ export default function SignInForm () {
           </div>
         </div>
         <div className='mt-4 mb-4 '>
-          <Link
+          <button
+            disabled={captchaToken ? false : true}
             onClick={() => handleDemo('jayprakashsharma225@gmail.com', 'admin')}
           >
             <div className='text-center relative rounded-full py-1 px-3 text-sm leading-6 text-gray-600 ring-1 ring-black/10 hover:ring-black/20'>
               as a Admin
             </div>
-          </Link>
+          </button>
         </div>
         <div className=''>
-          <Link onClick={() => handleDemo('jay.gdsc@gmail.com', 'worker')}>
+          <button
+            disabled={captchaToken ? false : true}
+            onClick={() => handleDemo('jay.gdsc@gmail.com', 'worker')}
+          >
             <div className='text-center relative rounded-full py-1 px-3 text-sm leading-6 text-gray-600 ring-1 ring-black/10 hover:ring-black/20'>
               as a Worker
             </div>
-          </Link>
+          </button>
         </div>
       </div>
     </div>
