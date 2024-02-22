@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { authStore } from '../../api/store/store'
 import HCaptcha from '@hcaptcha/react-hcaptcha'
 const sitekey = import.meta.env.VITE_CAPTCHA_SITE_KEY
+import { toast } from 'sonner'
 
 export default function SignInForm () {
   const { loginUser, demoLogin, setCaptchaToken, captchaToken } = authStore()
@@ -131,20 +132,18 @@ export default function SignInForm () {
           <button
             disabled={captchaToken ? false : true}
             onClick={() => handleDemo('jayprakashsharma225@gmail.com', 'admin')}
+            className='w-full text-center relative rounded-full py-1 px-3 text-sm leading-6 text-gray-600 ring-1 ring-black/10 hover:ring-black/20'
           >
-            <div className='text-center relative rounded-full py-1 px-3 text-sm leading-6 text-gray-600 ring-1 ring-black/10 hover:ring-black/20'>
-              as a Admin
-            </div>
+            as a Admin
           </button>
         </div>
         <div className=''>
           <button
             disabled={captchaToken ? false : true}
             onClick={() => handleDemo('jay.gdsc@gmail.com', 'worker')}
+            className='w-full text-center relative rounded-full py-1 px-3 text-sm leading-6 text-gray-600 ring-1 ring-black/10 hover:ring-black/20'
           >
-            <div className='text-center relative rounded-full py-1 px-3 text-sm leading-6 text-gray-600 ring-1 ring-black/10 hover:ring-black/20'>
-              as a Worker
-            </div>
+            as a Worker
           </button>
         </div>
       </div>
