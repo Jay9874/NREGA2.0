@@ -63,11 +63,12 @@ export const useAdminStore = create((set, get) => ({
       const toastID = toast.loading('Adding User...')
       const res = await fetch(url, options)
       toast.dismiss(toastID)
-      console.log(res)
-      // set({ lastAddedUser: data })
+      if (!res.ok) {
+        throw new Error(`${res.statusText}. Try after some time.`)
+      }
+      const { user } = res.json()
+      set({ lastAddedUser: user })
     } catch (err) {
-      toast.error(err.message)
-      console.log(err)
       throw err
     }
   },

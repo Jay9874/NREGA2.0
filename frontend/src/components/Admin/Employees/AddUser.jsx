@@ -26,7 +26,7 @@ export default function AddUser ({ onUserCreation }) {
       setLockInput(true)
       onUserCreation(newUser)
     } catch (error) {
-      toast.error(error.message)
+      return toast.error(error.message)
     }
   }
   return (
@@ -90,7 +90,7 @@ export default function AddUser ({ onUserCreation }) {
             />
           </div>
           <p className='mt-2 text-sm text-yellow-500' id='email-description'>
-            It will be used as password for logging in.
+            Atleast 8 characters long. It will be used as password for logging in.
           </p>
         </div>
         {/* Action buttons */}

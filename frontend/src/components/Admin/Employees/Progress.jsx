@@ -25,8 +25,10 @@ export default function Progress () {
   function onUserCreation (user) {
     steps[active].status = 'complete'
     steps[active + 1].status = 'current'
-    setNewUser(prev => ({ ...prev, fetchedDetails: user }))
-    setActive(1)
+    if (user) {
+      setNewUser(prev => ({ ...prev, fetchedDetails: user }))
+      setActive(1)
+    }
   }
   return (
     <>
