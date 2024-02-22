@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAdminStore } from '../../../api/store'
 import { FormLoading } from '../../Errors'
+import { Input } from '.'
 
 export default function AddEmployee () {
   const { lastAddedUser, lastAadhaarData, setAadhaarData, profile } =
@@ -18,7 +19,6 @@ export default function AddEmployee () {
     street: '',
     mobile: ''
   })
-  console.log(lastAddedUser)
   async function handleSubmit () {
     console.log('Cant change')
   }
@@ -35,6 +35,7 @@ export default function AddEmployee () {
     console.log('clicked aadhaar button')
     await setAadhaarData(aadhaarNo)
   }
+  console.log(lastAddedUser)
   useEffect(() => {
     if (lastAddedUser) {
       setLoading(true)
@@ -93,7 +94,7 @@ export default function AddEmployee () {
                 >
                   Aadhaar Number
                 </label>
-                <div className='mt-2 flex items-center rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md'>
+                <div className='mt-2 flex items-center rounded-md shadow-sm ring-1 ring-inset ring-gray-300 sm:max-w-md'>
                   <input
                     type='text'
                     name='aadhaar'
@@ -107,7 +108,7 @@ export default function AddEmployee () {
                   <button onClick={handleAadhaarClick}>
                     <p className='flex px-6'>
                       <ion-icon
-                        style={{ color: 'red' }}
+                        style={{ color: '#00D100' }}
                         size='large'
                         name='cloud-download-outline'
                       ></ion-icon>
@@ -132,28 +133,18 @@ export default function AddEmployee () {
               <div>
                 <div className='border-b border-gray-900/10 pb-12 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6'>
                   {/* MGNREGA ID */}
-                  <div className='sm:col-span-2 sm:col-start-1'>
-                    <label
-                      htmlFor='aadhaar'
-                      className='block text-sm font-medium leading-6 text-gray-900'
-                    >
-                      MGNREGA ID
-                    </label>
-                    <div className='mt-2'>
-                      <input
-                        type='text'
-                        name='aadhaar'
-                        id='aadhaar'
-                        value={formData.mgnrega_id}
-                        onChange={handleChange}
-                        className='block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                        placeholder='MG-00-00'
-                        required
-                      />
-                    </div>
-                  </div>
+                  <Input
+                    type='text'
+                    name='mgnrega_id'
+                    id='mgnrega_id'
+                    label='MGNREGA ID'
+                    value={formData.mgnrega_id}
+                    onChange={handleChange}
+                    colValue='sm:col-start-1 sm:col-span-3'
+                    placeholder='MG-00-00'
+                  />
                   {/* Profile Picture */}
-                  <div className='sm:col-start-1 sm:col-span-4'>
+                  <div className='sm:col-span-4'>
                     <label
                       htmlFor='cover-photo'
                       className='block text-sm font-medium leading-6 text-gray-900'
@@ -181,226 +172,122 @@ export default function AddEmployee () {
                           value={formData.photo}
                           onChange={handleChange}
                           className='block w-full text-sm text-slate-500
-                  file:mr-4 file:py-2 file:px-4
-                  file:rounded-full file:border-0
-                  file:text-sm file:font-semibold
-                 file:bg-violet-50 file:text-violet-700
-                   hover:file:bg-violet-100'
+                                      file:mr-4 file:py-2 file:px-4
+                                      file:rounded-full file:border-0
+                                      file:text-sm file:font-semibold
+                                    file:bg-violet-50 file:text-violet-700
+                                    hover:file:bg-violet-100'
                           required
                         />
                       </label>
                     </div>
                   </div>
-                  <div className='sm:col-start-1 sm:col-span-2'>
-                    <label
-                      htmlFor='first-name'
-                      className='block text-sm font-medium leading-6 text-gray-900'
-                    >
-                      First name
-                    </label>
-                    <div className='mt-2'>
-                      <input
-                        type='text'
-                        name='first-name'
-                        id='first-name'
-                        value={formData.first_name}
-                        onChange={handleChange}
-                        autoComplete='given-name'
-                        className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                        required
-                      />
-                    </div>
-                  </div>
+                  {/* First Name */}
+                  <Input
+                    type='text'
+                    name='first-name'
+                    id='first-name'
+                    value={formData.first_name}
+                    onChange={handleChange}
+                    label='First Name'
+                    colValue='col-start-1 col-span-full sm:col-span-2'
+                    disabled={false}
+                  />
                   {/* Last Name */}
-                  <div className='sm:col-span-2'>
-                    <label
-                      htmlFor='last-name'
-                      className='block text-sm font-medium leading-6 text-gray-900'
-                    >
-                      Last name
-                    </label>
-                    <div className='mt-2'>
-                      <input
-                        type='text'
-                        name='last-name'
-                        id='last-name'
-                        value={formData.last_name}
-                        onChange={handleChange}
-                        autoComplete='family-name'
-                        className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                        required
-                      />
-                    </div>
-                  </div>
+                  <Input
+                    id='last_name'
+                    label='Last Name'
+                    colValue='sm:col-span-2'
+                    type='text'
+                    name='last_name'
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    disabled={false}
+                  />
                   {/* Father's Name */}
-                  <div className='sm:col-span-2 sm:col-start-1'>
-                    <label
-                      htmlFor='father_name'
-                      className='block text-sm font-medium leading-6 text-gray-900'
-                    >
-                      Father's Name
-                    </label>
-                    <div className='mt-2'>
-                      <input
-                        type='text'
-                        name='father_name'
-                        id='father_name'
-                        value={lastAadhaarData.father_name}
-                        onChange={cantChange}
-                        placeholder="Worker's Father Name"
-                        disabled
-                        className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
-                        required
-                      />
-                      <p className='mt-2 invisible peer-disabled:visible text-gray-400 text-sm'>
-                        Prefilled with Aadhaar Data
-                      </p>
-                    </div>
-                  </div>
+                  <Input
+                    id='father_name'
+                    name='father_name'
+                    type='text'
+                    label="Father's Name"
+                    value={lastAadhaarData.father_name}
+                    onChange={cantChange}
+                    disabled={true}
+                    hint='Prefilled with Aadhaar Data'
+                    placeholder="Worker's Father Name"
+                    colValue='sm:col-span-2 sm:col-start-1'
+                  />
                   {/* Email address */}
-                  <div className='sm:col-span-3'>
-                    <label
-                      htmlFor='email'
-                      className='block text-sm font-medium leading-6 text-gray-900'
-                    >
-                      Email address
-                    </label>
-                    <div className='mt-2'>
-                      <input
-                        id='email'
-                        name='email'
-                        type='email'
-                        value={lastAddedUser.email}
-                        onChange={cantChange}
-                        disabled
-                        autoComplete='email'
-                        className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
-                        required
-                      />
-                      <p className='mt-2 invisible peer-disabled:visible text-gray-400 text-sm'>
-                        Prefilled with Worker's Data
-                      </p>
-                    </div>
-                  </div>
-
+                  <Input
+                    id='email'
+                    name='email'
+                    type='email'
+                    colValue='sm:col-span-3'
+                    label='Email address'
+                    value={lastAddedUser.email}
+                    onChange={cantChange}
+                    disabled={true}
+                    hint="Prefilled with Worker's Data"
+                  />
                   {/* Age/ DOB */}
-                  <div className='sm:col-span-2'>
-                    <label
-                      htmlFor='age'
-                      className='block text-sm font-medium leading-6 text-gray-900'
-                    >
-                      Age / DOB
-                    </label>
-                    <div className='mt-2'>
-                      <input
-                        type='text'
-                        name='age'
-                        id='age'
-                        value={`${lastAadhaarData.dob}`}
-                        onChange={cantChange}
-                        placeholder='00 / DD-MM-YYYY'
-                        disabled
-                        className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
-                        required
-                      />
-                      <p className='mt-2 invisible peer-disabled:visible text-gray-400 text-sm'>
-                        Prefilled with Aadhaar Data
-                      </p>
-                    </div>
-                  </div>
+                  <Input
+                    type='text'
+                    name='age'
+                    id='age'
+                    label='Age / DOB'
+                    colValue='sm:col-span-2'
+                    value={`${lastAadhaarData.dob}`}
+                    onChange={cantChange}
+                    placeholder='00 / DD-MM-YYYY'
+                    disabled={true}
+                    hint='Prefilled with Aadhaar Data'
+                  />
                   {/* Bank Account Number*/}
-                  <div className='sm:col-span-2'>
-                    <label
-                      htmlFor='account-number'
-                      className='block text-sm font-medium leading-6 text-gray-900'
-                    >
-                      Bank Account Number
-                    </label>
-                    <div className='mt-2'>
-                      <input
-                        type='text'
-                        name='account-number'
-                        id='account-number'
-                        value={lastAadhaarData.bank_account}
-                        onChange={cantChange}
-                        disabled
-                        className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
-                        required
-                      />
-                      <p className='mt-2 invisible peer-disabled:visible text-gray-400 text-sm'>
-                        Prefilled with Aadhaar Data
-                      </p>
-                    </div>
-                  </div>
+                  <Input
+                    type='text'
+                    name='account-number'
+                    id='account-number'
+                    value={lastAadhaarData.bank_account}
+                    onChange={cantChange}
+                    hint='Prefilled with Aadhaar Data'
+                    colValue='sm:col-span-3'
+                    label='Bank Account Number'
+                    disabled={true}
+                  />
                   {/* Mobile Number */}
-                  <div className='sm:col-span-2'>
-                    <label
-                      htmlFor='mobile'
-                      className='block text-sm font-medium leading-6 text-gray-900'
-                    >
-                      Mobile Number
-                    </label>
-                    <div className='mt-2'>
-                      <input
-                        type='text'
-                        name='mobile'
-                        id='mobile'
-                        value={formData.mobile}
-                        onChange={handleChange}
-                        autoComplete='family-name'
-                        placeholder='10 Digits'
-                        className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                        required
-                      />
-                    </div>
-                  </div>
+                  <Input
+                    type='text'
+                    name='mobile'
+                    id='mobile'
+                    value={formData.mobile}
+                    onChange={handleChange}
+                    label=' Mobile Number'
+                    colValue='sm:col-span-2'
+                    placeholder='10 Digits'
+                  />
                   {/* Street Address */}
-                  <div className='col-span-3'>
-                    <label
-                      htmlFor='street-address'
-                      className='block text-sm font-medium leading-6 text-gray-900'
-                    >
-                      Street address
-                    </label>
-                    <div className='mt-2'>
-                      <textarea
-                        type='text'
-                        name='street-address'
-                        id='street-address'
-                        value={formData.street}
-                        onChange={handleChange}
-                        cols={20}
-                        rows={3}
-                        autoComplete='street-address'
-                        className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                        required
-                      />
-                    </div>
-                  </div>
+                  <Input
+                    type='text'
+                    name='street-address'
+                    id='street-address'
+                    value={formData.street}
+                    onChange={handleChange}
+                    cols={20}
+                    rows={3}
+                    label='Street address'
+                    colValue='col-span-3'
+                    placeholder='234, Hadipur, Bihar 82.'
+                  />
                   {/* Location ID */}
-                  <div className='sm:col-span-2'>
-                    <label
-                      htmlFor='location_id'
-                      className='block text-sm font-medium leading-6 text-gray-900'
-                    >
-                      Location ID
-                    </label>
-                    <div className='mt-2'>
-                      <input
-                        type='text'
-                        name='location_id'
-                        id='location_id'
-                        value={profile.location_id.id}
-                        onChange={cantChange}
-                        disabled
-                        className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
-                        required
-                      />
-                      <p className='mt-2 invisible peer-disabled:visible text-gray-400 text-sm'>
-                        Autofilled with Sachiva Data
-                      </p>
-                    </div>
-                  </div>
+                  <Input
+                    colValue='col-start-1 col-span-full'
+                    label='Location ID'
+                    id='location_id'
+                    onChange={cantChange}
+                    name='location_id'
+                    disabled={true}
+                    value={profile.location_id.id}
+                  />
                 </div>
                 <div className='mt-6 flex items-center justify-end gap-x-6 pb-12'>
                   <Link

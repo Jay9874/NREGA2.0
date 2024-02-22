@@ -9,7 +9,7 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 // const client = new OAuth2Client(process.env.CLIENT_ID)
 // const jwt_secret = process.env.JWT_SECRET
 
-exports.create = async (req, res) => {
+exports.create = async (req, res, next) => {
   try {
     const { email, password } = req.body
     const { data: newUser, error } = await supabase.auth.signUp({
@@ -17,12 +17,18 @@ exports.create = async (req, res) => {
       password: password
     })
     if (error) {
-      res.status(500).json(error)
+      return res.status(500).send({
+        data: null,
+        error: error
+      })
     }
-    res.status(201).json(newUser.user)
+    return res.status(201).send({ data: newUser.user, error: null })
   } catch (error) {
-    console.log(error)
-    res.status(500).json(error)
+    return res.status(500).send({
+      data: null,
+      error: error
+    })
+    // next(error)
   }
 }
 
@@ -33,9 +39,22 @@ exports.fetchAadhaar = async (req, res) => {
       .from('aadhaar_db')
       .select(`*`)
       .eq('aadhaar_no', aadhaarNo)
-    if (error) res.status(500).json(error)
-    res.status(200).json(aadhaar)
-  } catch (error) {
-    res.status(500).json(error)
+    if (error) {
+      res.status(500)
+      res.send({
+        data: null,
+        error: error
+      })
+    }
+    res.status(200).send({
+      data: aadhaar,
+      error: null
+    })
+  } catch (err) {
+    res.status(500)
+    res.send({
+      data: null,
+      error: err
+    })
   }
 }

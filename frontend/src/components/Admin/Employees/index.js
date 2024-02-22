@@ -3,4 +3,5 @@ import ViewEmployees from './ViewEmployees'
 import EditEmployee from './EditEmployee'
 import Progress from './Progress'
 import AddUser from './AddUser'
-export { AddEmployee, ViewEmployees, EditEmployee, Progress, AddUser }
+import Input from './Input'
+export { AddEmployee, ViewEmployees, EditEmployee, Progress, AddUser, Input}

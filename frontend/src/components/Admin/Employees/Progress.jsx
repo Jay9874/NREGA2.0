@@ -76,7 +76,7 @@ export default function Progress () {
                   >
                     <div className='h-0.5 w-full bg-gray-200' />
                   </div>
-                  <button
+                  <div
                     className='relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-indigo-600 bg-white'
                     aria-current='step'
                   >
@@ -85,7 +85,7 @@ export default function Progress () {
                       aria-hidden='true'
                     />
                     <span className='sr-only'>{step.name}</span>
-                  </button>
+                  </div>
                 </>
               ) : (
                 <>
@@ -95,22 +95,13 @@ export default function Progress () {
                   >
                     <div className='h-0.5 w-full bg-gray-200' />
                   </div>
-                  <button
-                    onClick={() => {
-                      if (steps[active].status !== 'complete')
-                        steps[active].status = 'upcoming'
-                      setActive(stepIdx)
-                      if (steps[stepIdx].status !== 'complete')
-                        steps[stepIdx].status = 'current'
-                    }}
-                    className='group relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-gray-300 bg-white hover:border-gray-400'
-                  >
+                  <div className='group relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-gray-300 bg-white '>
                     <span
-                      className='h-2.5 w-2.5 rounded-full bg-transparent group-hover:bg-gray-300'
+                      className='h-2.5 w-2.5 rounded-full bg-transparent bg-gray-300'
                       aria-hidden='true'
                     />
                     <span className='sr-only'>{step.name}</span>
-                  </button>
+                  </div>
                 </>
               )}
             </li>

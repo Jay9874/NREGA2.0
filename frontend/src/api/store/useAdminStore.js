@@ -61,24 +61,17 @@ export const useAdminStore = create((set, get) => ({
     const url = `${get().base}/api/admin/create`
     try {
       const toastID = toast.loading('Adding User...')
-      const response = await fetch(url, options)
+      const res = await fetch(url, options)
       toast.dismiss(toastID)
-      console.log(response)
-      if (!response.ok) {
-        console.log(response)
-        throw new Error('Failed to add User')
-      }
-      toast.success('User Added Successfully')
-      const jsonResponse = await response.json()
-      console.log(jsonResponse)
-      set({ lastAddedUser: jsonResponse })
+      console.log(res)
+      // set({ lastAddedUser: data })
     } catch (err) {
       toast.error(err.message)
       console.log(err)
       throw err
     }
   },
-  setAadhaarData: async (aadhaarNo) => {
+  setAadhaarData: async aadhaarNo => {
     console.log('Aadhaar No:', aadhaarNo)
     const userData = {
       aadhaar: aadhaarNo
@@ -88,17 +81,13 @@ export const useAdminStore = create((set, get) => ({
       body: JSON.stringify(userData),
       headers: { 'Content-Type': 'application/json' }
     }
-    const url = `${get().base}/api/admin/fetchAadhaar`
+    const url = `${get().base}/api/admin/aadhaar`
     try {
       const toastID = toast.loading('Getting Aadhaar Data...')
-      const response = await fetch(url, options)
+      const { data, error } = await fetch(url, options)
       toast.dismiss(toastID)
-      if (!response.ok) {
-        throw new Error('Failed to add User')
-      }
-      toast.success('User Added Successfully')
-      const jsonResponse = await response.json()
-      set({ lastAadhaarData: jsonResponse })
+      console.log(data, error)
+      set({ lastAadhaarData: data })
     } catch (err) {
       toast.error(err.message)
       console.log('ERROR', err)
