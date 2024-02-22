@@ -3,7 +3,9 @@ import { supabase } from '..'
 import { toast } from 'sonner'
 export const authStore = create((set, get) => ({
   user: { email: '', type: '', id: '' },
+  captchaToken: '',
   loading: false,
+  setCaptchaToken: token => set({ captchaToken: token }),
   checkUser: async () => {
     await supabase.auth
       .getSession()
@@ -46,7 +48,8 @@ export const authStore = create((set, get) => ({
     await supabase.auth
       .signInWithPassword({
         email: email,
-        password: password
+        password: password,
+        options: { captchaToken }
       })
       .then(async authRes => {
         if (authRes.error) return toast.error(`${authRes.error.message}`)

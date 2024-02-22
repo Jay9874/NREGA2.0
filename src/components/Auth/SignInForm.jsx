@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { authStore } from '../../api/store/store'
+import HCaptcha from '@hcaptcha/react-hcaptcha'
+const sitekey = import.meta.env.VITE_CAPTCHA_SITE_KEY
 
 export default function SignInForm () {
+  const { loginUser, demoLogin, setCaptchaToken, captchaToken } = authStore()
   const navigate = useNavigate()
-  const { loginUser, demoLogin } = authStore()
-
+  const captcha = useRef()
   const [loginInfo, setLoginInfo] = useState({
     email: '',
     password: ''
@@ -13,7 +15,11 @@ export default function SignInForm () {
   function handleDemo (email, type) {
     demoLogin(email, type, navigate)
   }
-
+  function handleSubmit (e) {
+    e.preventDefault()
+    loginUser(loginInfo.email, loginInfo.password, navigate)
+    captcha.current.resetCaptcha()
+  }
   return (
     <div className='flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
       <div className='mx-auto w-full max-w-sm lg:w-96'>
@@ -25,13 +31,7 @@ export default function SignInForm () {
 
         <div className='mt-8'>
           <div className='mt-6'>
-            <form
-              className='space-y-6'
-              onSubmit={e => {
-                e.preventDefault()
-                loginUser(loginInfo.email, loginInfo.password, navigate)
-              }}
-            >
+            <form className='space-y-6' onSubmit={handleSubmit}>
               <div>
                 <label
                   htmlFor='email'
@@ -90,11 +90,22 @@ export default function SignInForm () {
                   </Link>
                 </div>
               </div>
-
+              <HCaptcha
+                ref={captcha}
+                sitekey={sitekey}
+                onVerify={token => {
+                  setCaptchaToken(token)
+                }}
+              />
               <div>
                 <button
                   type='submit'
-                  className='flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+                  disabled={captchaToken ? false : true}
+                  className={`flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm ${
+                    captchaToken
+                      ? 'hover:bg-indigo-700 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none focus:ring-2 '
+                      : 'cursor-not-allowed'
+                  }  `}
                 >
                   Sign in
                 </button>
