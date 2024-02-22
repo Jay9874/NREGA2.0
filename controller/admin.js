@@ -17,18 +17,12 @@ exports.create = async (req, res, next) => {
       password: password
     })
     if (error) {
-      return res.status(500).send({
-        data: null,
-        error: error
-      })
+      throw error
     }
-    return res.status(201).send({ data: newUser.user, error: null })
+    return res.status(201).json(newUser.user)
   } catch (error) {
-    return res.status(500).send({
-      data: null,
-      error: error
-    })
-    // next(error)
+    console.log('error in catch: ', error)
+    return next(error)
   }
 }
 
