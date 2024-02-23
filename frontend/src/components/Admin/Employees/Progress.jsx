@@ -6,8 +6,8 @@ import { useAdminStore } from '../../../api/store'
 
 // Helping functions
 var steps = [
-  { name: 'step 0', status: 'current' },
-  { name: 'step 1', status: 'upcoming' }
+  { name: 'step 0', status: 'upcoming' },
+  { name: 'step 1', status: 'current' }
 ]
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
@@ -15,7 +15,7 @@ function classNames (...classes) {
 
 export default function Progress () {
   const { lastAddedUesr } = useAdminStore()
-  const [active, setActive] = useState(0)
+  const [active, setActive] = useState(1)
   const [newUser, setNewUser] = useState({
     email: '',
     password: '',

@@ -18,7 +18,6 @@ export default function SignInForm () {
   function handleSubmit (e) {
     e.preventDefault()
     loginUser(loginInfo.email, loginInfo.password, navigate)
-    captcha.current.resetCaptcha()
   }
   return (
     <div className='flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
@@ -133,13 +132,6 @@ export default function SignInForm () {
           </Link>
         </div>
       </div>
-      <HCaptcha
-        ref={captcha}
-        sitekey={sitekey}
-        onVerify={token => {
-          setCaptchaToken(token)
-        }}
-      />
     </div>
   )
 }

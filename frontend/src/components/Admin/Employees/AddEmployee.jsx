@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAdminStore } from '../../../api/store'
 import { FormLoading } from '../../Errors'
+import { toast } from 'sonner'
 import { Input } from '.'
 
 export default function AddEmployee () {
@@ -19,24 +20,24 @@ export default function AddEmployee () {
     street: '',
     mobile: ''
   })
-  console.log(lastAddedUser)
   async function handleSubmit () {
     console.log('Cant change')
   }
   function handleChange (e) {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
-    console.log(name, value)
   }
   function cantChange (e) {
     e.preventDefault()
   }
   async function handleAadhaarClick (e) {
-    e.preventDefault()
-    console.log('clicked aadhaar button')
-    await setAadhaarData(aadhaarNo)
+    try {
+      e.preventDefault()
+      await setAadhaarData(aadhaarNo)
+    } catch (error) {
+      return toast.error(error)
+    }
   }
-  console.log(lastAddedUser)
   useEffect(() => {
     if (lastAddedUser) {
       setLoading(true)
@@ -107,13 +108,25 @@ export default function AddEmployee () {
                     placeholder='0000-0000-0000'
                     required
                   />
-                  <button onClick={handleAadhaarClick}>
+                  <button
+                    disabled={lastAadhaarData ? true : false}
+                    onClick={handleAadhaarClick}
+                    className={lastAadhaarData ? 'cursor-not-allowed' : ''}
+                  >
                     <p className='flex px-6'>
-                      <ion-icon
-                        style={{ color: '#00D100' }}
-                        size='large'
-                        name='cloud-download-outline'
-                      ></ion-icon>
+                      {lastAadhaarData ? (
+                        <ion-icon
+                          style={{ color: '#00D100' }}
+                          size='large'
+                          name='cloud-done-outline'
+                        ></ion-icon>
+                      ) : (
+                        <ion-icon
+                          style={{ color: '#00D100' }}
+                          size='large'
+                          name='cloud-download-outline'
+                        ></ion-icon>
+                      )}
                     </p>
                   </button>
                 </div>
@@ -212,7 +225,7 @@ export default function AddEmployee () {
                     name='father_name'
                     type='text'
                     label="Father's Name"
-                    value={lastAadhaarData.father_name}
+                    value={lastAadhaarData?.father_name}
                     onChange={cantChange}
                     disabled={true}
                     hint='Prefilled with Aadhaar Data'
@@ -226,7 +239,7 @@ export default function AddEmployee () {
                     type='email'
                     colValue='sm:col-span-3'
                     label='Email address'
-                    value={lastAddedUser.email}
+                    value={lastAddedUser?.email}
                     onChange={cantChange}
                     disabled={true}
                     hint="Prefilled with Worker's Data"
@@ -238,7 +251,7 @@ export default function AddEmployee () {
                     id='age'
                     label='Age / DOB'
                     colValue='sm:col-span-2'
-                    value={`${lastAadhaarData.dob}`}
+                    value={`${lastAadhaarData?.dob}`}
                     onChange={cantChange}
                     placeholder='00 / DD-MM-YYYY'
                     disabled={true}
@@ -249,7 +262,7 @@ export default function AddEmployee () {
                     type='text'
                     name='account-number'
                     id='account-number'
-                    value={lastAadhaarData.bank_account}
+                    value={lastAadhaarData?.bank_account}
                     onChange={cantChange}
                     hint='Prefilled with Aadhaar Data'
                     colValue='sm:col-span-3'
@@ -278,7 +291,7 @@ export default function AddEmployee () {
                     rows={3}
                     label='Street address'
                     colValue='col-span-3'
-                    placeholder='234, Hadipur, Bihar 82.'
+                    placeholder='000, XYZ, ABC 00.'
                   />
                   {/* Location ID */}
                   <Input
@@ -288,7 +301,7 @@ export default function AddEmployee () {
                     onChange={cantChange}
                     name='location_id'
                     disabled={true}
-                    value={profile.location_id.id}
+                    value={profile?.location_id.id}
                   />
                 </div>
                 <div className='mt-6 flex items-center justify-end gap-x-6 pb-12'>

@@ -9,7 +9,7 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 // const client = new OAuth2Client(process.env.CLIENT_ID)
 // const jwt_secret = process.env.JWT_SECRET
 
-exports.create = async (req, res, next) => {
+exports.create = async (req, res) => {
   try {
     const { email, password } = req.body
     const { data: newUser, error } = await supabase.auth.signUp({
@@ -19,36 +19,43 @@ exports.create = async (req, res, next) => {
     if (error) {
       throw error
     }
-    return res.status(201).json(newUser.user)
-  } catch (error) {
-    console.log('error in catch: ', error)
-    return next(error)
+    return res.status(201).send({
+      data: newUser.user,
+      error: null
+    })
+  } catch (err) {
+    return res.status(500).send({
+      data: null,
+      error: err
+    })
   }
 }
 
-exports.fetchAadhaar = async (req, res) => {
+exports.fetchAadhaar = async (req, res, next) => {
   try {
-    const { aadhaarNo } = req.body
-    const { data: aadhaar, error } = await supabase
+    const { aadhaar: aadhaarNo } = req.body
+    console.log(req.body)
+    const { data: aadhaar } = await supabase
       .from('aadhaar_db')
       .select(`*`)
       .eq('aadhaar_no', aadhaarNo)
-    if (error) {
-      res.status(500)
-      res.send({
-        data: null,
-        error: error
-      })
+    if (error) throw error
+    if (aadhaar.length === 0) {
+      throw new Error('No data found for Aadhaar Number.')
+    } else {
+      const { data: workerExist, error } = await supabase
+        .from('worker')
+        .select('aadhar_no')
+        .eq('aadhar_no', aadhaarNo)
+      if (error) throw error
+      if (workerExist.length !== 0)
+        throw new Error('Worker all ready exists with this Aadhaar.')
     }
-    res.status(200).send({
+    return res.status(201).send({
       data: aadhaar,
       error: null
     })
   } catch (err) {
-    res.status(500)
-    res.send({
-      data: null,
-      error: err
-    })
+    return res.status(404).send({ data: null, error: err.message })
   }
 }

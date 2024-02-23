@@ -14,10 +14,10 @@ export const useAdminStore = create((set, get) => ({
   user: { email: '', type: '', id: '' },
   dataLoaded: false,
   base: NODE_ENV === 'development' ? 'http://localhost:8080' : '',
-  profile: {},
-  employees: [],
-  lastAddedUser: {},
-  lastAadhaarData: {},
+  profile: null,
+  employees: null,
+  lastAddedUser: null,
+  lastAadhaarData: null,
   setDataLoaded: loading => set({ dataLoaded: loading }),
   setProfile: async navigate => {
     try {
@@ -62,18 +62,17 @@ export const useAdminStore = create((set, get) => ({
     try {
       const toastID = toast.loading('Adding User...')
       const res = await fetch(url, options)
+      const { data, error } = await res.json()
       toast.dismiss(toastID)
-      if (!res.ok) {
-        throw new Error(`${res.statusText}. Try after some time.`)
+      if (error) {
+        throw error
       }
-      const { user } = res.json()
-      set({ lastAddedUser: user })
+      set({ lastAddedUser: data })
     } catch (err) {
       throw err
     }
   },
   setAadhaarData: async aadhaarNo => {
-    console.log('Aadhaar No:', aadhaarNo)
     const userData = {
       aadhaar: aadhaarNo
     }
@@ -85,13 +84,14 @@ export const useAdminStore = create((set, get) => ({
     const url = `${get().base}/api/admin/aadhaar`
     try {
       const toastID = toast.loading('Getting Aadhaar Data...')
-      const { data, error } = await fetch(url, options)
+      const res = await fetch(url, options)
+      const { data, error } = await res.json()
       toast.dismiss(toastID)
-      console.log(data, error)
+      if (error) {
+        throw error
+      }
       set({ lastAadhaarData: data })
     } catch (err) {
-      toast.error(err.message)
-      console.log('ERROR', err)
       throw err
     }
   },

@@ -48,8 +48,7 @@ export const authStore = create((set, get) => ({
     await supabase.auth
       .signInWithPassword({
         email: email,
-        password: password,
-        options: { captchaToken }
+        password: password
       })
       .then(async authRes => {
         if (authRes.error) return toast.error(`${authRes.error.message}`)
