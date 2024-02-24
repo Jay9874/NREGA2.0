@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAdminStore } from '../../../api/store'
 import { FormLoading } from '../../Errors'
+import { calculateAge } from '../../../utils/dataFormating'
 import { toast } from 'sonner'
 import { Input } from '.'
 
@@ -239,7 +240,8 @@ export default function AddEmployee () {
                     type='email'
                     colValue='sm:col-span-3'
                     label='Email address'
-                    value={lastAddedUser?.email}
+                    // value={lastAddedUser?.email}
+                    value='jay@gmail.com'
                     onChange={cantChange}
                     disabled={true}
                     hint="Prefilled with Worker's Data"
@@ -251,7 +253,7 @@ export default function AddEmployee () {
                     id='age'
                     label='Age / DOB'
                     colValue='sm:col-span-2'
-                    value={`${lastAadhaarData?.dob}`}
+                    value={`${lastAadhaarData?.age} / ${lastAadhaarData?.dob}`}
                     onChange={cantChange}
                     placeholder='00 / DD-MM-YYYY'
                     disabled={true}
@@ -262,7 +264,7 @@ export default function AddEmployee () {
                     type='text'
                     name='account-number'
                     id='account-number'
-                    value={lastAadhaarData?.bank_account}
+                    value={lastAadhaarData?.account_no}
                     onChange={cantChange}
                     hint='Prefilled with Aadhaar Data'
                     colValue='sm:col-span-3'

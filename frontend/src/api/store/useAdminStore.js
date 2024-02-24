@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { supabase } from '..'
+import { calculateAge } from '../../utils/dataFormating'
 import { toast } from 'sonner'
 import {
   timestampToDate,
@@ -67,6 +68,7 @@ export const useAdminStore = create((set, get) => ({
       if (error) {
         throw error
       }
+      console.log('user found: ', data)
       set({ lastAddedUser: data })
     } catch (err) {
       throw err
@@ -90,7 +92,8 @@ export const useAdminStore = create((set, get) => ({
       if (error) {
         throw error
       }
-      set({ lastAadhaarData: data })
+      const updatedData = { ...data, age: calculateAge(data.dob) }
+      set({ lastAadhaarData: updatedData })
     } catch (err) {
       throw err
     }

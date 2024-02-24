@@ -57,8 +57,15 @@ function formatLocationShort (locationObj) {
   return `${locationObj.panchayat}, ${locationObj.block}`
 }
 function calculateAge (birthday) {
-  const ageDifMs = Date.now() - birthday.getTime()
+  const newBirthday = new Date(birthday)
+  const ageDifMs = Date.now() - newBirthday
   const ageDate = new Date(ageDifMs) // miliseconds from epoch
   return Math.abs(ageDate.getUTCFullYear() - 1970)
 }
-export { timestampToDate, jobDuration, formatLocation, formatLocationShort, calculateAge }
+export {
+  timestampToDate,
+  jobDuration,
+  formatLocation,
+  formatLocationShort,
+  calculateAge
+}

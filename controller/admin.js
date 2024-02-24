@@ -12,6 +12,12 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 exports.create = async (req, res) => {
   try {
     const { email, password } = req.body
+    const { data: user, error: err } = await supabase
+      .select('email')
+      .from('profiles')
+      .eq('email', email)
+    if (err) throw err
+    if (user !== 0) throw new Error('A user with this email already exists.')
     const { data: newUser, error } = await supabase.auth.signUp({
       email: email,
       password: password
@@ -34,8 +40,7 @@ exports.create = async (req, res) => {
 exports.fetchAadhaar = async (req, res, next) => {
   try {
     const { aadhaar: aadhaarNo } = req.body
-    console.log(req.body)
-    const { data: aadhaar } = await supabase
+    const { data: aadhaar, error } = await supabase
       .from('aadhaar_db')
       .select(`*`)
       .eq('aadhaar_no', aadhaarNo)
@@ -52,7 +57,7 @@ exports.fetchAadhaar = async (req, res, next) => {
         throw new Error('Worker all ready exists with this Aadhaar.')
     }
     return res.status(201).send({
-      data: aadhaar,
+      data: aadhaar[0],
       error: null
     })
   } catch (err) {
