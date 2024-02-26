@@ -1,23 +1,18 @@
-// const User = require('../models/user')
-// const bcrypt = require('bcrypt')
-// const jwt = require('jsonwebtoken')
 const { createClient } = require('@supabase/supabase-js')
 const supabaseUrl = process.env.VITE_SUPABASE_URL
 const supabaseKey = process.env.VITE_SUPABASE_KEY
 const supabase = createClient(supabaseUrl, supabaseKey)
-// const { OAuth2Client } = require('google-auth-library')
-// const client = new OAuth2Client(process.env.CLIENT_ID)
-// const jwt_secret = process.env.JWT_SECRET
 
 exports.create = async (req, res) => {
   try {
     const { email, password } = req.body
     const { data: user, error: err } = await supabase
-      .select('email')
       .from('profiles')
+      .select('*')
       .eq('email', email)
     if (err) throw err
-    if (user !== 0) throw new Error('A user with this email already exists.')
+    if (user.length !== 0)
+      throw new Error('A user with this email already exists.')
     const { data: newUser, error } = await supabase.auth.signUp({
       email: email,
       password: password
@@ -30,6 +25,7 @@ exports.create = async (req, res) => {
       error: null
     })
   } catch (err) {
+    console.log(err)
     return res.status(500).send({
       data: null,
       error: err

@@ -6,16 +6,16 @@ import { useAdminStore } from '../../../api/store'
 
 // Helping functions
 var steps = [
-  { name: 'step 0', status: 'upcoming' },
-  { name: 'step 1', status: 'current' }
+  { name: 'step 0', status: 'current' },
+  { name: 'step 1', status: 'upcoming' }
 ]
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 export default function Progress () {
-  const { lastAddedUesr } = useAdminStore()
-  const [active, setActive] = useState(1)
+  const { lastAddedUser } = useAdminStore()
+  const [active, setActive] = useState(0)
   const [newUser, setNewUser] = useState({
     email: '',
     password: '',
@@ -99,7 +99,7 @@ export default function Progress () {
                   </div>
                   <div className='group relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-gray-300 bg-white '>
                     <span
-                      className='h-2.5 w-2.5 rounded-full bg-transparent bg-gray-300'
+                      className='h-2.5 w-2.5 rounded-full bg-gray-300'
                       aria-hidden='true'
                     />
                     <span className='sr-only'>{step.name}</span>
