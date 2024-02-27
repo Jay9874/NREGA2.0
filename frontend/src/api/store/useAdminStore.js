@@ -2,13 +2,6 @@ import { create } from 'zustand'
 import { supabase } from '..'
 import { calculateAge } from '../../utils/dataFormating'
 import { toast } from 'sonner'
-import {
-  timestampToDate,
-  jobDuration,
-  formatLocation,
-  formatLocationShort
-} from '../../utils/dataFormating'
-import { authStore } from '.'
 const NODE_ENV = import.meta.env.MODE
 
 export const useAdminStore = create((set, get) => ({
