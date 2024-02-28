@@ -62,6 +62,7 @@ export const useAdminStore = create((set, get) => ({
         throw error
       }
       console.log('user found: ', data)
+      localStorage.setItem('lastAddedUser', JSON.stringify(data))
       set({ lastAddedUser: data })
     } catch (err) {
       throw err
@@ -86,6 +87,7 @@ export const useAdminStore = create((set, get) => ({
         throw error
       }
       const updatedData = { ...data, age: calculateAge(data.dob) }
+      localStorage.setItem('lastAadhaarData', JSON.stringify(updatedData))
       set({ lastAadhaarData: updatedData })
     } catch (err) {
       throw err
