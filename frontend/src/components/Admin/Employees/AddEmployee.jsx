@@ -77,7 +77,6 @@ export default function AddEmployee () {
                       name='uuid'
                       id='uuid'
                       value={lastAddedUser.id}
-                      // value='ee9f435c-e436-462d-bbaf-5f3253dadafe'
                       onChange={cantChange}
                       disabled
                       className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm sm:leading-6'
