@@ -49,7 +49,7 @@ export default function Attendance () {
   }
   // looping to fill child filters
   async function getLandmarkData (id, value) {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       try {
         filterLoop[id].landmarkValue = value
         filterLoop[id].callback = filterLoopcallback[id].callback
@@ -62,8 +62,8 @@ export default function Attendance () {
         for (let i = id; i < 3; i++) {
           const landmarkValue =
             i === id ? value : filterLoop[i - 1].landmarkValue
-          const newLocations = await filterData(i, landmarkValue)
-          const fetchedLandmarkData = await Promise.all(
+          const newLocations = filterData(i, landmarkValue)
+          const fetchedLandmarkData = Promise.all(
             newLocations.map(location => location[filterLoop[i].toFetch])
           )
           filterLoopcallback[i].callback([...new Set(fetchedLandmarkData)])
@@ -85,11 +85,11 @@ export default function Attendance () {
 
   // Initialize filter
   async function initFilter () {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       try {
         const fetchedStates = locations.map(location => location.state)
         setStates([...new Set(fetchedStates)])
-        var result = await getLandmarkData(0, fetchedStates[0])
+        var result = getLandmarkData(0, fetchedStates[0])
         result.state = fetchedStates[0]
         setSelected(result)
         setFilterInitialized(true)

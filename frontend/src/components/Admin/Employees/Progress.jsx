@@ -3,33 +3,40 @@ import { Link } from 'react-router-dom'
 import { AddEmployee, AddUser } from '.'
 import { useState } from 'react'
 import { useAdminStore } from '../../../api/store'
+import { useEffect } from 'react'
 
 // Helping functions
 var steps = [
   { name: 'step 0', status: 'current' },
-  { name: 'step 1', status: 'upcoming' }
+  { name: 'step 1', status: 'upcoming' },
 ]
-function classNames (...classes) {
+function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Progress () {
-  const { lastAddedUser } = useAdminStore()
+export default function Progress() {
+  const { checkLastUser, checkLastAadhaar } = useAdminStore()
   const [active, setActive] = useState(0)
-  const [newUser, setNewUser] = useState({
-    email: '',
-    password: '',
-    fetchedDetails: null
-  })
 
-  function onUserCreation (user) {
+  function onUserCreation(user) {
     steps[active].status = 'complete'
     steps[active + 1].status = 'current'
     if (user) {
-      setNewUser(prev => ({ ...prev, fetchedDetails: user }))
       setActive(1)
     }
   }
+  function setProgress() {
+    const isUser = checkLastUser()
+    checkLastAadhaar()
+    if (isUser) {
+      setActive(1)
+      steps[0].status = 'complete'
+      steps[1].status = 'current'
+    }
+  }
+  useEffect(() => {
+    setProgress()
+  }, [])
   return (
     <>
       {/* Bread crumbing to last url */}

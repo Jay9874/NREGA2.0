@@ -1,61 +1,68 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAdminStore } from '../../../api/store'
 import { FormLoading } from '../../Errors'
 import { toast } from 'sonner'
 import { Input } from '.'
 
-export default function AddEmployee () {
-  const { lastAddedUser, lastAadhaarData, setAadhaarData, profile } =
-    useAdminStore()
-  const [aadhaarNo, setAadhaarNo] = useState('')
-  const [loading, setLoading] = useState(false)
+export default function AddEmployee() {
+  const navigate = useNavigate();
+  const {
+    lastAddedUser,
+    lastAddedAadhaar,
+    setAadhaarData,
+    profile,
+    loading,
+    createEmployee
+  } = useAdminStore()
+
+  const [aadhaarNo, setAadhaarNo] = useState(
+    lastAddedAadhaar ? lastAddedAadhaar.aadhaar_no : ''
+  )
   const [formData, setFormData] = useState({
-    ...lastAadhaarData,
     first_name: '',
     last_name: '',
     mgnrega_id: '',
     address: '',
     photo: '',
     street: '',
-    mobile: ''
+    mobile: '',
+    age: lastAddedAadhaar ? lastAddedAadhaar.age : '',
+    dob: lastAddedAadhaar ? lastAddedAadhaar.dob : '',
+    father_name: lastAddedAadhaar ? lastAddedAadhaar.father_name : '',
+    bank_account_no: lastAddedAadhaar ? lastAddedAadhaar.bank_account_no : '',
   })
-  async function handleSubmit () {
-    console.log('Cant change')
+  async function handleSubmit() {
+    await createEmployee(formData, navigate)
   }
-  function handleChange (e) {
+  function handleChange(e) {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    setFormData((prev) => ({ ...prev, [name]: value }))
   }
-  function cantChange (e) {
+  function cantChange(e) {
     e.preventDefault()
   }
-  async function handleAadhaarClick (e) {
-    try {
+  async function handleAadhaarClick(e) {
       e.preventDefault()
-      await setAadhaarData(aadhaarNo)
-    } catch (error) {
-      return toast.error(error)
-    }
-  }
-  useEffect(() => {
-    if (lastAddedUser) {
-      setLoading(true)
-      ;async () => {
-        console.log('hello')
+      const isNum = /^\d+$/.test(aadhaarNo)
+      if (aadhaarNo.length != 12 || !isNum) {
+        toast.warning('Aadhaar number should be 12 digits.')
+        return null
       }
-      setLoading(false)
-    }
-  }, [aadhaarNo])
-  return (
+      const data = await setAadhaarData(aadhaarNo)
+      setFormData((prev) => ({ ...prev, ...data }))
+  }
+  return loading ? (
+    <div>loading...</div>
+  ) : (
     <main>
       {/* The Form with all the fields. */}
       <div className='px-6'>
         <h2 className='text-base font-semibold leading-7 text-gray-900'>
-          Fill New Worker's Details
+          Fill New Worker Details
         </h2>
         <p className='mt-1 text-sm leading-6 text-gray-600'>
-          This information will be will be used only for this system.{' '}
+          Informations will be will be used only for this platform.{' '}
           <strong>All fields are required.</strong>
         </p>
       </div>
@@ -102,30 +109,22 @@ export default function AddEmployee () {
                     name='aadhaar'
                     id='aadhaar'
                     value={aadhaarNo}
-                    onChange={e => setAadhaarNo(e.target.value)}
+                    onChange={(e) => setAadhaarNo(e.target.value)}
                     className='block w-full border-gray-300 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                     placeholder='0000-0000-0000'
                     required
                   />
                   <button
-                    disabled={lastAadhaarData ? true : false}
+                    disabled={loading ? true : false}
                     onClick={handleAadhaarClick}
-                    className={lastAadhaarData ? 'cursor-not-allowed' : ''}
+                    className={loading ? 'cursor-not-allowed' : ''}
                   >
                     <p className='flex px-6'>
-                      {lastAadhaarData ? (
-                        <ion-icon
-                          style={{ color: '#00D100' }}
-                          size='large'
-                          name='cloud-done-outline'
-                        ></ion-icon>
-                      ) : (
-                        <ion-icon
-                          style={{ color: '#00D100' }}
-                          size='large'
-                          name='cloud-download-outline'
-                        ></ion-icon>
-                      )}
+                      <ion-icon
+                        style={{ color: '#00D100' }}
+                        size='large'
+                        name='cloud-download-outline'
+                      ></ion-icon>
                     </p>
                   </button>
                 </div>
@@ -224,11 +223,10 @@ export default function AddEmployee () {
                     name='father_name'
                     type='text'
                     label="Father's Name"
-                    value={lastAadhaarData?.father_name}
+                    value={formData.father_name}
                     onChange={cantChange}
                     disabled={true}
                     hint='Prefilled with Aadhaar Data'
-                    placeholder="Worker's Father Name"
                     colValue='sm:col-span-2 sm:col-start-1'
                   />
                   {/* Email address */}
@@ -238,8 +236,7 @@ export default function AddEmployee () {
                     type='email'
                     colValue='sm:col-span-3'
                     label='Email address'
-                    // value={lastAddedUser?.email}
-                    value='jay@gmail.com'
+                    value={lastAddedUser?.email}
                     onChange={cantChange}
                     disabled={true}
                     hint="Prefilled with Worker's Data"
@@ -251,7 +248,7 @@ export default function AddEmployee () {
                     id='age'
                     label='Age / DOB'
                     colValue='sm:col-span-2'
-                    value={`${lastAadhaarData?.age} / ${lastAadhaarData?.dob}`}
+                    value={`${formData.age} / ${formData.dob}`}
                     onChange={cantChange}
                     placeholder='00 / DD-MM-YYYY'
                     disabled={true}
@@ -262,7 +259,7 @@ export default function AddEmployee () {
                     type='text'
                     name='account-number'
                     id='account-number'
-                    value={lastAadhaarData?.account_no}
+                    value={formData.bank_account_no}
                     onChange={cantChange}
                     hint='Prefilled with Aadhaar Data'
                     colValue='sm:col-span-3'
@@ -301,18 +298,20 @@ export default function AddEmployee () {
                     onChange={cantChange}
                     name='location_id'
                     disabled={true}
+                    hint='Prefilled with Sachiv Location'
                     value={profile?.location_id.id}
                   />
                 </div>
                 <div className='mt-6 flex items-center justify-end gap-x-6 pb-12'>
                   <Link
                     to='..'
-                    className='text-sm font-semibold leading-6 text-gray-900'
+                    className='rounded-md text-sm font-semibold leading-6 px-3 py-2 text-gray-900 hover:bg-gray-200'
                   >
                     Cancel
                   </Link>
                   <button
                     type='submit'
+                    disabled={loading}
                     className='rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
                   >
                     Save

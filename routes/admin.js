@@ -1,7 +1,7 @@
 // Requiring all the packages
 const express = require('express')
 const router = express.Router()
-const { create, fetchAadhaar } = require('../controller/admin')
+const { createUser, fetchAadhaar, createEmployee } = require('../controller/admin')
 
 // Defining the routes
 /**
@@ -9,7 +9,14 @@ const { create, fetchAadhaar } = require('../controller/admin')
  * @description register user
  * @access public
  **/
-router.post('/create', create)
+router.post('/createuser', createUser)
+
+/**
+ * @route POST api/admin/createemp
+ * @description Create new employee
+ * @access public
+ **/
+router.post('/createemp', createEmployee)
 
 /**
  * @route POST api/auth/sigin

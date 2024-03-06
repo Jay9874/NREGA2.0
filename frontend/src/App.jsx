@@ -15,7 +15,6 @@ import {
   Employee,
   Payout,
   AdminProfile,
-  AddEmployee
 } from './components/Admin'
 
 // Worker Components
@@ -24,14 +23,14 @@ import {
   Jobs,
   Payment,
   Attendance,
-  Dashboard
+  Dashboard,
 } from './components/Worker'
 
 // Auth components
 import { SignInForm, ForgotPass, ResetPass } from './components/Auth'
 
-export default function App () {
-  const { checkUser, user } = authStore()
+export default function App() {
+  const { checkUser } = authStore()
 
   useEffect(() => {
     checkUser()

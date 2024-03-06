@@ -3,18 +3,18 @@ import { Link } from 'react-router-dom'
 import { useAdminStore } from '../../../api/store'
 import { toast } from 'sonner'
 
-export default function AddUser ({ onUserCreation }) {
-  const { addUser } = useAdminStore()
+export default function AddUser({ onUserCreation }) {
+  const { addUser, loading } = useAdminStore()
   const [user, setUser] = useState({
     email: '',
-    password: ''
+    password: '',
   })
   const [lockInput, setLockInput] = useState(false)
-  function handleChange (e) {
+  function handleChange(e) {
     const { name, value } = e.target
-    setUser(prev => ({ ...prev, [name]: value }))
+    setUser((prev) => ({ ...prev, [name]: value }))
   }
-  async function handleSubmit (e) {
+  async function handleSubmit(e) {
     try {
       e.preventDefault()
       if (!user.email) {
@@ -90,20 +90,27 @@ export default function AddUser ({ onUserCreation }) {
             />
           </div>
           <p className='mt-2 text-sm text-yellow-500' id='email-description'>
-            Atleast 8 characters long. It will be used as password for logging in.
+            Atleast 8 characters long. It will be used as password for logging
+            in.
           </p>
         </div>
         {/* Action buttons */}
         <div className='mt-6 flex items-center justify-end gap-x-6 pb-12'>
           <Link
             to='..'
-            className='text-sm font-semibold leading-6 text-gray-900'
+            className='rounded-md text-sm font-semibold leading-6 px-3 py-2 text-gray-900 hover:bg-gray-200'
           >
             Cancel
           </Link>
           <button
             type='submit'
-            className='rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+            disabled={loading}
+            className={`rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold
+             text-white shadow-sm ${
+               !loading
+                 ? 'hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+                 : 'cursor-not-allowed'
+             } `}
           >
             Continue
           </button>
