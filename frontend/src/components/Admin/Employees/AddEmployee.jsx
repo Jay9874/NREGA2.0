@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAdminStore } from '../../../api/store'
 import { FormLoading } from '../../Errors'
@@ -6,34 +6,42 @@ import { toast } from 'sonner'
 import { Input } from '.'
 
 export default function AddEmployee() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const fileInputRef = useRef(null)
   const {
     lastAddedUser,
     lastAddedAadhaar,
     setAadhaarData,
     profile,
     loading,
-    createEmployee
+    createEmployee,
+    uploadFile,
   } = useAdminStore()
 
   const [aadhaarNo, setAadhaarNo] = useState(
     lastAddedAadhaar ? lastAddedAadhaar.aadhaar_no : ''
   )
+  const [preview, setPreview] = useState(null)
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
+    id: lastAddedUser.id,
     mgnrega_id: '',
     address: '',
-    photo: '',
-    street: '',
+    photo: null,
     mobile: '',
+    email: lastAddedUser.email,
     age: lastAddedAadhaar ? lastAddedAadhaar.age : '',
     dob: lastAddedAadhaar ? lastAddedAadhaar.dob : '',
     father_name: lastAddedAadhaar ? lastAddedAadhaar.father_name : '',
     bank_account_no: lastAddedAadhaar ? lastAddedAadhaar.bank_account_no : '',
   })
   async function handleSubmit() {
-    await createEmployee(formData, navigate)
+    try {
+      await createEmployee(formData, navigate)
+    } catch (err) {
+      return toast.error(err)
+    }
   }
   function handleChange(e) {
     const { name, value } = e.target
@@ -43,15 +51,44 @@ export default function AddEmployee() {
     e.preventDefault()
   }
   async function handleAadhaarClick(e) {
-      e.preventDefault()
-      const isNum = /^\d+$/.test(aadhaarNo)
-      if (aadhaarNo.length != 12 || !isNum) {
-        toast.warning('Aadhaar number should be 12 digits.')
-        return null
-      }
-      const data = await setAadhaarData(aadhaarNo)
-      setFormData((prev) => ({ ...prev, ...data }))
+    e.preventDefault()
+    const isNum = /^\d+$/.test(aadhaarNo)
+    if (aadhaarNo.length != 12 || !isNum) {
+      toast.warning('Aadhaar number should be 12 digits.')
+      return null
+    }
+    const data = await setAadhaarData(aadhaarNo)
+    setFormData((prev) => ({ ...prev, ...data }))
   }
+
+  // control the file change
+  function handleFileChange(event) {
+    const file = event.target.files[0]
+    if (file && file.type.substring(0, 5) === 'image') {
+      setFormData((prev) => ({
+        ...prev,
+        photo: file,
+      }))
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        photo: null,
+      }))
+    }
+  }
+  useEffect(() => {
+    if (formData.photo) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreview(reader.result)
+      }
+      //reader.readAsArrayBuffer <-  arraybuffer
+      reader.readAsDataURL(formData.photo) //represented as a base64string
+    } else {
+      setPreview(null)
+    }
+  }, [formData.photo])
+
   return loading ? (
     <div>loading...</div>
   ) : (
@@ -83,7 +120,7 @@ export default function AddEmployee() {
                       type='text'
                       name='uuid'
                       id='uuid'
-                      value={lastAddedUser.id}
+                      value={formData.id}
                       onChange={cantChange}
                       disabled
                       className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm sm:leading-6'
@@ -106,7 +143,7 @@ export default function AddEmployee() {
                 <div className='mt-2 flex items-center rounded-md shadow-sm ring-1 ring-inset ring-gray-300 sm:max-w-md'>
                   <input
                     type='text'
-                    name='aadhaar'
+                    name='aadhar_no'
                     id='aadhaar'
                     value={aadhaarNo}
                     onChange={(e) => setAadhaarNo(e.target.value)}
@@ -167,13 +204,21 @@ export default function AddEmployee() {
                     <div className='mt-2 flex items-center gap-6'>
                       <div className='shrink-0 '>
                         <span className='inline-block h-14 w-14 overflow-hidden rounded-full bg-gray-100'>
-                          <svg
-                            className='h-full w-full text-gray-300'
-                            fill='currentColor'
-                            viewBox='0 0 24 24'
-                          >
-                            <path d='M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z' />
-                          </svg>
+                          {formData.photo ? (
+                            <img
+                              src={preview}
+                              alt='photo'
+                              className='h-full w-full'
+                            />
+                          ) : (
+                            <svg
+                              className='h-full w-full text-gray-300'
+                              fill='currentColor'
+                              viewBox='0 0 24 24'
+                            >
+                              <path d='M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z' />
+                            </svg>
+                          )}
                         </span>
                       </div>
                       <label className='block'>
@@ -182,8 +227,9 @@ export default function AddEmployee() {
                           type='file'
                           name='photo'
                           id='photo'
-                          value={formData.photo}
-                          onChange={handleChange}
+                          accept='images/*'
+                          ref={fileInputRef}
+                          onChange={handleFileChange}
                           className='block w-full text-sm text-slate-500
                                       file:mr-4 file:py-2 file:px-4
                                       file:rounded-full file:border-0
@@ -198,7 +244,7 @@ export default function AddEmployee() {
                   {/* First Name */}
                   <Input
                     type='text'
-                    name='first-name'
+                    name='first_name'
                     id='first-name'
                     value={formData.first_name}
                     onChange={handleChange}
@@ -236,7 +282,7 @@ export default function AddEmployee() {
                     type='email'
                     colValue='sm:col-span-3'
                     label='Email address'
-                    value={lastAddedUser?.email}
+                    value={formData.email}
                     onChange={cantChange}
                     disabled={true}
                     hint="Prefilled with Worker's Data"
@@ -277,26 +323,13 @@ export default function AddEmployee() {
                     colValue='sm:col-span-2'
                     placeholder='10 Digits'
                   />
-                  {/* Street Address */}
-                  <Input
-                    type='text'
-                    name='street-address'
-                    id='street-address'
-                    value={formData.street}
-                    onChange={handleChange}
-                    cols={20}
-                    rows={3}
-                    label='Street address'
-                    colValue='col-span-3'
-                    placeholder='000, XYZ, ABC 00.'
-                  />
                   {/* Location ID */}
                   <Input
                     colValue='col-start-1 col-span-full'
                     label='Location ID'
                     id='location_id'
                     onChange={cantChange}
-                    name='location_id'
+                    name='address'
                     disabled={true}
                     hint='Prefilled with Sachiv Location'
                     value={profile?.location_id.id}
@@ -312,7 +345,12 @@ export default function AddEmployee() {
                   <button
                     type='submit'
                     disabled={loading}
-                    className='rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+                    className={`rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold
+                              text-white shadow-sm ${
+                                !loading
+                                  ? 'hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+                                  : 'cursor-not-allowed'
+                              } `}
                   >
                     Save
                   </button>

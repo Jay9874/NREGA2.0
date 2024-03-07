@@ -121,10 +121,8 @@ export const useAdminStore = create((set, get) => ({
     const res = await fetch(url, options)
     const { data, error } = await res.json()
     toast.dismiss(toastID)
-    if (error) {
-      set({ loading: false })
-      throw error
-    }
+    set({ loading: false })
+    if (error) return toast.error(error.message)
     toast.success('Employee added successfully')
     navigate('/admin/employee')
     return data
