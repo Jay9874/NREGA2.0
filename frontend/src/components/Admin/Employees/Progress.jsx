@@ -15,7 +15,7 @@ function classNames(...classes) {
 }
 
 export default function Progress() {
-  const { checkLastUser, checkLastAadhaar } = useAdminStore()
+  const { checkLastUser, checkLastAadhaar, lastAddedUser } = useAdminStore()
   const [active, setActive] = useState(0)
 
   function onUserCreation(user) {
@@ -35,8 +35,8 @@ export default function Progress() {
     }
   }
   useEffect(() => {
-    setProgress()
-  }, [])
+    if (lastAddedUser) setProgress()
+  }, [lastAddedUser])
   return (
     <>
       {/* Bread crumbing to last url */}
