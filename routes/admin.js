@@ -1,7 +1,11 @@
 // Requiring all the packages
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const { createUser, fetchAadhaar, createEmployee } = require('../controller/admin')
+import {
+  createUser,
+  fetchAadhaar,
+  createEmployee,
+} from '../controller/admin.js'
 
 // Defining the routes
 /**
@@ -25,4 +29,4 @@ router.post('/createemp', createEmployee)
  **/
 router.post('/aadhaar', fetchAadhaar)
 
-module.exports = router
+export { router as adminRoutes }

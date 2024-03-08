@@ -15,7 +15,6 @@ export default function AddEmployee() {
     profile,
     loading,
     createEmployee,
-    uploadFile,
   } = useAdminStore()
 
   const [aadhaarNo, setAadhaarNo] = useState(
@@ -27,18 +26,20 @@ export default function AddEmployee() {
     last_name: '',
     id: lastAddedUser.id,
     mgnrega_id: '',
-    address: '',
+    address: profile.location_id.id,
     photo: null,
-    mobile: '',
+    mobile_no: '',
     email: lastAddedUser.email,
     age: lastAddedAadhaar ? lastAddedAadhaar.age : '',
     dob: lastAddedAadhaar ? lastAddedAadhaar.dob : '',
     father_name: lastAddedAadhaar ? lastAddedAadhaar.father_name : '',
     bank_account_no: lastAddedAadhaar ? lastAddedAadhaar.bank_account_no : '',
   })
-  async function handleSubmit() {
+  async function handleSubmit(e) {
     try {
-      await createEmployee(formData, navigate)
+      e.preventDefault()
+      const updatedFormData = { ...formData, aadhar_no: aadhaarNo }
+      await createEmployee(updatedFormData, navigate)
     } catch (err) {
       return toast.error(err)
     }
@@ -77,20 +78,22 @@ export default function AddEmployee() {
     }
   }
   useEffect(() => {
-    if (formData.photo) {
+    if (formData.photo != null) {
       const reader = new FileReader()
       reader.onloadend = () => {
         setPreview(reader.result)
       }
-      //reader.readAsArrayBuffer <-  arraybuffer
       reader.readAsDataURL(formData.photo) //represented as a base64string
+      reader.onload = () => {
+        setFormData((prev) => ({ ...prev, queryImage: reader.result }))
+      }
     } else {
       setPreview(null)
     }
   }, [formData.photo])
 
   return loading ? (
-    <div>loading...</div>
+    <div className='w-full text-center'>loading...</div>
   ) : (
     <main>
       {/* The Form with all the fields. */}
@@ -150,6 +153,7 @@ export default function AddEmployee() {
                     className='block w-full border-gray-300 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                     placeholder='0000-0000-0000'
                     required
+                    title='Fetch details'
                   />
                   <button
                     disabled={loading ? true : false}
@@ -229,6 +233,7 @@ export default function AddEmployee() {
                           id='photo'
                           accept='images/*'
                           ref={fileInputRef}
+                          multiple={false}
                           onChange={handleFileChange}
                           className='block w-full text-sm text-slate-500
                                       file:mr-4 file:py-2 file:px-4
@@ -315,9 +320,9 @@ export default function AddEmployee() {
                   {/* Mobile Number */}
                   <Input
                     type='text'
-                    name='mobile'
+                    name='mobile_no'
                     id='mobile'
-                    value={formData.mobile}
+                    value={formData.mobile_no}
                     onChange={handleChange}
                     label=' Mobile Number'
                     colValue='sm:col-span-2'
@@ -332,7 +337,7 @@ export default function AddEmployee() {
                     name='address'
                     disabled={true}
                     hint='Prefilled with Sachiv Location'
-                    value={profile?.location_id.id}
+                    value={formData.address}
                   />
                 </div>
                 <div className='mt-6 flex items-center justify-end gap-x-6 pb-12'>

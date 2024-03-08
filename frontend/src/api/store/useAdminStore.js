@@ -68,20 +68,20 @@ export const useAdminStore = create((set, get) => ({
     const userData = {
       email: user.email,
       password: user.password,
-      userType: 'worker',
     }
     const options = {
       method: 'POST',
       body: JSON.stringify(userData),
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'content-type': 'application/json' },
     }
-    const url = `${get().base}/api/admin/create`
+    const url = `${get().base}/api/admin/createuser`
     const toastID = toast.loading('Adding User...')
     const res = await fetch(url, options)
     const { data, error } = await res.json()
     toast.dismiss(toastID)
     set({ loading: false })
     if (error) throw error
+    toast.success('New user added.')
     localStorage.setItem('lastAddedUser', JSON.stringify(data))
     set({ lastAddedUser: data })
   },
@@ -108,24 +108,30 @@ export const useAdminStore = create((set, get) => ({
     return updatedData
   },
   createEmployee: async (userData, navigate) => {
-    set({ loading: true })
-    //This data will be sent to the server with the POST request.
-    console.log(userData)
-    const options = {
-      method: 'POST',
-      body: JSON.stringify(userData),
-      headers: { 'Content-Type': 'application/json' },
+    try {
+      set({ loading: true })
+      const options = {
+        method: 'POST',
+        body: JSON.stringify(userData),
+        headers: { 'content-type': 'application/json' },
+      }
+      const url = `${get().base}/api/admin/createemp`
+      const toastID = toast.loading('Adding Employee...')
+      const res = await fetch(url, options)
+      const { data, error } = await res.json()
+      toast.dismiss(toastID)
+      set({ loading: false })
+      if (error) throw error
+      toast.success('Employee added successfully')
+      navigate('/admin/employee')
+      await get().setEmployees()
+      set({ lastAddedUser: null, lastAddedAadhaar: null })
+      localStorage.removeItem('lastAddedUser')
+      localStorage.removeItem('lastAddedAadhaar')
+      return data
+    } catch (error) {
+      return toast.error(error.message)
     }
-    const url = `${get().base}/api/admin/createemp`
-    const toastID = toast.loading('Adding Employee...')
-    const res = await fetch(url, options)
-    const { data, error } = await res.json()
-    toast.dismiss(toastID)
-    set({ loading: false })
-    if (error) return toast.error(error.message)
-    toast.success('Employee added successfully')
-    navigate('/admin/employee')
-    return data
   },
   setEmployees: async () => {
     try {

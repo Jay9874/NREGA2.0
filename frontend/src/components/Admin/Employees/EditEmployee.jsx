@@ -2,27 +2,25 @@ import React from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ArrowLongLeftIcon, PhotoIcon } from '@heroicons/react/24/solid'
 
-export default function EditEmployee () {
+export default function EditEmployee() {
   const { id } = useParams()
   return (
     <>
       <Link to='..'>
-        <span className='px-24'>
-          <ArrowLongLeftIcon
-            className='h-12 w-12 text-indigo-600'
-            aria-hidden='true'
-            title='Back to Employees List'
-          />
-        </span>
+        <ArrowLongLeftIcon
+          className='h-12 w-12 text-indigo-600'
+          aria-hidden='true'
+          title='Back to Employees List'
+        />
       </Link>
-      <div className='col-span-full'>
-        <label
-          htmlFor='cover-photo'
-          className='block text-sm font-medium leading-6 text-gray-900'
-        >
-          Profile photo
-        </label>
-        <div className='mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10'>
+      <div className='col-span-full px-6'>
+        <div className='sm:flex-auto'>
+          <h1 className='text-xl font-semibold text-gray-900'>Profile</h1>
+          <p className='mt-2 text-sm text-gray-700'>
+            You can only update profile photo.
+          </p>
+        </div>
+        <div className='px-6 mx-auto w-1/2 mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 py-10'>
           <div className='text-center'>
             <PhotoIcon
               className='mx-auto h-12 w-12 text-gray-300'

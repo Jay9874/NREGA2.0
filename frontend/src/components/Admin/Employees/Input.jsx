@@ -1,4 +1,4 @@
-export default function Input ({
+export default function Input({
   colValue,
   label,
   type,
@@ -8,7 +8,8 @@ export default function Input ({
   hint,
   placeholder,
   onChange,
-  disabled
+  disabled,
+  tooltip
 }) {
   return (
     <div className={colValue}>
@@ -29,6 +30,7 @@ export default function Input ({
           placeholder={placeholder}
           className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
           required
+          tooltip={tooltip}
         />
         {disabled && (
           <p className='mt-2 invisible peer-disabled:visible text-gray-400 text-sm'>

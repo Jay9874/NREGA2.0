@@ -1,9 +1,12 @@
-const { createClient } = require('@supabase/supabase-js')
+import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.VITE_SUPABASE_URL
 const supabaseKey = process.env.VITE_SUPABASE_KEY
 const supabase = createClient(supabaseUrl, supabaseKey)
+import * as formidable from 'formidable'
+import * as fs from 'fs'
+import { decode } from 'base64-arraybuffer'
 
-exports.createUser = async (req, res) => {
+const createUser = async (req, res) => {
   try {
     const { email, password } = req.body
     const { data: user, error: err } = await supabase
@@ -33,11 +36,14 @@ exports.createUser = async (req, res) => {
     })
   }
 }
-exports.createEmployee = async (req, res) => {
+const createEmployee = async (req, res) => {
   try {
-    let newEmplyee = req.body
-    let { first_name, last_name, email, id } = req.body
-    const { file } = req.body
+    console.log(req.body)
+    const base64String = req.body.queryImage
+    const base64 = base64String.split('base64,')[1]
+    const user = req.body
+    let newEmplyee = user
+    let { first_name, last_name, email, id } = user
     let newProfile = {
       first_name: first_name,
       last_name: last_name,
@@ -45,17 +51,17 @@ exports.createEmployee = async (req, res) => {
       id: id,
       user_type: 'worker',
     }
+    const filename = `${id}`
+    const fileType = base64String.match(/^data:(.+);base64/)?.[1]
     const { data: createdProfile, error: errAtPr } = await supabase
       .from('profiles')
       .insert([newProfile])
       .select()
     if (errAtPr) throw errAtPr
-    const filename = `${id}`
-    const fileContent = await fs.promises.readFile(file.image.filepath)
     const { data, error: errAtFile } = await supabase.storage
       .from('worker_profile')
-      .upload(`avatars/${filename}`, fileContent, {
-        contentType: file.image.mimetype,
+      .upload(`avatars/${filename}`, decode(base64), {
+        contentType: fileType,
         cacheControl: '3600',
         upsert: true,
       })
@@ -64,7 +70,8 @@ exports.createEmployee = async (req, res) => {
       .from('worker_profile')
       .getPublicUrl(`avatars/${filename}`)
     if (errAtUrl) throw errAtUrl
-    newEmplyee = { ...newEmplyee, [photo]: url }
+    newEmplyee = { ...newEmplyee, photo: url.publicUrl }
+    delete newEmplyee.queryImage
     const { data: createdEmp, error: errAtEmp } = await supabase
       .from('worker')
       .insert([newEmplyee])
@@ -82,7 +89,7 @@ exports.createEmployee = async (req, res) => {
     })
   }
 }
-exports.fetchAadhaar = async (req, res) => {
+const fetchAadhaar = async (req, res) => {
   try {
     const { aadhaar: aadhaarNo } = req.body
     const { data: aadhaar, error } = await supabase
@@ -109,3 +116,5 @@ exports.fetchAadhaar = async (req, res) => {
     return res.status(403).send({ data: null, error: err.message })
   }
 }
+
+export { createUser, fetchAadhaar, createEmployee }

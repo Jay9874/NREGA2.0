@@ -1,23 +1,25 @@
 // Requiring all the packages
-require('dotenv').config()
-const express = require('express')
-const cors = require('cors')
-const path = require('path')
-const bodyParser = require('body-parser')
-const { connect } = require('http2')
+import 'dotenv/config'
+import express from 'express'
+import cors from 'cors'
+import bodyParser from 'body-parser'
+import path from 'path';
+const __dirname = path.resolve();
 
 // Initializing the express application
 
 const app = express()
 const PORT = process.env.PORT || 8080
 
+// in latest body-parser.
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.json({ limit: '25mb' }))
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 app.use(bodyParser.json({ limit: '50mb' }))
 app.use(cors())
 
 // Defining api routes
-const adminRoutes = require('./routes/admin')
+import { adminRoutes } from './routes/admin.js'
 // const workerRoutes = require('./routes/worker')
 app.use('/api/admin', adminRoutes)
 // app.use('/api/worker', workerRoutes)
