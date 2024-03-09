@@ -20,19 +20,16 @@ const createUser = async (req, res) => {
       email: email,
       password: password,
     })
-    if (error) {
-      throw error
-    }
-
+    if (error) throw error
     return res.status(201).send({
       data: newUser.user,
       error: null,
     })
   } catch (err) {
     console.log(err)
-    return res.status(500).send({
+    return res.status(409).send({
       data: null,
-      error: err,
+      error: err.message,
     })
   }
 }
@@ -106,7 +103,7 @@ const fetchAadhaar = async (req, res) => {
         .eq('aadhar_no', aadhaarNo)
       if (error) throw error
       if (workerExist.length !== 0)
-        throw new Error('Worker all ready exists with this Aadhaar.')
+        throw new Error('Worker already exists with this Aadhaar.')
     }
     return res.status(201).send({
       data: aadhaar[0],

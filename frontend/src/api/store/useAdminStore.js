@@ -52,9 +52,7 @@ export const useAdminStore = create((set, get) => ({
         .from('sachiv')
         .select(`*, location_id(*)`)
         .eq('id', get().user.id)
-      if (error) {
-        throw error
-      }
+      if (error) throw error
       set({ profile: profile[0] })
       return profile
     } catch (error) {
@@ -63,27 +61,32 @@ export const useAdminStore = create((set, get) => ({
     }
   },
   addUser: async (user) => {
-    set({ loading: true })
-    //This data will be sent to the server with the POST request.
-    const userData = {
-      email: user.email,
-      password: user.password,
+    try {
+      set({ loading: true })
+      //This data will be sent to the server with the POST request.
+      const userData = {
+        email: user.email,
+        password: user.password,
+      }
+      const options = {
+        method: 'POST',
+        body: JSON.stringify(userData),
+        headers: { 'content-type': 'application/json' },
+      }
+      const url = `${get().base}/api/admin/createuser`
+      const toastID = toast.loading('Adding User...')
+      const res = await fetch(url, options)
+      const { data, error } = await res.json()
+      toast.dismiss(toastID)
+      set({ loading: false })
+      if (error) throw error
+      toast.success('New user added.')
+      localStorage.setItem('lastAddedUser', JSON.stringify(data))
+      set({ lastAddedUser: data })
+      return data
+    } catch (error) {
+      throw error
     }
-    const options = {
-      method: 'POST',
-      body: JSON.stringify(userData),
-      headers: { 'content-type': 'application/json' },
-    }
-    const url = `${get().base}/api/admin/createuser`
-    const toastID = toast.loading('Adding User...')
-    const res = await fetch(url, options)
-    const { data, error } = await res.json()
-    toast.dismiss(toastID)
-    set({ loading: false })
-    if (error) throw error
-    toast.success('New user added.')
-    localStorage.setItem('lastAddedUser', JSON.stringify(data))
-    set({ lastAddedUser: data })
   },
   setAadhaarData: async (aadhaarNo) => {
     localStorage.removeItem('lastAddedAadhaar')

@@ -1,9 +1,8 @@
 import { CheckIcon, ArrowLongLeftIcon } from '@heroicons/react/20/solid'
 import { Link } from 'react-router-dom'
 import { AddEmployee, AddUser } from '.'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAdminStore } from '../../../api/store'
-import { useEffect } from 'react'
 
 // Helping functions
 var steps = [
@@ -23,6 +22,7 @@ export default function Progress() {
     steps[active + 1].status = 'current'
     if (user) {
       setActive(1)
+      setProgress()
     }
   }
   function setProgress() {
@@ -35,8 +35,8 @@ export default function Progress() {
     }
   }
   useEffect(() => {
-    // if (lastAddedUser) setProgress()
-  }, [lastAddedUser])
+    setProgress()
+  }, [])
   return (
     <>
       {/* Bread crumbing to last url */}
