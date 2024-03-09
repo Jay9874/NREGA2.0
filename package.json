@@ -22,7 +22,8 @@
   "homepage": "https://github.com/Jay9874/NREGA2.0#readme",
   "dependencies": {
     "@hcaptcha/react-hcaptcha": "^1.10.1",
-    "@supabase/supabase-js": "^2.39.6",
+    "@supabase/ssr": "^0.1.0",
+    "@supabase/supabase-js": "^2.39.7",
     "base64-arraybuffer": "^1.0.2",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
@@ -31,6 +32,7 @@
     "express-formidable": "^1.2.0",
     "formidable": "^3.5.1",
     "json-stringify-safe": "^5.0.1",
+    "nodemailer": "^6.9.12",
     "nodemon": "^3.0.3"
   }
 }

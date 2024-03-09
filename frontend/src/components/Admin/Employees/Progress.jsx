@@ -35,7 +35,7 @@ export default function Progress() {
     }
   }
   useEffect(() => {
-    if (lastAddedUser) setProgress()
+    // if (lastAddedUser) setProgress()
   }, [lastAddedUser])
   return (
     <>

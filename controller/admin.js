@@ -2,12 +2,12 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.VITE_SUPABASE_URL
 const supabaseKey = process.env.VITE_SUPABASE_KEY
 const supabase = createClient(supabaseUrl, supabaseKey)
-import * as formidable from 'formidable'
-import * as fs from 'fs'
+// import { createClient } from '../lib/supabase.js'
 import { decode } from 'base64-arraybuffer'
 
 const createUser = async (req, res) => {
   try {
+    // const supabase = createClient({ req, res })
     const { email, password } = req.body
     const { data: user, error: err } = await supabase
       .from('profiles')
