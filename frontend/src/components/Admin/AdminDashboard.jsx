@@ -149,8 +149,8 @@ export default function Dashboard() {
     // </div>
     // </main>
     <div>
-      Building this tab. Thank you for your patience. Check out current work in
-      Employees tab.
+      Building this tab. Thank you for your patience. Coming Soon... Check out
+      current work in Employees tab.
     </div>
   )
 }

@@ -29,13 +29,16 @@ app.use('/api/test', (req, res) => {
 
 // Frontend Routes
 // For the vercel production
-app.use(express.static(path.join(__dirname, '/public')))
+app.use(express.static(path.join(__dirname, '/frontend/public')))
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public', '/index.html'), function (err) {
-    if (err) {
-      res.status(500).send(err)
+  res.sendFile(
+    path.join(__dirname, '/frontend/dist', '/index.html'),
+    function (err) {
+      if (err) {
+        res.status(500).send(err)
+      }
     }
-  })
+  )
 })
 
 //Connect to the database before listening
