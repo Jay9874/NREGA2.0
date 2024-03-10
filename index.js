@@ -3,8 +3,8 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-import path from 'path';
-const __dirname = path.resolve();
+import path from 'path'
+const __dirname = path.resolve()
 
 // Initializing the express application
 
@@ -28,10 +28,15 @@ app.use('/api/test', (req, res) => {
 })
 
 // Frontend Routes
-app.use(express.static(path.resolve(__dirname, 'frontend', 'dist')))
+// app.use(express.static(path.resolve(__dirname, 'frontend', 'dist')))
+
+// For the vercel production
+app.use(express.static(path.join(__dirname, '/public')))
+
 app.get('*', (req, res) => {
   res.sendFile(
-    path.resolve(__dirname, 'frontend', 'dist', 'index.html'),
+    // path.resolve(__dirname, 'frontend', 'dist', 'index.html'),
+    res.sendFile(path.join(__dirname, '/index.html')),
     function (err) {
       if (err) {
         res.status(500).send(err)
