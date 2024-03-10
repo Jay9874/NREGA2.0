@@ -1,33 +1,48 @@
-import { ScaleIcon } from "@heroicons/react/24/outline";
-import RecentPayment from "../RecentPayment";
+import { ScaleIcon } from '@heroicons/react/24/outline'
+import RecentPayment from '../RecentPayment'
 import {
   MapPinIcon,
   BuildingOfficeIcon,
   CheckCircleIcon,
   CalendarDaysIcon,
-} from "@heroicons/react/20/solid";
-import { Link } from "react-router-dom";
+} from '@heroicons/react/20/solid'
+import { Link } from 'react-router-dom'
 
 const transactions = [
   {
     id: 1,
-    name: "Payment from Kedraband Panchayat",
-    href: "#",
-    amount: "$20,000",
-    currency: "USD",
-    status: "success",
-    date: "July 11, 2020",
-    datetime: "2020-07-11",
+    name: 'Payment from Kedraband Panchayat',
+    href: '#',
+    amount: '$20,000',
+    currency: 'USD',
+    status: 'success',
+    date: 'July 11, 2020',
+    datetime: '2020-07-11',
   },
   // More transactions...
-];
+]
 
 const cards = [
-  { name: "Attendance", href: "/attendance", icon: CalendarDaysIcon, amount: "89/100" },
-  { name: "Working on", href: "/jobs", icon: BuildingOfficeIcon, amount: "Amritsarovar, Hadipur"},
-  { name: "Account balance", href: "/payment", icon: ScaleIcon, amount: "$30,659.45" },
+  {
+    name: 'Attendance',
+    href: '/attendance',
+    icon: CalendarDaysIcon,
+    amount: '89/100',
+  },
+  {
+    name: 'Working on',
+    href: '/jobs',
+    icon: BuildingOfficeIcon,
+    amount: 'Amritsarovar, Hadipur',
+  },
+  {
+    name: 'Account balance',
+    href: '/payment',
+    icon: ScaleIcon,
+    amount: '$30,659.45',
+  },
   // More items...
-];
+]
 
 export default function Dashboard() {
   return (
@@ -133,6 +148,9 @@ export default function Dashboard() {
     //   {/* <RecentPayment heading={"Recent Activity"} recentActivity={transactions} /> */}
     // </div>
     // </main>
-    <div>Building this tab. Check out current work in Employees tab.</div>
+    <div>
+      Building this tab. Thank you for your patience. Check out current work in
+      Employees tab.
+    </div>
   )
 }
