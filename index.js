@@ -28,25 +28,17 @@ app.use('/api/test', (req, res) => {
 })
 
 // Frontend Routes
-// app.use(express.static(path.resolve(__dirname, 'frontend', 'dist')))
-
 // For the vercel production
 app.use(express.static(path.join(__dirname, '/public')))
-
 app.get('*', (req, res) => {
-  res.sendFile(
-    // path.resolve(__dirname, 'frontend', 'dist', 'index.html'),
-    res.sendFile(path.join(__dirname, '/index.html')),
-    function (err) {
-      if (err) {
-        res.status(500).send(err)
-      }
+  res.sendFile(path.join(__dirname, '/public', '/index.html'), function (err) {
+    if (err) {
+      res.status(500).send(err)
     }
-  )
+  })
 })
 
 //Connect to the database before listening
-
 app.listen(PORT, () => {
   console.log(`listening for requests on port: ${PORT}`)
 })
