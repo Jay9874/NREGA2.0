@@ -7,7 +7,6 @@ import path from 'path'
 const __dirname = path.resolve()
 
 // Initializing the express application
-
 const app = express()
 const PORT = process.env.PORT || 8080
 
@@ -17,6 +16,9 @@ app.use(express.json({ limit: '25mb' }))
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 app.use(bodyParser.json({ limit: '50mb' }))
 app.use(cors())
+
+// Static files like css, img, js and more
+app.use(express.static(path.join(__dirname, '/frontend/public')))
 
 // Defining api routes
 import { adminRoutes } from './routes/admin.js'
@@ -29,10 +31,11 @@ app.use('/api/test', (req, res) => {
 
 // Frontend Routes
 // For the vercel production
-app.use(express.static(path.join(__dirname, '/frontend/public')))
+
 app.get('*', (req, res) => {
   res.sendFile(
-    path.join(__dirname, '/frontend/dist', '/index.html'),
+    path.resolve(__dirname, '/frontend/dist', 'index.html'),
+    // path.join(__dirname, '/frontend/dist', '/index.html'),
     function (err) {
       if (err) {
         res.status(500).send(err)
