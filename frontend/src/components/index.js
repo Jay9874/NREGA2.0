@@ -7,6 +7,7 @@ import Dropdown from './Dropdown'
 import Protected from './Protected'
 import NotFound from './NotFound'
 import ValidLink from './ValidLink'
+import Banner from './Banner'
 export {
   Sidebar,
   TableRow,
@@ -16,5 +17,6 @@ export {
   Dropdown,
   Protected,
   NotFound,
-  ValidLink
+  ValidLink,
+  Banner,
 }

@@ -92,6 +92,7 @@ export default function Example() {
     //     </div>
     //   </div>
     // </div>
-    <div>Building this tab. Check out current work in Employees tab.</div>
+    // <div>Building this tab. Check out current work in Employees tab.</div>
+    <div></div>
   )
 }

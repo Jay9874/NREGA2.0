@@ -75,7 +75,7 @@ export const authStore = create((set, get) => ({
                 id: userId
               }
             })
-            // toast.dismiss(verTID)
+            toast.dismiss(verTID)
             toast.success('Login successful!', { duration: 500 })
             const user = get().user
             navigate(`/${user.type}/dashboard`)

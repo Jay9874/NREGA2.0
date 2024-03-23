@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { Sidebar, TopNavbar } from '../components'
+import { Sidebar, TopNavbar, Banner } from '../components'
 import { useAdminStore } from '../api/store'
 // Constants imports
 import { adminTopNavigation } from '../utils/dashboard_toplink'
@@ -10,7 +10,7 @@ export const Admin = () => {
   const { setProfile, setEmployees, dataLoaded, setDataLoaded } =
     useAdminStore()
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  async function handleSetup () {
+  async function handleSetup() {
     try {
       setDataLoaded(false)
       await setProfile()
@@ -31,12 +31,11 @@ export const Admin = () => {
         navigation={adminNavigation}
       />
       <div className='flex flex-1 flex-col md:pl-64'>
+        <Banner text='The admin panel is being built.' />
         <TopNavbar
           setSidebarOpen={setSidebarOpen}
           userNavigation={adminTopNavigation}
         />
-        {/* <div>Working on it. Check Worker section for current work.</div> */}
-
         {!dataLoaded ? (
           <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
             <div className='rounded-xl ring-gray-100 h-24 flex items-center justify-center'>

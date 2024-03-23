@@ -7,21 +7,21 @@ import { toast } from 'sonner'
 
 const statusStyles = {
   present: 'bg-green-100 text-green-800',
-  absent: 'bg-red-100 text-gray-800'
+  absent: 'bg-red-100 text-gray-800',
 }
 const tableHeading = [
   { name: 'Work' },
   { name: 'Location' },
-  { name: 'Presence' }
+  { name: 'Presence' },
 ]
 
-export default function Attendance () {
+export default function Attendance() {
   const {
     attendances,
     setAttendance,
     locations,
     dataLoaded,
-    loadingAttendance
+    loadingAttendance,
   } = useWorkerStore()
   const [filterInitialized, setFilterInitialized] = useState(false)
   const [loadFilter, setLoadFilter] = useState(false)
@@ -33,23 +33,23 @@ export default function Attendance () {
     state: '',
     district: '',
     block: '',
-    panchayat: ''
+    panchayat: '',
   })
   const filterLoopcallback = [
     { callback: setDistricts },
     { callback: setBlocks },
-    { callback: setPanchayats }
+    { callback: setPanchayats },
   ]
 
   // filter only the required locations
-  async function filterData (id, value) {
+  async function filterData(id, value) {
     return locations.filter(
-      location => location[filterLoop[id].landmark] === value
+      (location) => location[filterLoop[id].landmark] === value
     )
   }
   // looping to fill child filters
-  async function getLandmarkData (id, value) {
-    return new Promise((resolve, reject) => {
+  async function getLandmarkData(id, value) {
+    return new Promise(async (resolve, reject) => {
       try {
         filterLoop[id].landmarkValue = value
         filterLoop[id].callback = filterLoopcallback[id].callback
@@ -57,20 +57,20 @@ export default function Attendance () {
           state: '',
           district: '',
           block: '',
-          panchayat: ''
+          panchayat: '',
         }
         for (let i = id; i < 3; i++) {
           const landmarkValue =
             i === id ? value : filterLoop[i - 1].landmarkValue
-          const newLocations = filterData(i, landmarkValue)
-          const fetchedLandmarkData = Promise.all(
-            newLocations.map(location => location[filterLoop[i].toFetch])
+          const newLocations = await filterData(i, landmarkValue)
+          const fetchedLandmarkData = await newLocations.map(
+            (location) => location[filterLoop[i].toFetch]
           )
           filterLoopcallback[i].callback([...new Set(fetchedLandmarkData)])
           selection[filterLoop[i].toFetch] = fetchedLandmarkData[0]
-          setSelected(prev => ({
+          setSelected((prev) => ({
             ...prev,
-            [filterLoop[i].toFetch]: fetchedLandmarkData[0]
+            [filterLoop[i].toFetch]: fetchedLandmarkData[0],
           }))
           filterLoop[i].fetchedDatas = fetchedLandmarkData
           filterLoop[i].landmarkValue = fetchedLandmarkData[0]
@@ -84,10 +84,10 @@ export default function Attendance () {
   }
 
   // Initialize filter
-  async function initFilter () {
+  async function initFilter() {
     return new Promise((resolve, reject) => {
       try {
-        const fetchedStates = locations.map(location => location.state)
+        const fetchedStates = locations.map((location) => location.state)
         setStates([...new Set(fetchedStates)])
         var result = getLandmarkData(0, fetchedStates[0])
         result.state = fetchedStates[0]
@@ -101,20 +101,20 @@ export default function Attendance () {
     })
   }
   // Handle filter change
-  async function handleChange (id, label, value) {
-    setSelected(prev => ({ ...prev, [label]: value }))
+  async function handleChange(id, label, value) {
+    setSelected((prev) => ({ ...prev, [label]: value }))
     await getLandmarkData(id, value)
     setLoadFilter(true)
   }
-  async function handlePanchayatChange (id, label, value) {
-    setSelected(prev => ({ ...prev, [label]: value }))
+  async function handlePanchayatChange(id, label, value) {
+    setSelected((prev) => ({ ...prev, [label]: value }))
     setLoadFilter(true)
   }
 
   useEffect(() => {
     if (dataLoaded && !filterInitialized) {
       initFilter()
-      setLoadFilter(false)
+      setLoadFilter(true)
     }
     if (loadFilter) {
       setAttendance(selected)

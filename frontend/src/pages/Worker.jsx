@@ -21,19 +21,19 @@ export const Worker = () => {
     setDataLoaded,
     setLastWork,
     setLocations,
-    setLastAttendance
+    setLastAttendance,
   } = useWorkerStore()
 
-  async function handleSetup () {
+  async function handleSetup() {
     try {
       setLoading(true)
-      const profile = await setProfile(navigate)
-      const payment = await setPayment()
-      const location = await setLocations()
-      const lastWork = await setLastWork()
-      const lastAttendance = await setLastAttendance()
-      const allJobs = await setAllJobs()
-      const nearbyJobs = await setNearbyJobs()
+      await setProfile(navigate)
+      await setPayment()
+      await setLocations()
+      await setLastWork()
+      await setLastAttendance()
+      await setAllJobs()
+      await setNearbyJobs()
       setLoading(false)
       setDataLoaded(true)
     } catch (error) {

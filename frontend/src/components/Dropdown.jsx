@@ -2,15 +2,15 @@ import { Fragment } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
-function classNames (...classes) {
+function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Dropdown ({ options, label, selected, onChange, id }) {
+export default function Dropdown({ options, label, selected, onChange, id }) {
   return (
     <Listbox
       value={selected}
-      onChange={option => {
+      onChange={(option) => {
         onChange(id, label, option)
       }}
     >
