@@ -5,7 +5,7 @@ import {
   timestampToDate,
   jobDuration,
   formatLocation,
-  formatLocationShort
+  formatLocationShort,
 } from '../../utils/dataFormating'
 
 export const useWorkerStore = create((set, get) => ({
@@ -13,6 +13,8 @@ export const useWorkerStore = create((set, get) => ({
   loading: false,
   dataLoaded: false,
   loadingAttendance: false,
+  isAttendanceActive: false,
+  selectedAttendance: {},
   nearbyJobs: [],
   allJobs: [],
   lastWork: {
@@ -22,7 +24,7 @@ export const useWorkerStore = create((set, get) => ({
     labours: 0,
     completion: '',
     deadline: '',
-    duration: ''
+    duration: '',
   },
   locations: [],
   payment: [],
@@ -30,11 +32,13 @@ export const useWorkerStore = create((set, get) => ({
   totalPresent: 0,
   lastAttendance: {
     work_name: '',
-    location: ''
+    location: '',
   },
   profile: {},
-  setDataLoaded: dataLoaded => set({ dataLoaded }),
-  setLoading: loading => set({ loading }),
+  setAttendancePopup: (isActive) => set({ isAttendanceActive: isActive }),
+  selectAttendance: (selected) => set({ selectedAttendance: selected }),
+  setDataLoaded: (dataLoaded) => set({ dataLoaded }),
+  setLoading: (loading) => set({ loading }),
   setProfile: async (navigate) => {
     try {
       let token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
@@ -44,8 +48,8 @@ export const useWorkerStore = create((set, get) => ({
         user: {
           email: token.user.email,
           type: token.userType,
-          id: token.user.id
-        }
+          id: token.user.id,
+        },
       })
       const { data: profile, error } = await supabase
         .from('worker')
@@ -115,7 +119,9 @@ export const useWorkerStore = create((set, get) => ({
       set({ totalPresent: attendances.length })
       const lastPresence = {
         work_name: attendances[0].attendance_for.job_name,
-        location: formatLocationShort(attendances[0].attendance_for.location_id)
+        location: formatLocationShort(
+          attendances[0].attendance_for.location_id
+        ),
       }
       set({ lastAttendance: lastPresence })
       return attendances
@@ -125,7 +131,7 @@ export const useWorkerStore = create((set, get) => ({
       return error
     }
   },
-  setAttendance: async locationSelected => {
+  setAttendance: async (locationSelected) => {
     try {
       set({ attendances: [] })
       set({ loadingAttendance: true })
@@ -139,17 +145,19 @@ export const useWorkerStore = create((set, get) => ({
           .eq('block', locationSelected.block)
           .eq('panchayat', locationSelected.panchayat)
         const filteredJobs = jobs.filter(
-          job =>
+          (job) =>
             job.location_id.id === locations[0]?.id && job.Status === 'enrolled'
         )
-        filteredJobs.forEach(async job => {
+        filteredJobs.forEach(async (job) => {
           const { data } = await supabase
             .from('attendance')
             .select(`*, attendance_for(*, location_id(*))`)
             .eq('worker_id', get().user.id)
             .eq('attendance_for', job.job_id)
             .order('created_at', { ascending: false })
-          const presence = data.filter(item => item.status === 'present').length
+          const presence = data.filter(
+            (item) => item.status === 'present'
+          ).length
           const previous = get().attendances
           set({
             attendances: [
@@ -158,9 +166,9 @@ export const useWorkerStore = create((set, get) => ({
                 data: data,
                 Work: job.job_name,
                 Location: job.Location,
-                Presence: `${presence}/${job.Duration}`
-              }
-            ]
+                Presence: `${presence}/${job.Duration}`,
+              },
+            ],
           })
           set({ loadingAttendance: false })
           resolve(get().attendances)
@@ -197,8 +205,8 @@ export const useWorkerStore = create((set, get) => ({
           labours: data.length,
           deadline: deadline,
           duration: days,
-          completion: percentage
-        }
+          completion: percentage,
+        },
       })
     } catch (error) {
       console.log(error)
@@ -212,7 +220,7 @@ export const useWorkerStore = create((set, get) => ({
         .from('workers_jobs')
         .select(`*, job_id(location_id(*))`)
         .eq('worker_id', get().user.id)
-      const result = jobs.map(item => item.job_id.location_id)
+      const result = jobs.map((item) => item.job_id.location_id)
       set({ locations: result })
     } catch (error) {
       console.log(error)
@@ -222,7 +230,7 @@ export const useWorkerStore = create((set, get) => ({
   },
 
   // Helping functions
-  getLocation: async item => {
+  getLocation: async (item) => {
     const { data: location, error } = await supabase
       .from('locations')
       .select(`*`)
@@ -235,10 +243,10 @@ export const useWorkerStore = create((set, get) => ({
       Date: timestampToDate(item.created_at),
       Work: item.jobs.job_name,
       Status: item.status,
-      Location: location[0]
+      Location: location[0],
     }
   },
-  getEnrollment: async item => {
+  getEnrollment: async (item) => {
     const { data, error } = await supabase
       .from('workers_jobs')
       .select(`*`)
@@ -254,7 +262,7 @@ export const useWorkerStore = create((set, get) => ({
       Location: formatLocation(item.location_id),
       Status: hasEnrolled ? 'enrolled' : 'unenrolled',
       Started: timestampToDate(item.created_at),
-      Duration: `${jobDuration(item.created_at, item.job_deadline).days} Day`
+      Duration: `${jobDuration(item.created_at, item.job_deadline).days} Day`,
     }
-  }
+  },
 }))

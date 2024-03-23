@@ -6,12 +6,12 @@ const tableHeading = [
   { name: 'Location' },
   { name: 'Duration' },
   { name: 'Started' },
-  { name: 'Status' }
+  { name: 'Status' },
 ]
 
 const statusStyles = {
   enrolled: 'bg-green-100 text-green-800',
-  unenrolled: 'bg-red-100 text-gray-800'
+  unenrolled: 'bg-red-100 text-gray-800',
 }
 
 const Jobs = () => {
@@ -19,11 +19,11 @@ const Jobs = () => {
   const highlight = [
     {
       label: 'Your presence',
-      value: `${lastWork.presence}/${lastWork.duration} day`
+      value: `${lastWork.presence}/${lastWork.duration} day`,
     },
     { label: 'Labours', value: lastWork.labours },
     { label: 'Completion', value: `${lastWork.completion}%` },
-    { label: 'Deadline', value: lastWork.deadline }
+    { label: 'Deadline', value: lastWork.deadline },
   ]
 
   return (
@@ -80,6 +80,7 @@ const Jobs = () => {
           tableHeading={tableHeading}
           tableData={nearbyJobs}
           statusStyles={statusStyles}
+          rowNext={null}
         />
       )}
     </main>
