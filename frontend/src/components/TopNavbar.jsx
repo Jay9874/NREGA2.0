@@ -14,7 +14,7 @@ export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
   const { pathname } = useLocation()
   const { logoutUser } = authStore()
   return (
-    <div className='sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white shadow'>
+    <div className='sticky top-0 z-40 flex h-16 flex-shrink-0 bg-white shadow'>
       <button
         type='button'
         className='border-r border-gray-200 px-4 text-gray-500 md:hidden'

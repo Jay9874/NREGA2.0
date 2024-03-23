@@ -1,5 +1,4 @@
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
-import { Link } from 'react-router-dom'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -59,10 +58,15 @@ export const TableRow = ({
                       ))}
                     </span>
                   </span>
-                  <ChevronRightIcon
-                    className='h-5 w-5 flex-shrink-0 text-gray-400 bg-gray-100 rounded-full'
-                    aria-hidden='true'
-                  />
+                  <button
+                    className='px-3 py-4 items-center justify-center text-sm font-medium text-gray-900'
+                    onClick={(e) => rowClick(e, transaction)}
+                  >
+                    <ChevronRightIcon
+                      className='h-5 w-5 flex-shrink-0 text-indigo-600 hover:text-indigo-900'
+                      aria-hidden='true'
+                    />
+                  </button>
                 </span>
               </a>
             </li>

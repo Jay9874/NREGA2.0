@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { useWorkerStore } from '../../api/store'
 import { Fragment } from 'react'
 import {
   CalendarIcon,
@@ -59,84 +59,89 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Example() {
-  return (  
-    <div className='z-5 bg-white shadow-md'>
-      <h2 className='text-lg font-semibold text-gray-900'>Upcoming meetings</h2>
-      {/* <div className='lg:grid lg:grid-cols-2 lg:gap-x-16'> */}
-      <div className='mt-10 text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:mt-9 xl:col-start-9'>
-        <div className='flex items-center text-gray-900 '>
-          <button
-            type='button'
-            className='-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500'
-          >
-            <span className='sr-only'>Previous month</span>
-            <ChevronLeftIcon className='h-5 w-5' aria-hidden='true' />
-          </button>
-          <div className='flex-auto font-semibold'>January</div>
-          <button
-            type='button'
-            className='-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500'
-          >
-            <span className='sr-only'>Next month</span>
-            <ChevronRightIcon className='h-5 w-5' aria-hidden='true' />
-          </button>
-        </div>
-        <div className='mt-6 grid grid-cols-7 text-xs leading-6 text-gray-500'>
-          <div>M</div>
-          <div>T</div>
-          <div>W</div>
-          <div>T</div>
-          <div>F</div>
-          <div>S</div>
-          <div>S</div>
-        </div>
-        <div className='isolate mt-2 grid grid-cols-7 gap-px rounded-lg bg-gray-200 text-sm shadow ring-1 ring-gray-200'>
-          {days.map((day, dayIdx) => (
+export default function Calendar() {
+  const { setAttendancePopup } = useWorkerStore()
+  return (
+    <div className='flex flex-col justify-center items-center'>
+      <div className='bg-white shadow-md px-12 py-6 rounded-md border-1 border-gray-200'>
+        <h2 className='text-lg font-semibold text-gray-900'>
+          Daily attendance of site.
+        </h2>
+        {/* <div className='lg:grid lg:grid-cols-2 lg:gap-x-16'> */}
+        <div className='mt-10 text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:mt-9 xl:col-start-9'>
+          <div className='flex items-center text-gray-900 '>
             <button
-              key={day.date}
               type='button'
-              className={classNames(
-                'py-1.5 hover:bg-gray-100 focus:z-10',
-                day.isCurrentMonth ? 'bg-white' : 'bg-gray-50',
-                (day.isSelected || day.isToday) && 'font-semibold',
-                day.isSelected && 'text-white',
-                !day.isSelected &&
-                  day.isCurrentMonth &&
-                  !day.isToday &&
-                  'text-gray-900',
-                !day.isSelected &&
-                  !day.isCurrentMonth &&
-                  !day.isToday &&
-                  'text-gray-400',
-                day.isToday && !day.isSelected && 'text-indigo-600',
-                dayIdx === 0 && 'rounded-tl-lg',
-                dayIdx === 6 && 'rounded-tr-lg',
-                dayIdx === days.length - 7 && 'rounded-bl-lg',
-                dayIdx === days.length - 1 && 'rounded-br-lg'
-              )}
+              className='-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500'
             >
-              <time
-                dateTime={day.date}
+              <span className='sr-only'>Previous month</span>
+              <ChevronLeftIcon className='h-5 w-5' aria-hidden='true' />
+            </button>
+            <div className='flex-auto font-semibold'>January</div>
+            <button
+              type='button'
+              className='-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500'
+            >
+              <span className='sr-only'>Next month</span>
+              <ChevronRightIcon className='h-5 w-5' aria-hidden='true' />
+            </button>
+          </div>
+          <div className='mt-6 grid grid-cols-7 text-xs leading-6 text-gray-500'>
+            <div>M</div>
+            <div>T</div>
+            <div>W</div>
+            <div>T</div>
+            <div>F</div>
+            <div>S</div>
+            <div>S</div>
+          </div>
+          <div className='isolate mt-2 grid grid-cols-7 gap-px rounded-lg bg-gray-200 text-sm shadow ring-1 ring-gray-200'>
+            {days.map((day, dayIdx) => (
+              <button
+                key={day.date}
+                type='button'
                 className={classNames(
-                  'mx-auto flex h-7 w-7 items-center justify-center rounded-full',
-                  day.isSelected && day.isToday && 'bg-indigo-600',
-                  day.isSelected && !day.isToday && 'bg-gray-900'
+                  'py-1.5 hover:bg-gray-100 focus:z-10',
+                  day.isCurrentMonth ? 'bg-white' : 'bg-gray-50',
+                  (day.isSelected || day.isToday) && 'font-semibold',
+                  day.isSelected && 'text-white',
+                  !day.isSelected &&
+                    day.isCurrentMonth &&
+                    !day.isToday &&
+                    'text-gray-900',
+                  !day.isSelected &&
+                    !day.isCurrentMonth &&
+                    !day.isToday &&
+                    'text-gray-400',
+                  day.isToday && !day.isSelected && 'text-indigo-600',
+                  dayIdx === 0 && 'rounded-tl-lg',
+                  dayIdx === 6 && 'rounded-tr-lg',
+                  dayIdx === days.length - 7 && 'rounded-bl-lg',
+                  dayIdx === days.length - 1 && 'rounded-br-lg'
                 )}
               >
-                {day.date.split('-').pop().replace(/^0/, '')}
-              </time>
-            </button>
-          ))}
+                <time
+                  dateTime={day.date}
+                  className={classNames(
+                    'mx-auto flex h-7 w-7 items-center justify-center rounded-full',
+                    day.isSelected && day.isToday && 'bg-indigo-600',
+                    day.isSelected && !day.isToday && 'bg-gray-900'
+                  )}
+                >
+                  {day.date.split('-').pop().replace(/^0/, '')}
+                </time>
+              </button>
+            ))}
+          </div>
+          <button
+            type='button'
+            onClick={() => setAttendancePopup(false)}
+            className='mt-8 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+          >
+            Close
+          </button>
         </div>
-        <button
-          type='button'
-          className='mt-8 w-full rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
-        >
-          Add event
-        </button>
       </div>
     </div>
-    // </div>
   )
 }

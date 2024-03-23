@@ -35,7 +35,10 @@ export const useWorkerStore = create((set, get) => ({
     location: '',
   },
   profile: {},
-  setAttendancePopup: (isActive) => set({ isAttendanceActive: isActive }),
+  setAttendancePopup: (isActive) => {
+    console.log(isActive)
+    set({ isAttendanceActive: isActive })
+  },
   selectAttendance: (selected) => set({ selectedAttendance: selected }),
   setDataLoaded: (dataLoaded) => set({ dataLoaded }),
   setLoading: (loading) => set({ loading }),

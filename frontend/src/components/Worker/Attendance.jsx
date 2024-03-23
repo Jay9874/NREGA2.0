@@ -135,15 +135,15 @@ export default function Attendance() {
 
   return (
     // The Attendance popup
-    <div className={`relative ${isAttendanceActive ? 'brightness-100' : ''}`}>
+    <div className='relative min-h-[calc(100vh-64px)]'>
       {isAttendanceActive && (
-        <div className='absolute inset-0 h-full w-full'>
+        <div className='absolute flex justify-center bg-gray-600 bg-opacity-75 items-center inset-0 h-full w-full z-20'>
           <Calendar data={selectedAttendance} />
         </div>
       )}
 
       {/* Attendance filter */}
-      <main className='flex-1 pb-8'>
+      <main className='flex-1 pb-8 relative z-10'>
         <div className='px-4 py-6 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8'>
           <div className='border-b border-gray-200 pb-5'>
             <h3 className='text-lg font-medium leading-6 text-gray-900'>
@@ -160,7 +160,7 @@ export default function Attendance() {
         {dataLoaded && (
           <div className='mx-auto max-w-6xl px-4 sm:px-6 lg:px-8'>
             <div className='mt-2 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3'>
-              <div className='relative z-0'>
+              <div className='relative'>
                 <Dropdown
                   options={states}
                   label='state'
