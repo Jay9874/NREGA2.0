@@ -18,7 +18,7 @@ app.use(bodyParser.json({ limit: '50mb' }))
 app.use(cors())
 
 // Static files like css, img, js and more
-app.use(express.static(path.join(__dirname, '/frontend/public')))
+app.use(express.static(path.resolve(__dirname, 'frontend', 'dist')))
 
 // Defining api routes
 import { adminRoutes } from './routes/admin.js'
@@ -34,8 +34,7 @@ app.use('/api/test', (req, res) => {
 
 app.get('*', (req, res) => {
   res.sendFile(
-    path.resolve(__dirname, '/frontend/dist', 'index.html'),
-    // path.join(__dirname, '/frontend/dist', '/index.html'),
+    path.join(__dirname, '/frontend/dist', '/index.html'),
     function (err) {
       if (err) {
         res.status(500).send(err)
