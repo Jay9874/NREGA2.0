@@ -6,7 +6,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   EllipsisHorizontalIcon,
-  MapPinIcon,
+  MapPinIcon
 } from '@heroicons/react/20/solid'
 import { Menu, Transition } from '@headlessui/react'
 
@@ -52,14 +52,14 @@ const days = [
   { date: '2022-02-03' },
   { date: '2022-02-04' },
   { date: '2022-02-05' },
-  { date: '2022-02-06' },
+  { date: '2022-02-06' }
 ]
 
-function classNames(...classes) {
+function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Calendar() {
+export default function Calendar () {
   const { setAttendancePopup } = useWorkerStore()
   return (
     <div className='min-h-1/2'>
@@ -135,15 +135,24 @@ export default function Calendar() {
               </button>
             ))}
           </div>
-          
+        </div>
+        <div className='mt-2'>
+          <p className='flex  items-center'>
+            <div className='w-6 h-3 bg-green-500 inline-block rounded-sm' />{' '}
+            <span className='whitespace-pre'> Present</span>
+          </p>
+          <p className='flex  items-center'>
+            <div className='w-6 h-3 bg-red-500 inline-block rounded-sm' />{' '}
+            <span className='whitespace-pre'> Absent</span>
+          </p>
         </div>
         <button
-            type='button'
-            onClick={() => setAttendancePopup(false)}
-            className='mt-8 text-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
-          >
-            Close
-          </button>
+          type='button'
+          onClick={() => setAttendancePopup(false)}
+          className='mt-8 text-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+        >
+          Close
+        </button>
       </div>
     </div>
   )
