@@ -62,11 +62,13 @@ function classNames(...classes) {
 export default function Calendar() {
   const { setAttendancePopup } = useWorkerStore()
   return (
-    <div className='flex flex-col justify-center items-center'>
-      <div className='bg-white shadow-md px-12 py-6 rounded-md border-1 border-gray-200'>
+    <div className='min-h-1/2'>
+      <div className='bg-white shadow-md px-6 py-6 rounded-md border-1 border-gray-200'>
         <h2 className='text-lg font-semibold text-gray-900'>
           Daily attendance of site.
         </h2>
+
+        {/* The calendar codes */}
         {/* <div className='lg:grid lg:grid-cols-2 lg:gap-x-16'> */}
         <div className='mt-10 text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:mt-9 xl:col-start-9'>
           <div className='flex items-center text-gray-900 '>
@@ -133,14 +135,15 @@ export default function Calendar() {
               </button>
             ))}
           </div>
-          <button
+          
+        </div>
+        <button
             type='button'
             onClick={() => setAttendancePopup(false)}
-            className='mt-8 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+            className='mt-8 text-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
           >
             Close
           </button>
-        </div>
       </div>
     </div>
   )

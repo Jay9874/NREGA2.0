@@ -137,7 +137,7 @@ export default function Attendance () {
     // The Attendance popup
     <div className='relative min-h-[calc(100vh-64px)]'>
       {isAttendanceActive && (
-        <div className='absolute flex justify-center bg-gray-600 bg-opacity-75 items-center inset-0 h-full w-full z-20'>
+        <div className='absolute px-12 pt-12 bg-gray-600 bg-opacity-75 inset-0 h-full w-full z-20'>
           <Calendar data={selectedAttendance} />
         </div>
       )}
