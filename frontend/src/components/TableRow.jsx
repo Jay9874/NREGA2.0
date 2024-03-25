@@ -1,6 +1,6 @@
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 
-function classNames(...classes) {
+function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
@@ -9,7 +9,7 @@ export const TableRow = ({
   tableData,
   statusStyles,
   rowNext,
-  rowClick,
+  rowClick
 }) => {
   return tableData.length === 0 ? (
     <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
@@ -58,15 +58,17 @@ export const TableRow = ({
                       ))}
                     </span>
                   </span>
-                  <button
-                    className='px-3 py-4 items-center justify-center text-sm font-medium text-gray-900'
-                    onClick={(e) => rowClick(e, transaction)}
-                  >
-                    <ChevronRightIcon
-                      className='h-5 w-5 flex-shrink-0 text-indigo-600 hover:text-indigo-900'
-                      aria-hidden='true'
-                    />
-                  </button>
+                  {rowNext && (
+                    <button
+                      className='px-3 py-4 items-center justify-center text-sm font-medium text-gray-900'
+                      onClick={e => rowClick(e, transaction)}
+                    >
+                      <ChevronRightIcon
+                        className='h-5 w-5 flex-shrink-0 text-indigo-600 hover:text-indigo-900'
+                        aria-hidden='true'
+                      />
+                    </button>
+                  )}
                 </span>
               </a>
             </li>
@@ -96,7 +98,7 @@ export const TableRow = ({
                         scope='col'
                         className='bg-gray-50 px-6 py-3 text-left text-sm font-semibold text-gray-900'
                       >
-                        <span className='sr-only'>Edit</span>
+                        <span className='sr-only'>More</span>
                       </th>
                     )}
                   </tr>
@@ -134,7 +136,7 @@ export const TableRow = ({
                         <td>
                           <button
                             className='px-3 py-4 items-center justify-center text-sm font-medium text-gray-900'
-                            onClick={(e) => rowClick(e, transaction)}
+                            onClick={e => rowClick(e, transaction)}
                           >
                             <ChevronRightIcon
                               className='h-5 w-5 flex-shrink-0 text-indigo-600 hover:text-indigo-900'

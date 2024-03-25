@@ -19,7 +19,7 @@ const Jobs = () => {
   const highlight = [
     {
       label: 'Your presence',
-      value: `${lastWork.presence}/${lastWork.duration} day`,
+      value: `${lastWork.presence}/${lastWork.duration} Day`,
     },
     { label: 'Labours', value: lastWork.labours },
     { label: 'Completion', value: `${lastWork.completion}%` },

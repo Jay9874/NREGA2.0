@@ -7,12 +7,23 @@ function timestampToDate (timestamp) {
   const month = date.getMonth() // Months are zero-indexed in JavaScript.
   const day = date.getDate()
 
-  // Create a new string in the format `yyyy-mm-dd` using the extracted date components.
+  // Create a new string in the format `21 July, 2021` using the extracted date components.
   const dateString = `${getDay(day)} ${getMonth(month)}, ${year}`
 
   // Return the new string.
   return dateString
 }
+function timeToString (timestamp) {
+  // Create a new JavaScript Date object from the PostgreSQL timestamp.
+  const date = new Date(timestamp)
+
+  // Extract the date components from the JavaScript Date object.
+  const year = date.getFullYear()
+  const month = date.getMonth() // Months are zero-indexed in JavaScript.
+  const day = date.getDate()
+  return { string: `${year}-${month}-${day}`, year: year, month: month }
+}
+
 function getDay (num) {
   const lastDigit = num % 10
   if (lastDigit == 1 || num == 1) return num + 'st'
@@ -67,5 +78,6 @@ export {
   jobDuration,
   formatLocation,
   formatLocationShort,
-  calculateAge
+  calculateAge,
+  timeToString
 }

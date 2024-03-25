@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useWorkerStore } from '../../api/store'
 import { Fragment } from 'react'
 import {
@@ -10,6 +10,20 @@ import {
 } from '@heroicons/react/20/solid'
 import { Menu, Transition } from '@headlessui/react'
 
+const months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+]
 const days = [
   { date: '2021-12-27' },
   { date: '2021-12-28' },
@@ -60,7 +74,13 @@ function classNames (...classes) {
 }
 
 export default function Calendar () {
-  const { setAttendancePopup } = useWorkerStore()
+  const { setAttendancePopup, selectedAttendance } = useWorkerStore()
+  const [selectedMonth, setSelectedMonth] = useState()
+
+  useEffect(() => {
+    console.log(selectedAttendance)
+    setSelectedMonth(selectedAttendance.startMonth)
+  }, [])
   return (
     <div className='min-h-1/2'>
       <div className='bg-white shadow-md px-6 py-6 rounded-md border-1 border-gray-200'>
@@ -79,7 +99,11 @@ export default function Calendar () {
               <span className='sr-only'>Previous month</span>
               <ChevronLeftIcon className='h-5 w-5' aria-hidden='true' />
             </button>
-            <div className='flex-auto font-semibold'>January</div>
+            <div className='flex-auto font-semibold'>
+              {months[selectedMonth]}
+              {', '}
+              {selectedAttendance.startYear}
+            </div>
             <button
               type='button'
               className='-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500'
@@ -137,14 +161,14 @@ export default function Calendar () {
           </div>
         </div>
         <div className='mt-2'>
-          <p className='flex  items-center'>
+          <div className='flex  items-center'>
             <div className='w-6 h-3 bg-green-500 inline-block rounded-sm' />{' '}
             <span className='whitespace-pre'> Present</span>
-          </p>
-          <p className='flex  items-center'>
+          </div>
+          <div className='flex  items-center'>
             <div className='w-6 h-3 bg-red-500 inline-block rounded-sm' />{' '}
             <span className='whitespace-pre'> Absent</span>
-          </p>
+          </div>
         </div>
         <button
           type='button'
