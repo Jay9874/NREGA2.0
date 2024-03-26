@@ -21,4 +21,8 @@ function genDates (year, startMonth, endMonth) {
   return dates
 }
 
+function getMonths(start, end){
+    
+}
+
 export { genDates }
