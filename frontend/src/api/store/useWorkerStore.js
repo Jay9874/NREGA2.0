@@ -169,10 +169,8 @@ export const useWorkerStore = create((set, get) => ({
                 data: data,
                 Work: job.job_name,
                 Location: job.Location,
-                startMonth: timeToString(job.created_at).month,
-                endMonth: timeToString(job.job_deadline).month,
-                startYear: timeToString(job.created_at).year,
-                endYear: timeToString(job.job_deadline).year,
+                start: timeToString(job.created_at).string,
+                end: timeToString(job.job_deadline).string,
                 Presence: `${presence.length}/${job.Duration}`
               }
             ]

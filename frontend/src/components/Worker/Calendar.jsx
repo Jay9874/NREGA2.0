@@ -9,6 +9,7 @@ import {
   MapPinIcon
 } from '@heroicons/react/20/solid'
 import { Menu, Transition } from '@headlessui/react'
+import { getDaysArray } from '../../utils/generate_date'
 
 const months = [
   'January',
@@ -76,10 +77,14 @@ function classNames (...classes) {
 export default function Calendar () {
   const { setAttendancePopup, selectedAttendance } = useWorkerStore()
   const [selectedMonth, setSelectedMonth] = useState()
-
+  const [dates, setDates] = useState([])
+  console.log(dates)
   useEffect(() => {
     console.log(selectedAttendance)
     setSelectedMonth(selectedAttendance.startMonth)
+    // setDates(genDates(selectedAttendance.start, selectedAttendance.end))
+    console.log(selectedAttendance.start, selectedAttendance.end)
+    setDates(getDaysArray(selectedAttendance.start, selectedAttendance.end))
   }, [])
   return (
     <div className='min-h-1/2'>

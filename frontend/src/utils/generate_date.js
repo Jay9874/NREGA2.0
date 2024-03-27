@@ -1,28 +1,36 @@
-function genDates (year, startMonth, endMonth) {
-  // Create an array to store the dates.
-  const dates = []
+// var genDates = function (start, end) {
+//   for (
+//     var arr = [], dt = new Date(start);
+//     dt <= new Date(end);
+//     dt.setDate(dt.getDate() + 1)
+//   ) {
+//     const newDate = new Date(dt)
+//     console.log(newDate)
+//     const dateString = newDate.toISOString().slice(0, 10).join('')
+//     console.log(dateString)
+//     arr.push(dateString)
+//   }
+//   console.log(arr)
+//   return arr
+// }
 
-  // Loop through the months of the year.
-  for (let month = 0; month < 12; month++) {
-    // Create a new Date object for the first day of the month.
-    const date = new Date(year, month, 1)
-
-    // Loop through the days of the month.
-    while (date.getMonth() === month) {
-      // Add the date to the array.
-      dates.push(date)
-
-      // Increment the date by one day.
-      date.setDate(date.getDate() + 1)
-    }
+var getDaysArray = function (start, end) {
+  console.log(start, end)
+  console.log(new Date(start), new Date(end))
+  for (
+    var arr = [], dt = new Date(start);
+    dt <= new Date(end);
+    dt.setDate(dt.getDate() + 1)
+  ) {
+    const newDate = new Date(dt)
+    console.log(newDate)
+    arr.push(new Date(dt))
   }
-
-  // Return the array of dates.
-  return dates
+  console.log(arr)
+  return arr
 }
 
-function getMonths(start, end){
-    
-}
+function getMonths (start, end) {}
 
-export { genDates }
+// export { genDates }
+export { getDaysArray }
