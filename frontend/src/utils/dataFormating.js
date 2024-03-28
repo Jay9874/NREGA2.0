@@ -21,7 +21,7 @@ function timeToString (timestamp) {
   const year = date.getFullYear()
   const month = date.getMonth() // Months are zero-indexed in JavaScript.
   const day = date.getDate()
-  return { string: `${year}-${month}-${day}`, year: year, month: month }
+  return { string: `${year}-${month}-${day}`, year: year, month: month+1 }
 }
 
 function getDay (num) {
