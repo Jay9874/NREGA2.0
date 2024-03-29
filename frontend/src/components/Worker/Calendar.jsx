@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useWorkerStore } from '../../api/store'
+import { DataTable } from '../Errors'
 import { Fragment } from 'react'
 import {
   CalendarIcon,
@@ -10,7 +11,7 @@ import {
 } from '@heroicons/react/20/solid'
 import { Menu, Transition } from '@headlessui/react'
 
-const months = [
+const monthNames = [
   'January',
   'February',
   'March',
@@ -34,31 +35,66 @@ export default function Calendar() {
   const {
     setAttendancePopup,
     selectedAttendance,
+    isFormatingPopup,
     attndDates,
     attndMonths,
     setAttndDates,
-    isFormatingPopup,
+    setFormatingPopup,
   } = useWorkerStore()
   const [selectedMonth, setSelectedMonth] = useState()
+  const [months, setMonths] = useState([])
+  const [active, setActive] = useState(0)
 
-  console.log(attndDates)
-  useEffect(() => {
-    // setSelectedMonth(selectedAttendance.startMonth)
-    setSelectedMonth((prev) => {
-      return attndMonths.map((month) => {
-        const monthNum = month.slice(1) * 1
-        const yearNum = month.slice(-4) * 1
-        console.log(monthNum, yearNum)
-        // return `${months[month.slice]}`
-        return month
-      })
+  async function setupMonths() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const newMonths = await attndMonths.map((month, idx) => {
+          const monthNum = Number(month.slice(0, 2))
+          const yearNum = Number(month.slice(3, 7))
+          return {
+            str: `${monthNames[monthNum - 1]}, ${yearNum}`,
+            num: monthNum,
+            idx: idx,
+          }
+        })
+        setMonths(newMonths)
+        resolve(newMonths)
+      } catch (err) {
+        reject(err)
+        return null
+      }
     })
-    setAttndDates(1)
-  }, [])
+  }
+  async function setupAttnd() {
+    try {
+      const fetchedMonths = await setupMonths()
+      setSelectedMonth(fetchedMonths[active])
+      handleMonthChange('I')
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  async function handleMonthChange(dir) {
+    let currActive = active
+    if (dir === 'N') {
+      setActive((prev) => prev++)
+      currActive++
+    } else if (dir === 'P') {
+      setActive((prev) => prev--)
+      currActive--
+    }
+    setSelectedMonth(months[currActive])
+    setFormatingPopup(false)
+  }
+  console.log(months)
+  useEffect(() => {
+    setAttndDates(selectedMonth?.num)
+  }, [selectedMonth])
 
   return isFormatingPopup ? (
-    <div className='w-1/2 h-[calc(100vh - 20px)] px-24 py-12 text-center'>
-      Please Wait
+    <div className=' bg-white text-center shadow-md px-6 py-6 rounded-md border-1 border-gray-200'>
+      <DataTable />
     </div>
   ) : (
     <div className='min-h-1/2'>
@@ -71,25 +107,28 @@ export default function Calendar() {
         {/* <div className='lg:grid lg:grid-cols-2 lg:gap-x-16'> */}
         <div className='mt-10 text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:mt-9 xl:col-start-9'>
           <div className='flex items-center text-gray-900 '>
-            <button
-              type='button'
-              className='-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500'
-            >
-              <span className='sr-only'>Previous month</span>
-              <ChevronLeftIcon className='h-5 w-5' aria-hidden='true' />
-            </button>
-            <div className='flex-auto font-semibold'>
-              {months[selectedMonth]}
-              {', '}
-              {selectedAttendance.startYear}
-            </div>
-            <button
-              type='button'
-              className='-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500'
-            >
-              <span className='sr-only'>Next month</span>
-              <ChevronRightIcon className='h-5 w-5' aria-hidden='true' />
-            </button>
+            {selectedMonth?.idx >= 1 && (
+              <button
+                type='button'
+                onClick={() => handleMonthChange('P')}
+                className='-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500'
+              >
+                <span className='sr-only'>Previous month</span>
+                <ChevronLeftIcon className='h-5 w-5' aria-hidden='true' />
+              </button>
+            )}
+
+            <div className='flex-auto font-semibold'>{selectedMonth?.str}</div>
+            {selectedMonth?.idx < months?.length && (
+              <button
+                type='button'
+                onClick={() => handleMonthChange('N')}
+                className='-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500'
+              >
+                <span className='sr-only'>Next month</span>
+                <ChevronRightIcon className='h-5 w-5' aria-hidden='true' />
+              </button>
+            )}
           </div>
           <div className='mt-6 grid grid-cols-7 text-xs leading-6 text-gray-500'>
             {days.map((item, index) => (

@@ -40,6 +40,7 @@ export const useWorkerStore = create((set, get) => ({
   attndDates: [],
   attndMonths: [],
   isFormatingPopup: true,
+  setFormatingPopup: (status) => set({ isFormatingPopup: status }),
   setAttendancePopup: (isActive) => {
     set({ isAttendanceActive: isActive })
   },
@@ -192,18 +193,20 @@ export const useWorkerStore = create((set, get) => ({
     }
   },
   setAttndDates: async (selMonth) => {
-    set({ isFormatingPopup: true })
-    const selectedAttnd = get().selectedAttendance
-    var { dates, months } = genDates(selectedAttnd.start, selectedAttnd.end)
-    console.log(dates, months)
-    dates = dates.filter((date) => date.month === selMonth)
-    console.log(dates)
-    dates = dates.map((date, index) => {
-      if (date.month === selMonth) date.isCurrentMonth = true
-      else date.isCurrentMonth = false
-      return date
+    console.log(selMonth)
+    return new Promise(async (resolve, reject) => {
+      set({ isFormatingPopup: true })
+      const selectedAttnd = get().selectedAttendance
+      var { dates, months } = genDates(selectedAttnd.start, selectedAttnd.end)
+      dates = dates.filter((date) => date.month === selMonth)
+      dates = dates.map((date, index) => {
+        if (date.month === selMonth) date.isCurrentMonth = true
+        else date.isCurrentMonth = false
+        return date
+      })
+      set({ attndDates: dates, attndMonths: months })
+      resolve(dates)
     })
-    set({ attndDates: dates, attndMonths: months, isFormatingPopup: false })
   },
   setLastWork: async () => {
     try {

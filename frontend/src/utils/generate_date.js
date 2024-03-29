@@ -1,6 +1,4 @@
 var genDates = function (start, end) {
-  console.log(start, end)
-  console.log(new Date(start), new Date(end))
   const months = []
   for (
     var arr = [], dt = new Date(start);
@@ -8,7 +6,8 @@ var genDates = function (start, end) {
     dt.setDate(dt.getDate() + 1)
   ) {
     let newDate = new Date(dt)
-    const newEntry = `${newDate.getMonth()}/${newDate.getFullYear()}`
+    const newDateStr = newDate.toISOString()
+    const newEntry = `${newDateStr.slice(5, 7)}/${newDate.getFullYear()}`
     if (!months.includes(newEntry)) months.push(newEntry)
     const weekDay = newDate.getDay()
     const month = newDate.getMonth()

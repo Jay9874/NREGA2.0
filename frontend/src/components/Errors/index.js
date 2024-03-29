@@ -1,2 +1,3 @@
 import FormLoading from './FormLoading'
-export { FormLoading }
+import DataTable from './TableLoading'
+export { FormLoading, DataTable }
