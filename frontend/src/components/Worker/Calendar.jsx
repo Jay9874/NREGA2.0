@@ -7,7 +7,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   EllipsisHorizontalIcon,
-  MapPinIcon,
+  MapPinIcon
 } from '@heroicons/react/20/solid'
 import { Menu, Transition } from '@headlessui/react'
 
@@ -23,15 +23,15 @@ const monthNames = [
   'September',
   'October',
   'November',
-  'December',
+  'December'
 ]
 
 const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
-function classNames(...classes) {
+function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Calendar() {
+export default function Calendar () {
   const {
     setAttendancePopup,
     selectedAttendance,
@@ -39,13 +39,13 @@ export default function Calendar() {
     attndDates,
     attndMonths,
     setAttndDates,
-    setFormatingPopup,
+    setFormatingPopup
   } = useWorkerStore()
   const [selectedMonth, setSelectedMonth] = useState()
   const [months, setMonths] = useState([])
   const [active, setActive] = useState(0)
 
-  async function setupMonths() {
+  async function setupMonths () {
     return new Promise(async (resolve, reject) => {
       try {
         const newMonths = await attndMonths.map((month, idx) => {
@@ -54,7 +54,7 @@ export default function Calendar() {
           return {
             str: `${monthNames[monthNum - 1]}, ${yearNum}`,
             num: monthNum,
-            idx: idx,
+            idx: idx
           }
         })
         setMonths(newMonths)
@@ -65,7 +65,7 @@ export default function Calendar() {
       }
     })
   }
-  async function setupAttnd() {
+  async function setupAttnd () {
     try {
       const fetchedMonths = await setupMonths()
       setSelectedMonth(fetchedMonths[active])
@@ -75,13 +75,13 @@ export default function Calendar() {
     }
   }
 
-  async function handleMonthChange(dir) {
+  async function handleMonthChange (dir) {
     let currActive = active
     if (dir === 'N') {
-      setActive((prev) => prev++)
+      setActive(prev => prev++)
       currActive++
     } else if (dir === 'P') {
-      setActive((prev) => prev--)
+      setActive(prev => prev--)
       currActive--
     }
     setSelectedMonth(months[currActive])
@@ -90,6 +90,7 @@ export default function Calendar() {
   console.log(months)
   useEffect(() => {
     setAttndDates(selectedMonth?.num)
+    setFormatingPopup(false)
   }, [selectedMonth])
 
   return isFormatingPopup ? (
