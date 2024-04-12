@@ -48,17 +48,23 @@ export default function Calendar () {
   async function setupMonths () {
     return new Promise(async (resolve, reject) => {
       try {
-        const newMonths = await attndMonths.map((month, idx) => {
+        console.log("hello", attndMonths)
+        const newMonths = attndMonths.map((month, idx) => {
+          console.log("inside the map")
           const monthNum = Number(month.slice(0, 2))
           const yearNum = Number(month.slice(3, 7))
-          return {
+          const date =  {
             str: `${monthNames[monthNum - 1]}, ${yearNum}`,
             num: monthNum,
             idx: idx
           }
+          console.log(date)
+          return date
         })
+        // console.log(newMonths)
         setMonths(newMonths)
         resolve(newMonths)
+        return newMonths
       } catch (err) {
         reject(err)
         return null
@@ -68,7 +74,9 @@ export default function Calendar () {
   async function setupAttnd () {
     try {
       const fetchedMonths = await setupMonths()
+      console.log(fetchedMonths)
       setSelectedMonth(fetchedMonths[active])
+      // await setAttendancePopup(fetchedMonths[active])
       handleMonthChange('I')
     } catch (err) {
       console.log(err)
@@ -87,11 +95,11 @@ export default function Calendar () {
     setSelectedMonth(months[currActive])
     setFormatingPopup(false)
   }
+
   console.log(months)
   useEffect(() => {
-    setAttndDates(selectedMonth?.num)
-    setFormatingPopup(false)
-  }, [selectedMonth])
+    setupAttnd()
+  }, [])
 
   return isFormatingPopup ? (
     <div className=' bg-white text-center shadow-md px-6 py-6 rounded-md border-1 border-gray-200'>

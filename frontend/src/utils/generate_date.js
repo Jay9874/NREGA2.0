@@ -8,9 +8,12 @@ var genDates = function (start, end) {
     let newDate = new Date(dt)
     const newDateStr = newDate.toISOString()
     const newEntry = `${newDateStr.slice(5, 7)}/${newDate.getFullYear()}`
-    if (!months.includes(newEntry)) months.push(newEntry)
+    
     const weekDay = newDate.getDay()
     const month = newDate.getMonth()
+    if (!months.includes(newEntry)){
+      
+    } months.push(newEntry)
     newDate = newDate.toISOString()
     newDate = {
       date: `${newDate.slice(0, 10)}`,
@@ -23,7 +26,7 @@ var genDates = function (start, end) {
     }
     arr.push(newDate)
   }
-
+  console.log(months)
   return { dates: arr, months: months }
 }
 
