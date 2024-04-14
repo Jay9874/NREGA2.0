@@ -38,6 +38,7 @@ export const useWorkerStore = create((set, get) => ({
   },
   profile: {},
   attndDates: [],
+  currActiveDates: [],
   attndMonths: [],
   isFormatingPopup: true,
   setFormatingPopup: (status) => set({ isFormatingPopup: status }),
@@ -156,7 +157,7 @@ export const useWorkerStore = create((set, get) => ({
           (job) =>
             job.location_id.id === locations[0]?.id && job.Status === 'enrolled'
         )
-        filteredJobs.forEach(async (job) => {
+        filteredJobs.forEach(async (job, index) => {
           const { data } = await supabase
             .from('attendance')
             .select(`*, attendance_for(*, location_id(*))`)
@@ -168,12 +169,15 @@ export const useWorkerStore = create((set, get) => ({
             return { [item.status]: timeToString(item.created_at) }
           })
           const previous = get().attendances
+          // console.log('previous attnd data', previous)
+          // console.log('current attnd data', data)
           set({
             attendances: [
               ...previous,
               {
+                id: index,
                 dates: dateStatus,
-                data: data,
+                attendances: data,
                 Work: job.job_name,
                 Location: job.Location,
                 start: job.created_at,
@@ -192,20 +196,30 @@ export const useWorkerStore = create((set, get) => ({
       reject(err)
     }
   },
-  setAttndDates: async (selMonth) => {
-    console.log(selMonth)
+  setAttndDates: (selMonth) => {
     return new Promise(async (resolve, reject) => {
-      set({ isFormatingPopup: true })
-      const selectedAttnd = get().selectedAttendance
-      var { dates, months } = genDates(selectedAttnd.start, selectedAttnd.end)
-      dates = dates.filter((date) => date.month === selMonth)
-      dates = dates.map((date, index) => {
-        if (date.month === selMonth) date.isCurrentMonth = true
-        else date.isCurrentMonth = false
-        return date
-      })
-      set({ attndDates: dates, attndMonths: months })
-      resolve(dates)
+      try {
+        set({ isFormatingPopup: true })
+        var dates = get().attndDates
+        dates = dates.filter((date) => date.month === selMonth)
+        set({ currActiveDates: dates, isFormatingPopup: false })
+        resolve(dates)
+      } catch (err) {
+        reject(err)
+      }
+    })
+  },
+  setAttndPopupData: (selectedAttnd) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        set({ isFormatingPopup: true })
+        const { months, dates } = await genDates(selectedAttnd)
+        set({ attndMonths: months, attndDates: dates, isFormatingPopup: false })
+        resolve(months)
+      } catch (err) {
+        set({ isFormatingPopup: false })
+        reject(err)
+      }
     })
   },
   setLastWork: async () => {
@@ -223,8 +237,9 @@ export const useWorkerStore = create((set, get) => ({
       const presence = attendance.length
       const { data } = await supabase
         .from('workers_jobs')
-        .select(`*, job_id(location_id(*))`)
+        .select(`*, job_id(*, location_id(*))`)
         .eq('job_id', job.job_id)
+      console.log(data)
       set({
         lastWork: {
           location: data[0].job_id.location_id,
@@ -234,6 +249,7 @@ export const useWorkerStore = create((set, get) => ({
           deadline: deadline,
           duration: days,
           completion: percentage,
+          desc: data[0].job_id.job_description,
         },
       })
     } catch (error) {

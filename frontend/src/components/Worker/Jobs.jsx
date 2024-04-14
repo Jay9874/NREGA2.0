@@ -25,7 +25,6 @@ const Jobs = () => {
     { label: 'Completion', value: `${lastWork.completion}%` },
     { label: 'Deadline', value: lastWork.deadline },
   ]
-
   return (
     <main>
       <div className='px-4 pt-6 pb-1 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8 '>
@@ -33,9 +32,13 @@ const Jobs = () => {
           <h3 className='text-lg font-medium leading-6 text-gray-900'>
             Your working site
           </h3>
-          <p className='mt-2 max-w-4xl text-sm text-gray-500'>
-            {lastWork.name}, {lastWork.location.district},{' '}
-            {lastWork.location.panchayat}
+          <p className='mt-2 max-w-4xl text-sm text-gray-700'>
+            {lastWork.name} at {lastWork.location.district},{' '}
+            {lastWork.location.panchayat} <br />
+            <i>
+              {'_'}
+              {lastWork.desc}
+            </i>
           </p>
         </div>
         <div className=' bg-white pb-1 sm:pb-4 border-gray-200'>
