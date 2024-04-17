@@ -1,102 +1,79 @@
 import React, { useEffect, useState } from 'react'
 import { useWorkerStore } from '../../api/store'
 import { DataTable } from '../Errors'
-import { Fragment } from 'react'
-import {
-  CalendarIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  EllipsisHorizontalIcon,
-  MapPinIcon,
-} from '@heroicons/react/20/solid'
-import { Menu, Transition } from '@headlessui/react'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 
-const monthNames = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-]
-
-const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
-function classNames(...classes) {
+function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Calendar() {
+export default function Calendar () {
   const {
     setAttendancePopup,
-    selectedAttendance,
     isFormatingPopup,
     attndMonths,
+    attndDates,
     setAttndDates,
     setFormatingPopup,
-    currActiveDates,
+    currActiveDates
   } = useWorkerStore()
+
+  // State Variables
   const [selectedMonth, setSelectedMonth] = useState()
   const [months, setMonths] = useState([])
   const [active, setActive] = useState(0)
   const [dataInitialize, setDataInitialize] = useState(false)
   const [changeDates, setChangeDates] = useState(true)
+  const [prev, setPrev] = useState(null)
+  const [next, setNext] = useState(null)
 
-  async function setupMonths() {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const newMonths = attndMonths.map((month, idx) => {
-          const monthNum = Number(month.slice(0, 2))
-          const yearNum = Number(month.slice(3, 7))
-          const date = {
-            str: `${monthNames[monthNum - 1]}, ${yearNum}`,
-            num: monthNum,
-            idx: idx,
-          }
-          return date
-        })
-        setMonths(newMonths)
-        resolve(newMonths)
-        return newMonths
-      } catch (err) {
-        reject(err)
-        return null
-      }
-    })
-  }
-  async function setupAttnd() {
+  // Functions
+  async function setupAttnd () {
     try {
-      const fetchedMonths = await setupMonths()
+      const fetchedMonths = [...attndMonths.values()]
+      setMonths(fetchedMonths)
       setSelectedMonth(fetchedMonths[active])
-      await setAttndDates(fetchedMonths[active].num)
+      await setAttndDates(fetchedMonths[active].uniqueID)
+      if (active < fetchedMonths.length - 1) {
+        const id = fetchedMonths[active + 1].uniqueID
+        const nextDates = attndDates.get(id)
+        setNext({ month: fetchedMonths[active + 1].str, dates: nextDates })
+      }
       setDataInitialize(true)
       setChangeDates(false)
     } catch (err) {
       console.log(err)
     }
   }
-
-  async function handleMonthChange(dir) {
+  async function handleMonthChange (dir) {
     if (dir === 'N') {
-      setActive((prev) => prev + 1)
+      setActive(prev => prev + 1)
+      if (active + 2 < months.length) {
+        const id = months[active + 1].uniqueID
+        const nextDates = attndDates.get(id)
+        setNext({ month: months[active + 2].str, dates: nextDates })
+      } else {
+        setNext(null)
+      }
+      setPrev({ month: months[active].str, dates: currActiveDates })
     } else if (dir === 'P') {
-      setActive((prev) => prev - 1)
+      setNext({ month: months[active].str, dates: currActiveDates })
+      if (active >= 2) {
+        const prevDates = attndDates.get(months[active - 2].uniqueID)
+        setPrev({ month: months[active - 2].str, dates: prevDates })
+      } else {
+        setPrev(null)
+      }
+      setActive(prev => prev - 1)
     }
   }
-
-  async function onMonthChange() {
+  async function onMonthChange () {
     setChangeDates(true)
     setSelectedMonth(months[active])
-    await setAttndDates(months[active].num)
+    await setAttndDates(months[active].uniqueID)
     setFormatingPopup(false)
     setChangeDates(false)
   }
-
   useEffect(() => {
     if (!dataInitialize) {
       setupAttnd()
@@ -142,14 +119,14 @@ export default function Calendar() {
               </button>
             )}
           </div>
-          <div className='isolate mt-4 grid grid-cols-7 rounded-lg px-1 py-1 grid-rows-5 gap-px bg-gray-200 text-sm shadow ring-1 ring-gray-200'>
+          <div className='isolate mt-4 grid grid-cols-7 rounded-lg px-1 py-1 grid-rows-5 gap-px gap-y-0.5 bg-gray-200 text-sm shadow ring-1 ring-gray-200'>
             {changeDates ? (
               <div>Changing dates...</div>
             ) : (
-              currActiveDates.map((day, dayIdx) => {
+              currActiveDates?.map((day, dayIdx) => {
                 return (
                   <button
-                    key={day.date}
+                    key={dayIdx}
                     type='button'
                     className={classNames(
                       'py-1.5 ',
@@ -158,8 +135,8 @@ export default function Calendar() {
                       day.status === 'present' && 'bg-green-200',
                       dayIdx % 7 === 0 && 'rounded-tl-lg',
                       dayIdx % 7 === 6 && 'rounded-tr-lg',
-                      dayIdx % 7 === days.length - 7 && 'rounded-bl-lg',
-                      dayIdx % 7 === days.length - 1 && 'rounded-br-lg'
+                      dayIdx % 7 === 0 && 'rounded-bl-lg',
+                      dayIdx % 7 === 6 && 'rounded-br-lg'
                     )}
                   >
                     <time
@@ -170,7 +147,7 @@ export default function Calendar() {
                         day.isSelected && !day.isToday && 'bg-gray-900'
                       )}
                     >
-                      {day.date.split('-').pop().replace(/^0/, '')}
+                      {day.date}
                     </time>
                   </button>
                 )
