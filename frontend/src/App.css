@@ -2,7 +2,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600&family=Roboto:wght@300;400;700&display=swap');
 
 :root {
-  --popup-offset: 432px
+  --popup-offset-lg: 512px;
+  --popup-offset-sm: 160px
 }
 
 * {
@@ -27,7 +28,6 @@ body {
 /* Calendar month change animation */
 .calendar-prev-btn,
 .calendar-nxt-btn {
-  display: inline-block;
   width: 40px;
   height: 40px;
 }
@@ -51,6 +51,7 @@ body {
 
 .calendar-btn-container {
   display: inline-block;
+
   height: 40px;
   width: 40px;
 }
@@ -58,29 +59,27 @@ body {
 .static-str-container {
   display: inline-block;
   position: relative;
-  overflow: hidden;
+  /* padding: 0 6px; */
+  overflow: scroll;
   width: calc(100% - 80px);
   height: 40px;
 
 }
 
 .month-str-container {
-  position: absolute;
-  top: 0;
-  left: 0;
   white-space: nowrap;
-  transition-duration: 1s;
+  /* transition-duration: 1s; */
 }
 
 .month-str-container span {
-  text-align: center;
   display: inline-block;
-  width: 888px;
+  margin: auto 0; 
+  width: calc(100vw - var(--popup-offset-lg));
   height: 40px;
 }
 
-.month-str-container.left {
-  transform: translateX(calc( - 100vw + var(--popup-offset)));
+/* .month-str-container.left {
+  transform: translateX(calc(100vw - var(--popup-offset-lg)));
 }
 
 .month-str-container.normal {
@@ -88,5 +87,23 @@ body {
 }
 
 .month-str-container.right {
-  transform: translateX(calc(100vw - var(--popup-offset)));
+  transform: translateX(calc(100vw - var(--popup-offset-lg)));
+} */
+
+@media screen and (max-width: 768px) {
+  .month-str-container span {
+    width: calc(100vw - var(--popup-offset-sm));
+  }
+
+  .month-str-container.left {
+    transform: translateX(calc(100vw - var(--popup-offset-sm)));
+  }
+
+  .month-str-container.normal {
+    transform: translateX(0);
+  }
+
+  .month-str-container.right {
+    transform: translateX(calc(var(--popup-offset-sm) - 100vw));
+  }
 }

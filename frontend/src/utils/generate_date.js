@@ -62,9 +62,10 @@ var genDates = function (selectedAttnd) {
         }
         if (monthlyDates.get(monthIdx) === undefined) {
           monthlyDates.set(monthIdx, [dateItem])
+        } else {
+          var dateArr = monthlyDates.get(monthIdx)
+          dateArr.push(dateItem)
         }
-        var dateArr = monthlyDates.get(monthIdx)
-        dateArr.push(dateItem)
       }
       // const monthsArr = [...months.values()]
       resolve({ dates: monthlyDates, months: months })

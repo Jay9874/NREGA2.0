@@ -115,11 +115,11 @@ export default function Calendar () {
                 )}
               </div>
               <div className='static-str-container'>
-                <div className={`month-str-container font-semibold ${animDir}`}>
-                  {prev && <span>{prev.month}</span>}
-                  <span>{selectedMonth?.str}</span>
-                  {next && <span>{next.month}</span>}
-                </div>
+              <div className={`month-str-container font-semibold`}>
+                {prev && <span>{prev.month}</span>}
+                <span>{selectedMonth?.str}</span>
+                {next && <span>{next.month}</span>}
+              </div>
               </div>
 
               <div className='calendar-btn-container'>
