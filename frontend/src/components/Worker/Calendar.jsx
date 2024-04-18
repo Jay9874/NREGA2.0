@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useWorkerStore } from '../../api/store'
 import { DataTable } from '../Errors'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
@@ -26,6 +26,9 @@ export default function Calendar () {
   const [changeDates, setChangeDates] = useState(true)
   const [prev, setPrev] = useState(null)
   const [next, setNext] = useState(null)
+  const [animDir, setAnimDir] = useState('normal')
+
+  // useRef variables
 
   // Functions
   async function setupAttnd () {
@@ -49,6 +52,7 @@ export default function Calendar () {
     if (dir === 'N') {
       setActive(prev => prev + 1)
       if (active + 2 < months.length) {
+        setAnimDir('left')
         const id = months[active + 1].uniqueID
         const nextDates = attndDates.get(id)
         setNext({ month: months[active + 2].str, dates: nextDates })
@@ -59,6 +63,7 @@ export default function Calendar () {
     } else if (dir === 'P') {
       setNext({ month: months[active].str, dates: currActiveDates })
       if (active >= 2) {
+        setAnimDir('right')
         const prevDates = attndDates.get(months[active - 2].uniqueID)
         setPrev({ month: months[active - 2].str, dates: prevDates })
       } else {
@@ -95,29 +100,44 @@ export default function Calendar () {
 
         {/* The calendar codes */}
         <div className='mt-6 text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:mt-9 xl:col-start-9'>
-          <div className='flex items-center text-gray-900 '>
-            {selectedMonth?.idx >= 1 && (
-              <button
-                type='button'
-                onClick={() => handleMonthChange('P')}
-                className='-m-1.5 px-2 py-2 rounded-full bg-gray-50 flex flex-none items-center justify-center p-1.5 text-gray-900 hover:bg-gray-100'
-              >
-                <span className='sr-only'>Previous month</span>
-                <ChevronLeftIcon className='h-5 w-5' aria-hidden='true' />
-              </button>
-            )}
+          <div className='w-full text-gray-700'>
+            <div className='main-month-container'>
+              <div className='calendar-btn-container'>
+                {selectedMonth?.idx >= 1 && (
+                  <button
+                    type='button'
+                    onClick={() => handleMonthChange('P')}
+                    className='calendar-prev-btn rounded-full bg-gray-200 flex flex-none items-center justify-center text-gray-900 hover:bg-gray-100'
+                  >
+                    <span className='sr-only'>Previous month</span>
+                    <ChevronLeftIcon className='h-10 w-10' aria-hidden='true' />
+                  </button>
+                )}
+              </div>
+              <div className='static-str-container'>
+                <div className={`month-str-container font-semibold ${animDir}`}>
+                  {prev && <span>{prev.month}</span>}
+                  <span>{selectedMonth?.str}</span>
+                  {next && <span>{next.month}</span>}
+                </div>
+              </div>
 
-            <div className='flex-auto font-semibold'>{selectedMonth?.str}</div>
-            {selectedMonth?.idx < months?.length - 1 && (
-              <button
-                type='button'
-                onClick={() => handleMonthChange('N')}
-                className='-m-1.5 px-2 py-2 rounded-full bg-gray-50 flex flex-none items-center justify-center p-1.5 text-gray-900 hover:bg-gray-100'
-              >
-                <span className='sr-only'>Next month</span>
-                <ChevronRightIcon className='h-5 w-5' aria-hidden='true' />
-              </button>
-            )}
+              <div className='calendar-btn-container'>
+                {selectedMonth?.idx < months?.length - 1 && (
+                  <button
+                    type='button'
+                    onClick={() => handleMonthChange('N')}
+                    className='calendar-nxt-btn rounded-full bg-gray-200 flex flex-none items-center justify-center text-gray-900 hover:bg-gray-100'
+                  >
+                    <span className='sr-only'>Next month</span>
+                    <ChevronRightIcon
+                      className='h-10 w-10'
+                      aria-hidden='true'
+                    />
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
           <div className='isolate mt-4 grid grid-cols-7 rounded-lg px-1 py-1 grid-rows-5 gap-px gap-y-0.5 bg-gray-200 text-sm shadow ring-1 ring-gray-200'>
             {changeDates ? (

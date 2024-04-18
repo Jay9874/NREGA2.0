@@ -1,6 +1,10 @@
 /* root css */
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600&family=Roboto:wght@300;400;700&display=swap');
 
+:root {
+  --popup-offset: 432px
+}
+
 * {
   font-family: Open Sans, sans-serif;
   margin: 0;
@@ -17,4 +21,72 @@ body {
 
 #root {
   min-height: 100vh;
+}
+
+
+/* Calendar month change animation */
+.calendar-prev-btn,
+.calendar-nxt-btn {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+}
+
+.main-month-container {
+  height: 40px;
+
+}
+
+.month-str-container {
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.month-str-container::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
+}
+
+.calendar-btn-container {
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+}
+
+.static-str-container {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  width: calc(100% - 80px);
+  height: 40px;
+
+}
+
+.month-str-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  transition-duration: 1s;
+}
+
+.month-str-container span {
+  text-align: center;
+  display: inline-block;
+  width: 888px;
+  height: 40px;
+}
+
+.month-str-container.left {
+  transform: translateX(calc( - 100vw + var(--popup-offset)));
+}
+
+.month-str-container.normal {
+  transform: translateX(0);
+}
+
+.month-str-container.right {
+  transform: translateX(calc(100vw - var(--popup-offset)));
 }
