@@ -1,10 +1,5 @@
 {
-  "builds": [
-    {
-      "src": "./index.js",
-      "use": "@vercel/node"
-    }
-  ],
+ 
   "outputDirectory": "./frontend/dist",
   "rewrites": [{ "source": "/(.*)", "destination": "index.js" }]
 }
