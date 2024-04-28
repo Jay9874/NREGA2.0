@@ -26,7 +26,7 @@ import { adminRoutes } from './routes/admin.js'
 app.use('/api/admin', adminRoutes)
 // app.use('/api/worker', workerRoutes)
 app.use('/api/test', (req, res) => {
-  res.send('Hello from the server')
+  res.send(`Hello from the server\n Directory is ${__dirname}`)
 })
 
 // Frontend Routes
