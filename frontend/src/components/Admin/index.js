@@ -1,10 +1,11 @@
 import AdminDashboard from './AdminDashboard'
 import AdminAttendance from './AdminAttendance'
 import Payout from './Payout'
-import Addjobs from './Addjobs'
+import Jobs from './Job'
 import AdminProfile from './AdminProfile'
 import Employee from './Employee'
 import { AddEmployee, ViewEmployees, EditEmployee, Progress } from './Employees'
+import { ViewJobs } from './Jobs'
 
 export {
   AdminDashboard,
@@ -14,7 +15,8 @@ export {
   ViewEmployees,
   EditEmployee,
   Payout,
-  Addjobs,
+  Jobs,
   AdminProfile,
-  AddEmployee
+  AddEmployee,
+  ViewJobs,
 }

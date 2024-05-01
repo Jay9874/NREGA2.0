@@ -25,7 +25,6 @@ export default function Attendance() {
     loadingAttendance,
     setAttendancePopup,
     isAttendanceActive,
-    selectedAttendance,
     selectAttendance,
     setAttndPopupData,
   } = useWorkerStore()
@@ -139,6 +138,7 @@ export default function Attendance() {
       setLoadFilter(false)
     }
   }, [dataLoaded, loadFilter])
+  console.log(attendances)
 
   return (
     // The Attendance popup

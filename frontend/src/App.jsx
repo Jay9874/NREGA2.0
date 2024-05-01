@@ -8,13 +8,14 @@ import { useEffect } from 'react'
 import {
   AdminDashboard,
   AdminAttendance,
-  Addjobs,
+  Jobs as AdminJobs,
   Progress,
   ViewEmployees,
   EditEmployee,
   Employee,
   Payout,
   AdminProfile,
+  ViewJobs,
 } from './components/Admin'
 
 // Worker Components
@@ -48,7 +49,7 @@ export default function App() {
           <Route path='*' element={<NotFound path='auth' />} />
         </Route>
         <Route element={<Protected />}>
-          <Route path='/worker' element={<Worker />}>
+          <Route path='worker' element={<Worker />}>
             <Route path='dashboard' element={<Dashboard />} />
             <Route path='profile' element={<Profile />} />
             <Route path='jobs' element={<Jobs />} />
@@ -56,9 +57,11 @@ export default function App() {
             <Route path='attendance' element={<Attendance />} />
             <Route path='*' element={<NotFound path='worker' />} />
           </Route>
-          <Route path='/admin' element={<Admin />}>
-            <Route path='dashboard' index element={<AdminDashboard />} />
-            <Route path='addjob' element={<Addjobs />} />
+          <Route path='admin' element={<Admin />}>
+            <Route path='dashboard' element={<AdminDashboard />} />
+            <Route path='jobs' element={<AdminJobs />}>
+              <Route index element={<ViewJobs />} />
+            </Route>
             <Route path='attendance' element={<AdminAttendance />} />
             <Route path='employee' element={<Employee />}>
               <Route index element={<ViewEmployees />} />
