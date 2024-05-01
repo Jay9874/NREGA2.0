@@ -5,7 +5,7 @@ import Jobs from './Job'
 import AdminProfile from './AdminProfile'
 import Employee from './Employee'
 import { AddEmployee, ViewEmployees, EditEmployee, Progress } from './Employees'
-import { ViewJobs } from './Jobs'
+import { ViewJobs, AddJob } from './Jobs'
 
 export {
   AdminDashboard,
@@ -19,4 +19,5 @@ export {
   AdminProfile,
   AddEmployee,
   ViewJobs,
+  AddJob,
 }

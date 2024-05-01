@@ -1,3 +1,4 @@
 import ViewJobs from './ViewJobs'
+import AddJob from './AddJob'
 
-export { ViewJobs }
+export { ViewJobs, AddJob }

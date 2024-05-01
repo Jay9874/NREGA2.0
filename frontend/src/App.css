@@ -18,3 +18,21 @@ body {
 #root {
   min-height: 100vh;
 }
+
+.admin-job-progress-outer {
+  width: 100px;
+  height: 20px;
+  border-radius: 10px;
+  position: relative;
+  background-color: #dcfce7;
+  border: 2px solid #426551;
+}
+#admin-job-progress {
+  height: 100%;
+  width: 50px;
+  border-radius: 10px;
+  background-color: #50d380;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

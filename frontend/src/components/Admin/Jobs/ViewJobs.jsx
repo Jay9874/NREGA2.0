@@ -1,3 +1,6 @@
+import { Link } from 'react-router-dom'
+import Pagination from '../../Pagination'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
 const people = [
   {
     name: 'Lindsay Walton',
@@ -17,51 +20,71 @@ const statusStyles = {
 }
 const tableHeading = [
   { name: 'Name' },
-  { name: 'Location' },
+  { name: 'Description' },
   { name: 'Deadline' },
-  { name: 'Headcount' },
-  { name: 'Delay' },
+  { name: 'Workers' },
+  { name: 'Progress' },
 ]
 
 const tableData = [
   {
-    Location: 'Joda Mandir, Kasba, Kolkata, West Bengal',
+    Description: 'Plant 500 trees along B.B.Chatterjee road',
     Presence: '2/147 Day',
     Name: 'Ped Lagao',
     Deadline: '2024-01-25T23:26:35+00:00',
     id: 1,
-    Headcount: 5,
-    Delay: 5,
+    Workers: 5,
+    Progress: 5,
     start: '2023-09-01T17:29:27.52655+00:00',
   },
   {
-    Location: 'Joda Mandir, Kasba, Kolkata, West Bengal',
+    Description: 'Plant 500 trees along B.B.Chatterjee road',
     Presence: '2/147 Day',
     Name: 'Ped Lagao',
     Deadline: '2024-01-25T23:26:35+00:00',
     id: 1,
-    Headcount: 5,
-    Delay: 5,
+    Workers: 5,
+    Progress: 5,
     start: '2023-09-01T17:29:27.52655+00:00',
   },
   {
-    Location: 'Joda Mandir, Kasba, Kolkata, West Bengal',
+    Description: 'Plant 500 trees along B.B.Chatterjee road',
     Presence: '2/147 Day',
     Name: 'Ped Lagao',
     Deadline: '2024-01-25T23:26:35+00:00',
     id: 1,
-    Headcount: 5,
-    Delay: 5,
+    Workers: 5,
+    Progress: 5,
     start: '2023-09-01T17:29:27.52655+00:00',
   },
   {
-    Location: 'Joda Mandir, Kasba, Kolkata, West Bengal',
+    Description: 'Plant 500 trees along B.B.Chatterjee road',
     Presence: '2/147 Day',
     Name: 'Ped Lagao',
     Deadline: '2024-01-25T23:26:35+00:00',
     id: 1,
-    Headcount: 5,
-    Delay: 5,
+    Workers: 5,
+    Progress: 5,
+    start: '2023-09-01T17:29:27.52655+00:00',
+  },
+  {
+    Description: 'Plant 500 trees along B.B.Chatterjee road',
+    Presence: '2/147 Day',
+    Name: 'Ped Lagao',
+    Deadline: '2024-01-25T23:26:35+00:00',
+    id: 1,
+    Workers: 5,
+    Progress: 5,
+    start: '2023-09-01T17:29:27.52655+00:00',
+  },
+  {
+    Description: 'Plant 500 trees along B.B.Chatterjee road',
+    Presence: '2/147 Day',
+    Name: 'Ped Lagao',
+    Deadline: '2024-01-25T23:26:35+00:00',
+    id: 1,
+    Workers: 5,
+    Progress: 5,
     start: '2023-09-01T17:29:27.52655+00:00',
   },
 ]
@@ -78,12 +101,12 @@ export default function ViewJobs() {
             </p>
           </div>
           <div className='mt-4 sm:mt-0 sm:ml-16 sm:flex-none'>
-            <button
-              type='button'
+            <Link
+              to='add'
               className='inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto'
             >
               Add a Job
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -144,40 +167,48 @@ export default function ViewJobs() {
 
             {/* Activity table (small breakpoint and up) */}
             <div className='hidden sm:block'>
-              <div className='pb-12'>
-                {/* <div className='mt-2 flex flex-col'> */}
-                <div className='min-w-full max-h-[200px] overflow-scroll overflow-x-auto align-middle shadow sm:rounded-lg'>
-                  <table className='min-w-full divide-y divide-gray-200'>
-                    <thead className="stickey top-0">
+              <div className='pt-12 pb-12'>
+                <div className='relative min-w-full max-h-[250px] overflow-scroll overflow-x-auto align-middle shadow sm:rounded-lg'>
+                  <table className='min-w-full relative divide-y divide-gray-200'>
+                    <thead>
                       <tr>
                         {tableHeading.map((heading, index) => (
                           <th
                             key={index}
-                            className='bg-gray-50 px-6 py-3 text-left text-sm font-semibold text-gray-900'
+                            className='sticky top-0 bg-gray-50 px-6 py-3 text-left text-sm font-semibold text-gray-900 
+                            z-10 border-b border-gray-300 bg-opacity-75 pl-4 pr-3 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8'
                             scope='col'
                           >
-                            {heading.name}
+                            <a href='#' className='group inline-flex'>
+                              {heading.name}
+                              <span className='invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible'>
+                                <ChevronDownIcon
+                                  className='h-5 w-5'
+                                  aria-hidden='true'
+                                />
+                              </span>
+                            </a>
                           </th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody className='divide-y divide-gray-200 h-50 bg-white overflow-y-scroll w-full'>
+                    <tbody className='divide-y divide-gray-200 h-50 bg-white w-full'>
                       {tableData.map((transaction, index) => (
                         <tr key={index} className='bg-white'>
                           {tableHeading.map((heading, index) =>
-                            heading.name === 'Status' ? (
+                            heading.name === 'Progress' ? (
                               <td
                                 key={index}
                                 className='whitespace-nowrap px-6 py-4 text-sm text-gray-500 md:block'
                               >
-                                <span
-                                  className={classNames(
-                                    statusStyles[transaction[heading.name]],
-                                    'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize'
-                                  )}
-                                >
-                                  {transaction[heading.name]}
-                                </span>
+                                <div class='admin-job-progress-outer'>
+                                  <div id='admin-job-progress' data-done='70'>
+                                    <span className='text-sm'>
+                                      {transaction[heading.name]}
+                                      {'%'}
+                                    </span>
+                                  </div>
+                                </div>
                               </td>
                             ) : (
                               <td
@@ -196,7 +227,7 @@ export default function ViewJobs() {
                   </table>
                   {/* Pagination */}
                 </div>
-                {/* </div> */}
+                <Pagination />
               </div>
             </div>
           </>
