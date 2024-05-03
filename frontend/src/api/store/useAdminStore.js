@@ -89,26 +89,30 @@ export const useAdminStore = create((set, get) => ({
     }
   },
   setAadhaarData: async (aadhaarNo) => {
-    localStorage.removeItem('lastAddedAadhaar')
-    const userData = { aadhaar: aadhaarNo }
-    const options = {
-      method: 'POST',
-      body: JSON.stringify(userData),
-      headers: { 'Content-Type': 'application/json' },
+    try {
+      const toastId = toast.loading('Getting aadhaar data...')
+      localStorage.removeItem('lastAddedAadhaar')
+      const userData = { aadhaar: aadhaarNo }
+      const options = {
+        method: 'POST',
+        body: JSON.stringify(userData),
+        headers: { 'Content-Type': 'application/json' },
+      }
+      const url = `${get().base}/api/admin/aadhaar`
+      const res = await fetch(url, options)
+      const { data, error } = await res.json()
+      if (error) {
+        toast.dismiss(toastId)
+        return toast.error(error)
+      }
+      const updatedData = { ...data, age: calculateAge(data.dob) }
+      localStorage.setItem('lastAddedAadhaar', JSON.stringify(updatedData))
+      set({ lastAddedAadhaar: updatedData })
+      toast.success('Fields filled with aadhaar data.')
+      return updatedData
+    } catch (error) {
+      return toast.error(`${error.message}, Please try again.`)
     }
-    const url = `${get().base}/api/admin/aadhaar`
-    const res = await fetch(url, options)
-    const { data, error } = await res.json()
-    toast.promise(fetch(url, options), {
-      loading: 'Getting Aadhaar Data...',
-      success: 'Fields filled with Aadhaar data',
-      error: `${error}`,
-    })
-    if (error) return null
-    const updatedData = { ...data, age: calculateAge(data.dob) }
-    localStorage.setItem('lastAddedAadhaar', JSON.stringify(updatedData))
-    set({ lastAddedAadhaar: updatedData })
-    return updatedData
   },
   createEmployee: async (userData, navigate) => {
     try {
