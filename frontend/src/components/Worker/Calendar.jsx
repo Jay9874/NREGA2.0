@@ -29,7 +29,9 @@ export default function Calendar () {
   const [animDir, setAnimDir] = useState('normal')
 
   // useRef variables
-
+  const monthCont = useRef(null)
+  const monthStr = useRef(null)
+  var parentWidth
   // Functions
   async function setupAttnd () {
     try {
@@ -48,8 +50,13 @@ export default function Calendar () {
       console.log(err)
     }
   }
-  async function handleMonthChange (dir) {
+  async function handleMonthChange (e, dir) {
+    const parentWidth = monthCont.current.offsetWidth
+
     if (dir === 'N') {
+      monthStr.current.style.transform = `translate(${
+        -parentWidth * (active + 1)
+      }px, 0)`
       setActive(prev => prev + 1)
       if (active + 2 < months.length) {
         setAnimDir('left')
@@ -61,6 +68,9 @@ export default function Calendar () {
       }
       setPrev({ month: months[active].str, dates: currActiveDates })
     } else if (dir === 'P') {
+      monthStr.current.style.transform = `translate(${
+        parentWidth * (-active + 1)
+      }px, 0)`
       setNext({ month: months[active].str, dates: currActiveDates })
       if (active >= 2) {
         setAnimDir('right')
@@ -106,7 +116,7 @@ export default function Calendar () {
                 {selectedMonth?.idx >= 1 && (
                   <button
                     type='button'
-                    onClick={() => handleMonthChange('P')}
+                    onClick={e => handleMonthChange(e, 'P')}
                     className='calendar-prev-btn rounded-full bg-gray-200 flex flex-none items-center justify-center text-gray-900 hover:bg-gray-100'
                   >
                     <span className='sr-only'>Previous month</span>
@@ -114,19 +124,32 @@ export default function Calendar () {
                   </button>
                 )}
               </div>
-              <div className='static-str-container'>
-              <div className={`month-str-container font-semibold`}>
-                {prev && <span>{prev.month}</span>}
-                <span>{selectedMonth?.str}</span>
-                {next && <span>{next.month}</span>}
-              </div>
+              <div ref={monthCont} className='static-str-container'>
+                <div
+                  ref={monthStr}
+                  className='month-str-container font-semibold'
+                >
+                  {months?.map((element, index) => (
+                    <div
+                      className={`month-str-item ${
+                        active === index ? 'active' : ''
+                      }`}
+                      id={`month-${index}`}
+                      key={index}
+                    >
+                      <div className='flex items-center justify-center h-full'>
+                        <p>{element.str}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className='calendar-btn-container'>
                 {selectedMonth?.idx < months?.length - 1 && (
                   <button
                     type='button'
-                    onClick={() => handleMonthChange('N')}
+                    onClick={e => handleMonthChange(e, 'N')}
                     className='calendar-nxt-btn rounded-full bg-gray-200 flex flex-none items-center justify-center text-gray-900 hover:bg-gray-100'
                   >
                     <span className='sr-only'>Next month</span>
