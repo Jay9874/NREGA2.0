@@ -51,51 +51,40 @@ body {
 
 .calendar-btn-container {
   display: inline-block;
-
   height: 40px;
   width: 40px;
 }
 
 .static-str-container {
   display: inline-block;
-  position: relative;
-  /* padding: 0 6px; */
-  overflow: scroll;
+  overflow: hidden;
   width: calc(100% - 80px);
   height: 40px;
 
 }
 
 .month-str-container {
-  display: flex;
+  display: inline-block;
   white-space: nowrap;
   height: 100%;
-  transition: all 400ms ease-in-out;
+  transition: all 500ms ease-in-out;
 }
 
 .month-str-item {
-  flex-shrink: 0;
   display: inline-block;
-  width: 100%;
+  width: calc(100vw - 512px);
   height: 100%;
   transform-origin: left center;
 }
 
-/* .month-str-container.left {
-  transform: translateX(calc(100vw - var(--popup-offset-lg)));
-}
-
-.month-str-container.normal {
-  transform: translateX(0);
-}
-
-.month-str-container.right {
-  transform: translateX(calc(100vw - var(--popup-offset-lg)));
-} */
 
 @media screen and (max-width: 768px) {
   .month-str-container span {
     width: calc(100vw - var(--popup-offset-sm));
+  }
+
+  .month-str-item{
+    width: calc(100vw - 152px);
   }
 
   .month-str-container.left {

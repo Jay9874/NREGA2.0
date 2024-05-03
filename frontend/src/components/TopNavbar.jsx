@@ -1,6 +1,7 @@
+import { useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import { Fragment } from 'react'
+import { Fragment, useReducer } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { Bars3BottomLeftIcon, BellIcon } from '@heroicons/react/24/outline'
 import { authStore } from '../api/store'
@@ -13,6 +14,7 @@ export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
   const { profile } = useWorkerStore()
   const { pathname } = useLocation()
   const { logoutUser } = authStore()
+
   return (
     <div className='sticky top-0 z-40 flex h-16 flex-shrink-0 bg-white shadow'>
       <button
@@ -43,7 +45,10 @@ export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
             </div>
           </form>
         </div>
-        <div className='ml-4 flex items-center md:ml-6' title='View Notifications'>
+        <div
+          className='ml-4 flex items-center md:ml-6'
+          title='View Notifications'
+        >
           <button
             type='button'
             className='rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
