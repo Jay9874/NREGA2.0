@@ -148,9 +148,6 @@ export default function Dashboard() {
     //   {/* <RecentPayment heading={"Recent Activity"} recentActivity={transactions} /> */}
     // </div>
     // </main>
-    <div>
-      Building this tab. Thank you for your patience. Coming Soon... Check out
-      current work in Employees tab.
-    </div>
+    <div>Building it...</div>
   )
 }
