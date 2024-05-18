@@ -1,66 +1,79 @@
-import { CheckCircleIcon } from '@heroicons/react/20/solid'
-const features = [
+import { FeatureCard, FeatureToggler } from '.'
+import {
+  CheckCircleIcon,
+  ChevronRightIcon,
+  ChevronLeftIcon,
+} from '@heroicons/react/20/solid'
+import featureImg from '../../../public/feature.png'
+import featureAdminImg from '../../../public/admin_sc.png'
+import { useState } from 'react'
+const workerPanelFeatures = [
   {
     name: 'Job Application: ',
     description: 'for the works around the Panchayat.',
-    icon: CheckCircleIcon
+    icon: CheckCircleIcon,
   },
   {
     name: 'Attendance with Filtration: ',
     description:
       'for sorting out attendances spreaded in States, Districts, Blocks and Panchayats.',
-    icon: CheckCircleIcon
+    icon: CheckCircleIcon,
   },
   {
     name: 'Payment Status: ',
     description: 'for daily wages paid on certain work.',
-    icon: CheckCircleIcon
-  }
+    icon: CheckCircleIcon,
+  },
 ]
 
-export default function Feature () {
+export default function Feature() {
+  const [active, setActive] = useState(0)
   return (
-    <div className='overflow-hidden bg-white py-24 sm:py-32'>
-      <div className='mx-auto max-w-7xl px-6 lg:px-8'>
-        <div className='mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2'>
-          <div className='lg:pr-8 lg:pt-4'>
-            <div className='lg:max-w-lg'>
-              <h2 className='text-base font-semibold leading-7 text-indigo-600'>
-                Worker Panel
-              </h2>
-              <p className='mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
-                A transparency in whole
-              </p>
-              <p className='mt-6 text-lg leading-8 text-gray-600'>
-                It was never before available for a normal worker to access
-                their records by the Gram Panchayat Officer, "Sachiv". Thus
-                bringing credibility and connect amongst Government and People.
-              </p>
-              <dl className='mt-10 max-w-xl space-y-8 text-base leading-7 text-gray-600 lg:max-w-none'>
-                {features.map(feature => (
-                  <div key={feature.name} className='relative pl-9'>
-                    <dt className='inline font-semibold text-gray-900'>
-                      <feature.icon
-                        className='absolute left-1 top-1 h-5 w-5 text-indigo-600'
-                        aria-hidden='true'
-                      />
-                      {feature.name}
-                    </dt>{' '}
-                    <dd className='inline'>{feature.description}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </div>
-          <img
-            src='./feature.png'
-            alt='Product screenshot'
-            className='w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0'
-            width={2432}
-            height={1442}
-          />
+    <main className='bg-white text-center'>
+      <div className='py-12 sm:py-16 px-12'>
+        <div className='feature-toggler'>
+          <button
+            onClick={() => setActive(0)}
+            className={active === 0 ? 'active' : ''}
+          >
+            <p>Worker Panel</p>
+          </button>
+          <button
+            name='live'
+            value={1}
+            onClick={() => setActive(1)}
+            className={active === 1 ? 'active' : ''}
+          >
+            <p>Admin Panel</p>
+          </button>
+          <div className='toggle-activator'></div>
         </div>
+        {/* <FeatureToggler handleToggler={handleToggler} /> */}
       </div>
-    </div>
+      <div className='relative overflow-hidden bg-white pb-24 sm:pb-32'>
+        <div className='grid'>
+          {/* <div className='home-feature-card'> */}
+          <FeatureCard
+            features={workerPanelFeatures}
+            imgSrc={featureImg}
+            panelName='Worker Panel'
+          />
+          {/* </div>
+          <div className='home-feature-card'> */}
+          <FeatureCard
+            features={workerPanelFeatures}
+            imgSrc={featureAdminImg}
+            panelName='Admin Panel'
+          />
+          {/* </div> */}
+        </div>
+        {/* <button className='home-btn-cont-lft home-slide-btn'>
+          <ChevronLeftIcon />
+        </button>
+        <button className='home-btn-cont-rgt home-slide-btn'>
+          <ChevronRightIcon />
+        </button> */}
+      </div>
+    </main>
   )
 }

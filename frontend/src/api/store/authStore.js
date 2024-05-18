@@ -114,13 +114,14 @@ export const authStore = create((set, get) => ({
   },
   logoutUser: async () => {
     const { error } = await supabase.auth.signOut()
-    if (error) return toast.error(error.message)
-    else {
-      set({ user: { email: '', type: '', id: '' } })
-      localStorage.removeItem(import.meta.env.VITE_AUTH_TOKEN)
-      toast.success('Logout successful!', { duration: 750 })
-      return null
+    if (error) {
+      console.log(error)
+      return toast.error(error.message)
     }
+    set({ user: { email: '', type: '', id: '' } })
+    localStorage.removeItem(import.meta.env.VITE_AUTH_TOKEN)
+    toast.success('Logout successful!', { duration: 750 })
+    return null
   },
   recoverUser: async (email, navigate) => {
     set({ loading: true })
