@@ -1,19 +1,16 @@
-import { useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import { Fragment, useReducer } from 'react'
+import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { Bars3BottomLeftIcon, BellIcon } from '@heroicons/react/24/outline'
 import { authStore } from '../api/store'
-import { useWorkerStore } from '../api/store'
-function classNames (...classes) {
+function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
-  const { profile } = useWorkerStore()
   const { pathname } = useLocation()
-  const { logoutUser } = authStore()
+  const { logoutUser, user } = authStore()
 
   return (
     <div className='sticky top-0 z-40 flex h-16 flex-shrink-0 bg-white shadow'>
@@ -72,7 +69,7 @@ export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
                 <span className='sr-only'>Open user menu</span>
                 <img
                   className='h-8 w-8 rounded-full'
-                  src={profile?.photo}
+                  src={user?.photo}
                   alt='profile_image'
                 />
               </Menu.Button>
@@ -87,7 +84,7 @@ export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
               leaveTo='transform opacity-0 scale-95'
             >
               <Menu.Items className='absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
-                {userNavigation.map(item => (
+                {userNavigation.map((item) => (
                   <Menu.Item key={item.name}>
                     {({ active }) => (
                       <Link

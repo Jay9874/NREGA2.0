@@ -2,10 +2,10 @@ import { create } from 'zustand'
 import { supabase } from '..'
 import { toast } from 'sonner'
 export const authStore = create((set, get) => ({
-  user: { email: '', type: '', id: '' },
+  user: { email: '', type: '', id: '', photo: '' },
   captchaToken: '',
   loading: false,
-  setCaptchaToken: token => set({ captchaToken: token }),
+  setCaptchaToken: (token) => set({ captchaToken: token }),
   checkUser: async () => {
     await supabase.auth
       .getSession()
@@ -32,16 +32,28 @@ export const authStore = create((set, get) => ({
               user: {
                 email: authEmail,
                 type: userType,
-                id: userId
-              }
+                id: userId,
+              },
             })
             return get().user
           })
       })
-      .catch(err => {
+      .catch((err) => {
         toast.error(err.message)
         return null
       })
+  },
+  setNavIcon: async () => {
+    const { type, id } = get().user
+    const searchTable = type === 'admin' ? 'sachiv' : 'worker'
+    const { data, error } = await supabase
+      .from(searchTable)
+      .select('*')
+      .eq('id', id)
+    if (error) return toast.error(error.message)
+    const prevValue = get().user
+    set({ user: { ...prevValue, photo: data[0].photo } })
+    return data[0]
   },
   loginUser: async (email, password, navigate) => {
     const verTID = toast.loading('Verifying')
@@ -49,9 +61,9 @@ export const authStore = create((set, get) => ({
       .signInWithPassword({
         email: email,
         password: password,
-        options: { captchaToken: get().captchaToken }
+        options: { captchaToken: get().captchaToken },
       })
-      .then(async authRes => {
+      .then(async (authRes) => {
         if (authRes.error) return toast.error(`${authRes.error.message}`)
         const authEmail = authRes.data.user.email
         const userId = authRes.data.user.id
@@ -72,23 +84,25 @@ export const authStore = create((set, get) => ({
               user: {
                 email: authEmail,
                 type: userType,
-                id: userId
-              }
+                id: userId,
+              },
             })
             toast.dismiss(verTID)
             toast.success('Login successful!', { duration: 500 })
+            const setNavIcon = get().setNavIcon
+            setNavIcon()
             const user = get().user
             navigate(`/${user.type}/dashboard`)
             return data
           })
         return authRes.data
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err)
         return toast.error(err.message)
       })
   },
-  checkSession: async navigate => {
+  checkSession: async (navigate) => {
     const user = get().user
     if (user.email !== '') {
       navigate(`/${user.type}/dashboard`)
@@ -112,7 +126,7 @@ export const authStore = create((set, get) => ({
     set({ loading: true })
     const redirectURL = 'https://nrega-2-0.vercel.app/auth/reset'
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: redirectURL
+      redirectTo: redirectURL,
     })
     if (error) {
       console.log(error)
@@ -127,7 +141,7 @@ export const authStore = create((set, get) => ({
   },
   resetPassword: async (new_password, navigate) => {
     const { data, error } = await supabase.auth.updateUser({
-      password: new_password
+      password: new_password,
     })
     if (error) return toast.error(error.message)
     else {
@@ -147,5 +161,5 @@ export const authStore = create((set, get) => ({
       password = import.meta.env.VITE_ADMIN_PASSWORD
     }
     await loginUser(email, password, navigate)
-  }
+  },
 }))
