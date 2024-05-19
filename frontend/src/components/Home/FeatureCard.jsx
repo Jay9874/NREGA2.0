@@ -1,9 +1,9 @@
 export default function FeatureCard({ features, imgSrc, panelName }) {
   return (
-    // <div className='mx-auto max-w-7xl text-left px-6 lg:px-8'>
-    <div className='mx-auto max-w-7xl px-6 lg:px-8 text-left'>
+    <div className='mx-auto max-w-7xl text-left px-6 lg:px-8'>
+      {/* <div className='px-6 lg:px-8 text-left'> */}
       <div className='mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2'>
-        {/* <div className='flex max-w-2xl'> */}
+        {/* <div className='flex justify-between'> */}
         {/* <div> */}
         <div className='lg:pr-8 lg:pt-4'>
           <div className='lg:max-w-lg'>
@@ -35,14 +35,15 @@ export default function FeatureCard({ features, imgSrc, panelName }) {
           </div>
         </div>
         {/* </div> */}
-
-        <img
-          src={imgSrc}
-          alt='Product screenshot'
-          className='w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0'
-          width={2432}
-          height={1442}
-        />
+        <div width={2432} height={1442}>
+          <img
+            src={imgSrc}
+            alt='Product screenshot'
+            className='w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0'
+            // width={2432}
+            // height={1442}
+          />
+        </div>
       </div>
     </div>
   )

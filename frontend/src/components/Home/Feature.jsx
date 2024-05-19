@@ -5,8 +5,8 @@ import {
   ChevronLeftIcon,
 } from '@heroicons/react/20/solid'
 import featureImg from '../../../public/feature.png'
-import featureAdminImg from '../../../public/admin_sc.png'
-import { useState } from 'react'
+import featureAdminImg from '../../../public/admin_scr.png'
+import { useEffect, useState } from 'react'
 const workerPanelFeatures = [
   {
     name: 'Job Application: ',
@@ -27,53 +27,32 @@ const workerPanelFeatures = [
 ]
 
 export default function Feature() {
-  const [active, setActive] = useState(0)
+  const [dir, setDir] = useState('normal')
+  setInterval(function () {
+    if (dir === 'normal' || dir === 'left') setDir('right')
+    else setDir('left')
+  }, 5000)
   return (
     <main className='bg-white text-center'>
-      <div className='py-12 sm:py-16 px-12'>
-        <div className='feature-toggler'>
-          <button
-            onClick={() => setActive(0)}
-            className={active === 0 ? 'active' : ''}
-          >
-            <p>Worker Panel</p>
-          </button>
-          <button
-            name='live'
-            value={1}
-            onClick={() => setActive(1)}
-            className={active === 1 ? 'active' : ''}
-          >
-            <p>Admin Panel</p>
-          </button>
-          <div className='toggle-activator'></div>
+      <div className='relative overflow-hidden bg-white py-24 sm:py-32'>
+        <div className={`home-feature-cont ${dir}`}>
+          <div className='home-feature-card'>
+            <FeatureCard
+              features={workerPanelFeatures}
+              imgSrc={featureImg}
+              panelName='Worker Panel'
+            />
+          </div>
+          <div className='home-feature-card'>
+            <FeatureCard
+              features={workerPanelFeatures}
+              imgSrc={featureAdminImg}
+              panelName='Admin Panel'
+            />
+          </div>
         </div>
-        {/* <FeatureToggler handleToggler={handleToggler} /> */}
       </div>
-      <div className='relative overflow-hidden bg-white pb-24 sm:pb-32'>
-        <div className='grid'>
-          {/* <div className='home-feature-card'> */}
-          <FeatureCard
-            features={workerPanelFeatures}
-            imgSrc={featureImg}
-            panelName='Worker Panel'
-          />
-          {/* </div>
-          <div className='home-feature-card'> */}
-          <FeatureCard
-            features={workerPanelFeatures}
-            imgSrc={featureAdminImg}
-            panelName='Admin Panel'
-          />
-          {/* </div> */}
-        </div>
-        {/* <button className='home-btn-cont-lft home-slide-btn'>
-          <ChevronLeftIcon />
-        </button>
-        <button className='home-btn-cont-rgt home-slide-btn'>
-          <ChevronRightIcon />
-        </button> */}
-      </div>
+      <div></div>
     </main>
   )
 }

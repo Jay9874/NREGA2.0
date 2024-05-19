@@ -120,10 +120,22 @@ body {
   transform: translateX(calc(50vw - 4.5rem));
 }
 
-/* .home-feature-card {
+.home-feature-cont {
+  display: flex;
+  gap: 300px;
+  transition: all 1s ease-in-out;
+}
+.home-feature-cont.right {
+  transform: translate(-118vw, 0);
+}
+.home-feature-cont.left {
+  transform: translate(0, 0);
+}
+
+.home-feature-card {
+  flex-basis: 1;
   flex-shrink: 0;
-} */
-.feature-card-cont {
+  margin: 0 23px;
 }
 .home-btn-cont-lft {
   left: 30px;
