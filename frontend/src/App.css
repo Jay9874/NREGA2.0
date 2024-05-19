@@ -122,26 +122,24 @@ body {
 
 .home-feature-cont {
   display: flex;
+  width: 100%;
   gap: 300px;
   transition: all 1s ease-in-out;
 }
 .home-feature-cont.right {
-  transform: translate(-118vw, 0);
+  transform: translate(-1630px, 0);
 }
 .home-feature-cont.left {
   transform: translate(0, 0);
 }
 
 .home-feature-card {
-  flex-basis: 1;
   flex-shrink: 0;
-  margin: 0 23px;
 }
 .home-btn-cont-lft {
   left: 30px;
 }
-.home-btn-cont-lft div:nth-child(1) {
-}
+
 .home-btn-cont-rgt {
   right: 30px;
 }
@@ -159,7 +157,20 @@ body {
   border-radius: 8px;
   background-color: #636364;
 }
-.home-slide-btn div.active {
+.feature-indicator-cont{
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+}
+.feature-indicator-cont button{
+  height: 20px;
+  width: 20px;
+  background-color: #00000020;
+  border-radius: 10px;
+  transition: all 1s ease-in-out;
+}
+.feature-indicator-cont button.active{
+  background-color: #4338ca;
 }
 
 .home-slide-btn:hover {

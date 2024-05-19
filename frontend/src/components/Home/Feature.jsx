@@ -1,58 +1,141 @@
-import { FeatureCard, FeatureToggler } from '.'
-import {
-  CheckCircleIcon,
-  ChevronRightIcon,
-  ChevronLeftIcon,
-} from '@heroicons/react/20/solid'
+import { FeatureCard } from '.'
+import { CheckCircleIcon } from '@heroicons/react/20/solid'
 import featureImg from '../../../public/feature.png'
 import featureAdminImg from '../../../public/admin_scr.png'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 const workerPanelFeatures = [
   {
     name: 'Job Application: ',
     description: 'for the works around the Panchayat.',
-    icon: CheckCircleIcon,
+    icon: CheckCircleIcon
   },
   {
     name: 'Attendance with Filtration: ',
     description:
       'for sorting out attendances spreaded in States, Districts, Blocks and Panchayats.',
-    icon: CheckCircleIcon,
+    icon: CheckCircleIcon
   },
   {
     name: 'Payment Status: ',
     description: 'for daily wages paid on certain work.',
+    icon: CheckCircleIcon
+  }
+]
+const adminPanelFeatures = [
+  {
+    name: 'Auto Job Progress: ',
+    description: 'with ML algo based on daily photos and attendaces.',
+    icon: CheckCircleIcon,
+  },
+  {
+    name: 'Employee Identity: ',
+    description:
+      'fetched from UIDAI Database halting fake worker enrollment.',
+    icon: CheckCircleIcon,
+  },
+  {
+    name: 'Payment Tranasfer: ',
+    description: 'to worker account with DBT excluding human intervention.',
     icon: CheckCircleIcon,
   },
 ]
 
+const workerFeatureDesc = {
+  tag: 'A transparency in whole',
+  desc: `It was never before available for a normal worker to access their
+records by the Gram Panchayat Officer, "Sachiv". Thus bringing
+credibility and connect amongst Government and People.`,
+}
+const adminFeatureDesc = {
+  tag: 'Managing like A  B C',
+  desc: `Get updates on Payment
+ Status, Job Progress, Empoloyee info, and Attendance system enhanced with Geo Tagging
+, Demographic Authentication, and Machine Learning.`,
+}
+
 export default function Feature() {
   const [dir, setDir] = useState('normal')
-  setInterval(function () {
-    if (dir === 'normal' || dir === 'left') setDir('right')
-    else setDir('left')
-  }, 5000)
   return (
-    <main className='bg-white text-center'>
-      <div className='relative overflow-hidden bg-white py-24 sm:py-32'>
-        <div className={`home-feature-cont ${dir}`}>
-          <div className='home-feature-card'>
+    <main className='bg-white'>
+      <div className='overflow-hidden bg-white pt-24 pb-8 sm:pb-12 sm:pt-32'>
+        <div className={`home-feature-cont mx-auto max-w-7xl ${dir}`}>
+          <div className='home-feature-card mx-auto max-w-7xl'>
             <FeatureCard
               features={workerPanelFeatures}
               imgSrc={featureImg}
               panelName='Worker Panel'
+              featureDesc={workerFeatureDesc}
             />
           </div>
           <div className='home-feature-card'>
             <FeatureCard
-              features={workerPanelFeatures}
+              features={adminPanelFeatures}
               imgSrc={featureAdminImg}
               panelName='Admin Panel'
+              featureDesc={adminFeatureDesc}
             />
           </div>
         </div>
       </div>
-      <div></div>
+      <div className='feature-indicator-cont pb-16 sm:pb-20'>
+        <button
+          onClick={() => {
+            setDir('left')
+          }}
+          className={`${dir === 'normal' || dir === 'left' ? 'active' : ''}`}
+        ></button>
+        <button
+          onClick={() => {
+            setDir('right')
+          }}
+          className={`${dir === 'right' ? 'active' : ''}`}
+        ></button>
+      </div>
     </main>
   )
+}
+
+{
+  /* <div className='overflow-hidden bg-white py-24 sm:py-32'>
+      <div className='mx-auto max-w-7xl px-6 lg:px-8'>
+        <div className='mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2'>
+          <div className='lg:pr-8 lg:pt-4'>
+            <div className='lg:max-w-lg'>
+              <h2 className='text-base font-semibold leading-7 text-indigo-600'>
+                Worker Panel
+              </h2>
+              <p className='mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
+                A transparency in whole
+              </p>
+              <p className='mt-6 text-lg leading-8 text-gray-600'>
+                It was never before available for a normal worker to access
+                their records by the Gram Panchayat Officer, "Sachiv". Thus
+                bringing credibility and connect amongst Government and People.
+              </p>
+              <dl className='mt-10 max-w-xl space-y-8 text-base leading-7 text-gray-600 lg:max-w-none'>
+                {features.map(feature => (
+                  <div key={feature.name} className='relative pl-9'>
+                    <dt className='inline font-semibold text-gray-900'>
+                      <feature.icon
+                        className='absolute left-1 top-1 h-5 w-5 text-indigo-600'
+                        aria-hidden='true'
+                      />
+                      {feature.name}
+                    </dt>{' '}
+                    <dd className='inline'>{feature.description}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+          <img
+            src='./feature.png'
+            alt='Product screenshot'
+            className='w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0'
+            width={2432}
+            height={1442}
+          />
+        </div>
+      </div>
+    </div> */
 }
