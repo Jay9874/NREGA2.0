@@ -10,3 +10,15 @@ The government of India has a scheme named "Mahatma Gandhi National Rural Employ
 
 ## Solution, The redefined platform.
 ![NREGA, the homepage](/frontend/public/nrega_homepage.png)
+
+## Features
+### Admin Panel
+  - Manage workers with creation, updation, deletion, and selection options.
+  - Progress of works, addition of workers and work detail modification.
+  - Attendance of worker with authentication with UIDAI and Location Co-ordinates. 
+  - Payment to worker directly with on server algorithm to detect attendance and Direct Benefit Transfer.
+### Worker Panel
+- Apply for job in Gram Panchayat.
+- Check attendance for specific location, job, and date.
+- Status of last payment and other payments for specific job.
+- Progress on current enrolled job.
