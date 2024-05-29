@@ -23,7 +23,7 @@ The government of India has a scheme named "Mahatma Gandhi National Rural Employ
 - Attendance of worker with authentication with UIDAI and Location Co-ordinates.
 - Payment to worker directly with on server algorithm to detect attendance and Direct Benefit Transfer.
 
-  ![Admin Panel](frontend\public\admin_scr.png)
+  ![Admin Panel](frontend/public/admin_scr.png)
 ***a view of Admin Panel***
 
 ### Worker Panel
