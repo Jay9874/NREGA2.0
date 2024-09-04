@@ -138,7 +138,6 @@ export default function Attendance() {
       setLoadFilter(false)
     }
   }, [dataLoaded, loadFilter])
-  console.log(attendances)
 
   return (
     // The Attendance popup

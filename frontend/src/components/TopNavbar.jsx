@@ -11,7 +11,6 @@ function classNames(...classes) {
 export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
   const { pathname } = useLocation()
   const { logoutUser, user } = authStore()
-
   return (
     <div className='sticky top-0 z-40 flex h-16 flex-shrink-0 bg-white shadow'>
       <button
