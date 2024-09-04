@@ -2,7 +2,6 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.VITE_SUPABASE_URL
 const supabaseKey = process.env.VITE_SUPABASE_KEY
 const supabase = createClient(supabaseUrl, supabaseKey)
-// import { createClient } from '../lib/supabase.js'
 import { decode } from 'base64-arraybuffer'
 
 const createUser = async (req, res) => {
