@@ -148,6 +148,6 @@ export default function Dashboard() {
     //   {/* <RecentPayment heading={"Recent Activity"} recentActivity={transactions} /> */}
     // </div>
     // </main>
-    <div>Building it...</div>
+    <div>Building the admin panel, please check back soon.</div>
   )
 }
