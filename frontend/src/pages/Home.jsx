@@ -148,7 +148,7 @@ export default function Home () {
                 <div className='mt-10 flex-wrap flex items-center justify-center gap-x-6'>
                   <Link
                     to='/auth/login'
-                    className='rounded-3xl bg-green-500 px-8 py-1.5 text-base font-semibold leading-7  shadow-sm hover:bg-green-400 text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-400'
+                    className='rounded-3xl bg-green-500 px-8 py-1.5 text-base font-semibold leading-7  shadow-sm hover:bg-green-400 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-400'
                   >
                     Get started
                   </Link>
