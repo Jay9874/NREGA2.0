@@ -17,6 +17,6 @@ export const adminNavigation = [
   { name: 'Dashboard', href: 'dashboard', icon: HomeIcon },
   { name: 'Jobs', href: 'jobs', icon: WrenchScrewdriverIcon },
   { name: 'Attendance', href: 'attendance', icon: CalendarIcon },
-  { name: 'Employees', href: 'employee', icon: UserGroupIcon },
+  { name: 'Workers', href: 'workers', icon: UserGroupIcon },
   { name: 'Payout', href: 'payout', icon: CurrencyRupeeIcon }
 ]

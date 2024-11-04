@@ -1,7 +1,7 @@
 import { Worker, Auth, Home, Admin } from './pages'
 import { authStore } from './api/store'
 import { Protected, NotFound, ValidLink } from './components'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 
 // Admin Components
@@ -36,7 +36,7 @@ export default function App() {
 
   useEffect(() => {
     checkUser()
-  }, [checkUser])
+  }, [])
   return (
     <BrowserRouter>
       <Routes>
@@ -65,7 +65,7 @@ export default function App() {
               <Route path='add' element={<AddJob />} />
             </Route>
             <Route path='attendance' element={<AdminAttendance />} />
-            <Route path='employee' element={<Employee />}>
+            <Route path='workers' element={<Employee />}>
               <Route index element={<ViewEmployees />} />
               <Route path='add' element={<Progress />} />
               <Route path='edit/:id' element={<EditEmployee />} />

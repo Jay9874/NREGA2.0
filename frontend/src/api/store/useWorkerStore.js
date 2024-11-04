@@ -9,9 +9,10 @@ import {
   timeToString
 } from '../../utils/dataFormating'
 import { genDates } from '../../utils/generate_date'
+import { authStore } from './authStore'
 
 export const useWorkerStore = create((set, get) => ({
-  user: { email: '', type: '', id: '' },
+  user: { email: '', type: '', id: '', photo: '' },
   loading: false,
   dataLoaded: false,
   loadingAttendance: false,
@@ -167,8 +168,6 @@ export const useWorkerStore = create((set, get) => ({
             return { [item.status]: timeToString(item.created_at) }
           })
           const previous = get().attendances
-          // console.log('previous attnd data', previous)
-          // console.log('current attnd data', data)
           set({
             attendances: [
               ...previous,

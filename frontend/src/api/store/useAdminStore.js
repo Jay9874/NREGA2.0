@@ -1,11 +1,13 @@
 import { create } from 'zustand'
 import { supabase } from '..'
 import { calculateAge } from '../../utils/dataFormating'
+import { authStore } from './authStore'
 import { toast } from 'sonner'
 const NODE_ENV = import.meta.env.MODE
 
 export const useAdminStore = create((set, get) => ({
   user: { email: '', type: '', id: '' },
+  user: authStore.getState().user,
   dataLoaded: false,
   loading: false,
   base: NODE_ENV === 'development' ? 'http://localhost:8080' : '',
