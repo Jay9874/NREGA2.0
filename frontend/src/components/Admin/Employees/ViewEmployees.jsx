@@ -28,7 +28,7 @@ export default function ViewEmployees () {
         </div>
         <div className='mt-4 sm:mt-0 sm:ml-16 sm:flex-none'>
           <Link
-            to={'/admin/employee/add'}
+            to={'/admin/workers/add'}
             className='inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto'
           >
             Add Worker
@@ -97,8 +97,6 @@ export default function ViewEmployees () {
                         </div>
                       </td>
                       <td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
-                        {/* <div className='text-gray-900'>{person.aadhaar}</div>
-                        <div className='text-gray-500'>{person.department}</div> */}
                         <div className='text-gray-900'>{person.aadhar_no}</div>
                       </td>
                       <td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
@@ -112,7 +110,7 @@ export default function ViewEmployees () {
                       </td>
                       <td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'>
                         <Link
-                          to={`/admin/employee/edit/${person.id}`}
+                          to={`/admin/workers/edit/${person.id}`}
                           className='text-indigo-600 hover:text-indigo-900'
                         >
                           Edit<span className='sr-only'>, {person.name}</span>

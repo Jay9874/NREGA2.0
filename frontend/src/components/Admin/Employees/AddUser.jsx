@@ -31,7 +31,7 @@ export default function AddUser({ onUserCreation }) {
     <main>
       <div className='px-6'>
         <h2 className='text-base font-semibold leading-7 text-gray-900'>
-          First Add a New User
+          First, add a new user
         </h2>
         <p className='mt-1 text-sm leading-6 text-gray-600'>
           Fill in the actual Email ID of Worker and a strong Password.
@@ -86,7 +86,7 @@ export default function AddUser({ onUserCreation }) {
             />
           </div>
           <p className='mt-2 text-sm text-yellow-500' id='email-description'>
-            Atleast 8 characters long. It will be used as password for logging
+            It will be used as password for logging
             in.
           </p>
         </div>

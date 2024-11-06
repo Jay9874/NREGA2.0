@@ -38,13 +38,13 @@ export default function Dashboard () {
 
   const cards = [
     {
-      name: 'Workers',
+      name: 'Workers Count',
       href: '/admin/workers',
       icon: UserGroupIcon,
       amount: `100`
     },
     {
-      name: 'Jobs',
+      name: 'Jobs in Gram Panchayat',
       href: '/admin/jobs',
       icon: WrenchScrewdriverIcon,
       amount: `100`
