@@ -16,7 +16,7 @@ import {
   Payout,
   AdminProfile,
   ViewJobs,
-  AddJob,
+  AddJob
 } from './components/Admin'
 
 // Worker Components
@@ -25,13 +25,14 @@ import {
   Jobs,
   Payment,
   Attendance,
-  Dashboard,
+  Dashboard
 } from './components/Worker'
 
 // Auth components
 import { SignInForm, ForgotPass, ResetPass } from './components/Auth'
+import JobAttendance from './components/Admin/JobAttendance'
 
-export default function App() {
+export default function App () {
   const { checkUser } = authStore()
 
   useEffect(() => {
@@ -64,7 +65,9 @@ export default function App() {
               <Route index element={<ViewJobs />} />
               <Route path='add' element={<AddJob />} />
             </Route>
-            <Route path='attendance' element={<AdminAttendance />} />
+            <Route path='attendance' element={<AdminAttendance />}>
+              <Route path=':jobId' element={<JobAttendance />} />
+            </Route>
             <Route path='workers' element={<Employee />}>
               <Route index element={<ViewEmployees />} />
               <Route path='add' element={<Progress />} />
