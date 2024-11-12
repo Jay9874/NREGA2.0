@@ -111,7 +111,7 @@ export default function SignInForm () {
           </div>
           <div className='relative flex justify-center'>
             <span className='bg-white px-2 text-sm text-gray-500'>
-              Take Demo
+              Or take demo
             </span>
           </div>
         </div>
