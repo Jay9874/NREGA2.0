@@ -201,7 +201,7 @@ export default function ViewJobs() {
                                 key={index}
                                 className='whitespace-nowrap px-6 py-4 text-sm text-gray-500 md:block'
                               >
-                                <div class='admin-job-progress-outer'>
+                                <div className='admin-job-progress-outer'>
                                   <div id='admin-job-progress' data-done='70'>
                                     <span className='text-sm'>
                                       {transaction[heading.name]}

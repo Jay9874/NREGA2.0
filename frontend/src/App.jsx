@@ -66,7 +66,7 @@ export default function App () {
               <Route path='add' element={<AddJob />} />
             </Route>
             <Route path='attendance' element={<AdminAttendance />}>
-              <Route path=':jobId' element={<JobAttendance />} />
+              <Route path='job/:jobId' element={<JobAttendance />} />
             </Route>
             <Route path='workers' element={<Employee />}>
               <Route index element={<ViewEmployees />} />

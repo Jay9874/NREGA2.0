@@ -6,16 +6,16 @@ import { toast } from 'sonner'
 const NODE_ENV = import.meta.env.MODE
 
 export const useAdminStore = create((set, get) => ({
-  user: { email: '', type: '', id: '' },
+  // user: { email: '', type: '', id: '' },
   user: authStore.getState().user,
-  dataLoaded: false,
   loading: false,
   base: NODE_ENV === 'development' ? 'http://localhost:8080' : '',
   profile: null,
   employees: null,
   lastAddedUser: null,
   lastAddedAadhaar: null,
-  setDataLoaded: (loading) => set({ dataLoaded: loading }),
+  checkUser: authStore.getState().checkUser,
+  setLoading: loading => set({ loading: loading }),
   checkLastAadhaar: () => {
     set({ loading: true })
     const lastAddedAadhaar = JSON.parse(
@@ -38,42 +38,42 @@ export const useAdminStore = create((set, get) => ({
     set({ loading: false })
     return false
   },
-  setProfile: async (navigate) => {
-    try {
-      let token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
-      if (!token) throw new Error('No session found!')
-      token = JSON.parse(token)
-      set({
-        user: {
-          email: token.user.email,
-          type: token.userType,
-          id: token.user.id,
-        },
-      })
-      const { data: profile, error } = await supabase
-        .from('sachiv')
-        .select(`*, location_id(*)`)
-        .eq('id', get().user.id)
-      if (error) throw error
-      set({ profile: profile[0] })
-      return profile
-    } catch (error) {
-      toast.error(error.message)
-      throw error
-    }
+  setProfile: async () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        set({ loading: true })
+        console.log('waiting....')
+        const user = await get().checkUser()
+        console.log(user)
+        const { data: profile, error } = await supabase
+          .from('sachiv')
+          .select(`*, location_id(*)`)
+          .eq('id', user.id)
+        if (error) throw error
+        set({ profile: profile[0] })
+        set({ loading: false })
+        setTimeout(() => {
+          resolve(profile[0])
+        }, 5000)
+      } catch (error) {
+        console.log(error)
+        toast.error(error.message)
+        throw error
+      }
+    })
   },
-  addUser: async (user) => {
+  addUser: async user => {
     try {
       set({ loading: true })
       //This data will be sent to the server with the POST request.
       const userData = {
         email: user.email,
-        password: user.password,
+        password: user.password
       }
       const options = {
         method: 'POST',
         body: JSON.stringify(userData),
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json' }
       }
       const url = `${get().base}/api/admin/createuser`
       const toastID = toast.loading('Adding User...')
@@ -90,15 +90,16 @@ export const useAdminStore = create((set, get) => ({
       throw error
     }
   },
-  setAadhaarData: async (aadhaarNo) => {
+  setAadhaarData: async aadhaarNo => {
     try {
+      set({ loading: true })
       const toastId = toast.loading('Getting aadhaar data...')
       localStorage.removeItem('lastAddedAadhaar')
       const userData = { aadhaar: aadhaarNo }
       const options = {
         method: 'POST',
         body: JSON.stringify(userData),
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' }
       }
       const url = `${get().base}/api/admin/aadhaar`
       const res = await fetch(url, options)
@@ -111,6 +112,7 @@ export const useAdminStore = create((set, get) => ({
       localStorage.setItem('lastAddedAadhaar', JSON.stringify(updatedData))
       set({ lastAddedAadhaar: updatedData })
       toast.success('Fields filled with aadhaar data.')
+      set({ loading: false })
       return updatedData
     } catch (error) {
       return toast.error(`${error.message}, Please try again.`)
@@ -122,7 +124,7 @@ export const useAdminStore = create((set, get) => ({
       const options = {
         method: 'POST',
         body: JSON.stringify(userData),
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json' }
       }
       const url = `${get().base}/api/admin/createemp`
       const toastID = toast.loading('Adding Employee...')
@@ -160,4 +162,29 @@ export const useAdminStore = create((set, get) => ({
       throw error
     }
   },
+
+  // Dashboard Data fetching functions
+  setDashboard: async () => {
+    try {
+      set({ loading: true })
+      const adminId = get().profile.id
+      console.log(adminId)
+      const options = {
+        method: 'POST',
+        body: JSON.stringify({ adminId: adminId }),
+        headers: { 'Content-Type': 'application/json' }
+      }
+      const url = `${get().base}/api/admin/dashboard`
+      const res = await fetch(url, options)
+      const { data, error } = await res.json()
+      if (error) {
+        return toast.error(error)
+      }
+      console.log(data)
+      set({ loading: false })
+    } catch (err) {
+      console.log(err)
+      throw err
+    }
+  }
 }))

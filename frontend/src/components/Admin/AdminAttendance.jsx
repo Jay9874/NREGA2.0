@@ -1,54 +1,63 @@
 import { useState } from 'react'
 import JobAttendance from './JobAttendance'
+import { Link, Outlet } from 'react-router-dom'
 
 const works = [
   {
     name: 'Tree Plantation',
     worker_count: '30',
     duration: '2 month',
-    location: 'Kasba GP'
+    location: 'Kasba GP',
+    jobId: 1
   },
   {
     name: 'Tree Plantation',
     worker_count: '30',
     duration: '2 month',
-    location: 'Kasba GP'
+    location: 'Kasba GP',
+    jobId: 2
   },
   {
     name: 'Tree Plantation',
     worker_count: '30',
     duration: '2 month',
-    location: 'Kasba GP'
+    location: 'Kasba GP',
+    jobId: 3
   },
   {
     name: 'Tree Plantation',
     worker_count: '30',
     duration: '2 month',
-    location: 'Kasba GP'
+    location: 'Kasba GP',
+    jobId: 4
   },
   {
     name: 'Tree Plantation',
     worker_count: '30',
     duration: '2 month',
-    location: 'Kasba GP'
+    location: 'Kasba GP',
+    jobId: 5
   },
   {
     name: 'Tree Plantation',
     worker_count: '30',
     duration: '2 month',
-    location: 'Kasba GP'
+    location: 'Kasba GP',
+    jobId: 6
   },
   {
     name: 'Tree Plantation',
     worker_count: '30',
     duration: '2 month',
-    location: 'Kasba GP'
+    location: 'Kasba GP',
+    jobId: 7
   },
   {
     name: 'Tree Plantation',
     worker_count: '30',
     duration: '2 month',
-    location: 'Kasba GP'
+    location: 'Kasba GP',
+    jobId: 8
   }
 ]
 
@@ -57,20 +66,14 @@ function classNames (...classes) {
 }
 
 export default function AdminAttendance () {
-  const [selectedJob, setSelectedJob] = useState(null)
   function onClose () {
-    setSelectedJob(null)
+    console.log('hello')
   }
   return (
     <main className='relative min-h-[calc(100vh-64px)]'>
-      {selectedJob != null && (
-        <div className='overlay-modal h-full flex justify-center overflow-scroll absolute top-0 w-full z-20 bg-gray-300 bg-opacity-90'>
-          {/* The selected job attendance */}
-          <div className='modal h-full w-full lg:max-w-[60%] box-border  p-4 lg:p-12'>
-            <JobAttendance onclose={onClose} />
-          </div>
-        </div>
-      )}
+      {/* The selected job attendance */}
+      <Outlet context={[onClose]} />
+
       <div className='relative overflow-hidden h-full'>
         <div className='px-4 sm:px-6 lg:px-8 py-6 h-full'>
           <div className='sm:flex sm:items-center'>
@@ -202,8 +205,8 @@ export default function AdminAttendance () {
                               'relative whitespace-nowrap py-4 pr-4 pl-3 text-right text-sm font-medium'
                             )}
                           >
-                            <button
-                              onClick={() => setSelectedJob(workIdx)}
+                            <Link
+                              to={`job/${work.jobId}`}
                               className='flex items-center justify-evenly w-[100%]'
                             >
                               <span className='ring-1 ring-gray-500 hover:ring-indigo-500 hover:text-indigo-700 text-gray-500 px-4 py-1 hover:bg-indigo-50 bg-gray-50 rounded-full'>
@@ -211,7 +214,7 @@ export default function AdminAttendance () {
                               </span>
                               <ion-icon name='chevron-forward-outline'></ion-icon>
                               <span className='sr-only'>, {work.name}</span>
-                            </button>
+                            </Link>
                           </td>
                         </tr>
                       ))}

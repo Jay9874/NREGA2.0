@@ -7,15 +7,14 @@ import { adminTopNavigation } from '../utils/dashboard_toplink'
 import { adminNavigation } from '../utils/sidelinks'
 
 export const Admin = () => {
-  const { setProfile, setEmployees, dataLoaded, setDataLoaded } =
-    useAdminStore()
+  const { setProfile, setEmployees, loading, setLoading } = useAdminStore()
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  async function handleSetup() {
+  async function handleSetup () {
     try {
-      setDataLoaded(false)
+      console.log("waiting for profile")
       await setProfile()
       await setEmployees()
-      setDataLoaded(true)
+      console.log("complete waiting.")
     } catch (error) {
       return error
     }
@@ -36,7 +35,7 @@ export const Admin = () => {
           setSidebarOpen={setSidebarOpen}
           userNavigation={adminTopNavigation}
         />
-        {!dataLoaded ? (
+        {!loading ? (
           <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
             <div className='rounded-xl ring-gray-100 h-24 flex items-center justify-center'>
               <p className='mt-2 text-lg font-medium text-black text-opacity-50'>

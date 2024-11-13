@@ -7,43 +7,48 @@ export const authStore = create((set, get) => ({
   loading: false,
   setCaptchaToken: token => set({ captchaToken: token }),
   checkUser: async () => {
-    await supabase.auth
-      .getSession()
-      .then(async ({ data }) => {
-        if (!data.session) {
-          localStorage.setItem(import.meta.env.VITE_AUTH_TOKEN, null)
-          return null
-        }
-        const authEmail = data.session.user.email
-        const userId = data.session.user.id
-        const userType = data.session.userType
-        await supabase
-          .from('profiles')
-          .select('avatar')
-          .eq('id', data.session.user.id)
-          .then(({ data }) => {
-            let token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
-            token = token ? JSON.parse(token) : {}
-            token['userType'] = userType
-            localStorage.setItem(
-              import.meta.env.VITE_AUTH_TOKEN,
-              JSON.stringify(token)
-            )
-            set({
-              user: {
-                email: authEmail,
-                type: userType,
-                id: userId,
-                photo: data[0].avatar
-              }
+    return new Promise(async (resolve, reject) => {
+      set({ loading: true })
+      await supabase.auth
+        .getSession()
+        .then(async ({ data }) => {
+          if (!data.session) {
+            localStorage.setItem(import.meta.env.VITE_AUTH_TOKEN, null)
+            return null
+          }
+          const authEmail = data.session.user.email
+          const userId = data.session.user.id
+          const userType = data.session.userType
+          await supabase
+            .from('profiles')
+            .select('avatar')
+            .eq('id', data.session.user.id)
+            .then(({ data }) => {
+              let token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
+              token = token ? JSON.parse(token) : {}
+              token['userType'] = userType
+              localStorage.setItem(
+                import.meta.env.VITE_AUTH_TOKEN,
+                JSON.stringify(token)
+              )
+              set({
+                user: {
+                  email: authEmail,
+                  type: userType,
+                  id: userId,
+                  photo: data[0].avatar
+                },
+                loading: false
+              })
+              resolve(get().user)
             })
-            return get().user
-          })
-      })
-      .catch(err => {
-        toast.error(err.message)
-        return null
-      })
+        })
+        .catch(err => {
+          set({ loading: false })
+          toast.error(err.message)
+          throw err
+        })
+    })
   },
   loginUser: async (email, password, navigate) => {
     const verTID = toast.loading('Verifying')
