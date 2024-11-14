@@ -6,12 +6,11 @@ import { toast } from 'sonner'
 const NODE_ENV = import.meta.env.MODE
 
 export const useAdminStore = create((set, get) => ({
-  // user: { email: '', type: '', id: '' },
   user: authStore.getState().user,
   loading: false,
   base: NODE_ENV === 'development' ? 'http://localhost:8080' : '',
-  profile: null,
-  employees: null,
+  profile: {},
+  employees: {},
   lastAddedUser: null,
   lastAddedAadhaar: null,
   checkUser: authStore.getState().checkUser,
@@ -41,20 +40,14 @@ export const useAdminStore = create((set, get) => ({
   setProfile: async () => {
     return new Promise(async (resolve, reject) => {
       try {
-        set({ loading: true })
-        console.log('waiting....')
         const user = await get().checkUser()
-        console.log(user)
         const { data: profile, error } = await supabase
           .from('sachiv')
           .select(`*, location_id(*)`)
           .eq('id', user.id)
         if (error) throw error
         set({ profile: profile[0] })
-        set({ loading: false })
-        setTimeout(() => {
-          resolve(profile[0])
-        }, 5000)
+        resolve(profile[0])
       } catch (error) {
         console.log(error)
         toast.error(error.message)
@@ -146,12 +139,10 @@ export const useAdminStore = create((set, get) => ({
   },
   setEmployees: async () => {
     try {
-      set({ loading: true })
       const { data: employees, error } = await supabase
         .from('worker')
         .select('*')
         .eq('address', get().profile.location_id.id)
-      set({ loading: false })
       if (error) {
         toast.error(error.message)
         throw error

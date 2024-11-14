@@ -11,10 +11,10 @@ export const Admin = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   async function handleSetup () {
     try {
-      console.log("waiting for profile")
+      setLoading(true)
       await setProfile()
       await setEmployees()
-      console.log("complete waiting.")
+      setLoading(false)
     } catch (error) {
       return error
     }
@@ -35,7 +35,7 @@ export const Admin = () => {
           setSidebarOpen={setSidebarOpen}
           userNavigation={adminTopNavigation}
         />
-        {!loading ? (
+        {loading == true ? (
           <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
             <div className='rounded-xl ring-gray-100 h-24 flex items-center justify-center'>
               <p className='mt-2 text-lg font-medium text-black text-opacity-50'>

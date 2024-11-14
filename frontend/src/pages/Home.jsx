@@ -118,7 +118,7 @@ export default function Home () {
               </Dialog.Panel>
             </Dialog>
             {/* The intro section */}
-            <div className='mx-auto max-w-2xl py-32 py-56 overflow-auto'>
+            <div className='mx-auto max-w-2xl py-32 overflow-auto'>
               <div className='hidden sm:mb-8 sm:flex sm:justify-center'>
                 <div className='relative rounded-full py-1 px-3 text-sm leading-6 text-gray-400 ring-1 ring-white/10 hover:ring-white/20'>
                   Launching redefined way of.{' '}
@@ -150,7 +150,7 @@ export default function Home () {
                     to='/auth/login'
                     className='rounded-3xl bg-green-500 px-8 py-1.5 text-base font-semibold leading-7  shadow-sm hover:bg-green-400 text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-400'
                   >
-                    Get started
+                    Login for live Demo
                   </Link>
                   <a
                   href='#feature'

@@ -67,19 +67,19 @@ export default function Dashboard () {
               <div className='flex items-center'>
                 <img
                   className='hidden h-16 w-16 rounded-full sm:block'
-                  src={profile.photo}
+                  src={profile?.photo}
                   alt='profile_image'
                 />
                 <div>
                   <div className='flex items-center'>
                     <img
                       className='h-16 w-16 rounded-full sm:hidden'
-                      src={profile.photo}
+                      src={profile?.photo}
                       alt='profile_image'
                     />
                     <h1 className='break-keep ml-3 text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:leading-9'>
                       <span className='break-keep'>{GreetUserWithTime()},</span>{' '}
-                      {profile.first_name}
+                      {profile?.first_name}
                     </h1>
                   </div>
                   <dl className='mt-6 flex flex-col sm:ml-3 sm:mt-1 sm:flex-row sm:flex-wrap'>
@@ -101,7 +101,7 @@ export default function Dashboard () {
                         className='mr-1.5 h-5 w-5 flex-shrink-0 text-green-400'
                         aria-hidden='true'
                       />
-                      {profile.sachiv_id}
+                      {profile?.sachiv_id}
                     </dd>
                   </dl>
                 </div>
