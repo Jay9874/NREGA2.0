@@ -7,6 +7,7 @@ import { Sidebar, TopNavbar } from '../components'
 // Constants imports
 import { workerNavigation } from '../utils/sidelinks'
 import { workerTopNavigation } from '../utils/dashboard_toplink'
+import HomeLoading from '../components/Skeleton/HomeLoading'
 
 export const Worker = () => {
   const navigate = useNavigate()
@@ -21,10 +22,10 @@ export const Worker = () => {
     setDataLoaded,
     setLastWork,
     setLocations,
-    setLastAttendance,
+    setLastAttendance
   } = useWorkerStore()
 
-  async function handleSetup() {
+  async function handleSetup () {
     try {
       setLoading(true)
       await setProfile(navigate)
@@ -57,17 +58,7 @@ export const Worker = () => {
           setSidebarOpen={setSidebarOpen}
           userNavigation={workerTopNavigation}
         />
-        {loading === true ? (
-          <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
-            <div className='rounded-xl ring-gray-100 h-24 flex items-center justify-center'>
-              <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
-                Loading...
-              </p>
-            </div>
-          </div>
-        ) : (
-          <Outlet />
-        )}
+        {loading === true ? <HomeLoading /> : <Outlet />}
       </div>
     </>
   )
