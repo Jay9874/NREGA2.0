@@ -5,6 +5,7 @@ import { useAdminStore } from '../api/store'
 // Constants imports
 import { adminTopNavigation } from '../utils/dashboard_toplink'
 import { adminNavigation } from '../utils/sidelinks'
+import HomeLoading from '../components/Skeleton/HomeLoading'
 
 export const Admin = () => {
   const { setProfile, setEmployees, loading, setLoading } = useAdminStore()
@@ -35,17 +36,7 @@ export const Admin = () => {
           setSidebarOpen={setSidebarOpen}
           userNavigation={adminTopNavigation}
         />
-        {loading == true ? (
-          <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
-            <div className='rounded-xl ring-gray-100 h-24 flex items-center justify-center'>
-              <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
-                Loading...
-              </p>
-            </div>
-          </div>
-        ) : (
-          <Outlet />
-        )}
+        {!dataLoaded ? <HomeLoading /> : <Outlet />}
       </div>
     </>
   )
