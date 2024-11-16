@@ -13,27 +13,29 @@ import {
 import { Link } from 'react-router-dom'
 
 export default function Dashboard () {
-  const payment = [{
-    amount: 7800,
-    created_at: '2024-01-17T17:34:20.282973+00:00',
-    id: 7,
-    payment_for: {
-      created_at: '2023-09-01T17:29:27.52655+00:00',
-      job_deadline: '2024-01-25T23:26:35+00:00',
-      job_description: 'cutting trees ',
-      job_id: 1,
-      job_name: 'Ped Lagao',
-      job_posted_date: '2023-09-01T17:29:27.52655+00:00',
-      location_id: 1,
-      sachiv_id: 'adb7ffff-9644-4736-b6a8-671498aa34d2',
-      work_photo: null
-    },
-    payment_title: 'For Nahar Widening',
-    payment_to: '0c39cd09-906b-4897-a1e1-917a508969eb',
-    status: 'success',
-    transaction_id: 7
-  }]
-  const { profile } = useAdminStore()
+  const payment = [
+    {
+      amount: 7800,
+      created_at: '2024-01-17T17:34:20.282973+00:00',
+      id: 7,
+      payment_for: {
+        created_at: '2023-09-01T17:29:27.52655+00:00',
+        job_deadline: '2024-01-25T23:26:35+00:00',
+        job_description: 'cutting trees ',
+        job_id: 1,
+        job_name: 'Ped Lagao',
+        job_posted_date: '2023-09-01T17:29:27.52655+00:00',
+        location_id: 1,
+        sachiv_id: 'adb7ffff-9644-4736-b6a8-671498aa34d2',
+        work_photo: null
+      },
+      payment_title: 'For Nahar Widening',
+      payment_to: '0c39cd09-906b-4897-a1e1-917a508969eb',
+      status: 'success',
+      transaction_id: 7
+    }
+  ]
+  const { profile, setDashboard } = useAdminStore()
   const [balance, setBalance] = useState(0)
 
   const cards = [
@@ -56,6 +58,14 @@ export default function Dashboard () {
       amount: `100`
     }
   ]
+
+  async function setupDashboard () {
+    const res = await setDashboard()
+  }
+
+  useEffect(() => {
+    // setupDashboard()
+  }, [])
   return (
     <main className='flex-1 pb-8'>
       {/* Page header */}
