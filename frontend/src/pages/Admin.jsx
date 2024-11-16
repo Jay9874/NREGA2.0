@@ -36,7 +36,7 @@ export const Admin = () => {
           setSidebarOpen={setSidebarOpen}
           userNavigation={adminTopNavigation}
         />
-        {!dataLoaded ? <HomeLoading /> : <Outlet />}
+        {loading ? <HomeLoading /> : <Outlet />}
       </div>
     </>
   )

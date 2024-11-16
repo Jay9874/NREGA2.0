@@ -16,19 +16,19 @@ export default function HomeLoading () {
         </svg>
         <div className='pl-4'>
           <div className='flex pb-4'>
-            <div class='w-20 h-3.5 bg-gray-200 rounded-full dark:bg-gray-700 me-3'></div>
-            <div class='w-40 h-3.5 bg-gray-200 rounded-full dark:bg-gray-700'></div>
+            <div className='w-20 h-3.5 bg-gray-200 rounded-full dark:bg-gray-700 me-3'></div>
+            <div className='w-40 h-3.5 bg-gray-200 rounded-full dark:bg-gray-700'></div>
           </div>
           <div className='flex'>
-            <div class='w-40 h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 me-3' />
-            <div class='w-24 h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 me-3' />
+            <div className='w-40 h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 me-3' />
+            <div className='w-24 h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 me-3' />
           </div>
         </div>
       </div>
 
       {/* Cards loading */}
       <div className='cards-loading w-full pt-12'>
-        <div class='w-40 h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 me-3' />
+        <div className='w-40 h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 me-3' />
         <div className='pt-6 load-card-cont flex gap-6 w-full justify-evenly'>
           <AdminCard />
           <AdminCard />
