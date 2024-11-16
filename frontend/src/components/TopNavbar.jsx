@@ -4,13 +4,13 @@ import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { Bars3BottomLeftIcon, BellIcon } from '@heroicons/react/24/outline'
 import { authStore } from '../api/store'
-function classNames(...classes) {
+function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
   const { pathname } = useLocation()
-  const { logoutUser, user } = authStore()
+  const { logoutUser, user, loading } = authStore()
   return (
     <div className='sticky top-0 z-40 flex h-16 flex-shrink-0 bg-white shadow'>
       <button
@@ -66,11 +66,23 @@ export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
                 )}
               >
                 <span className='sr-only'>Open user menu</span>
-                <img
-                  className='h-8 w-8 rounded-full'
-                  src={user?.photo}
-                  alt='profile_image'
-                />
+                {loading ? (
+                  <svg
+                    className='w-8 h-8 text-gray-200 dark:text-gray-700'
+                    aria-hidden='true'
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='currentColor'
+                    viewBox='0 0 20 20'
+                  >
+                    <path d='M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z' />
+                  </svg>
+                ) : (
+                  <img
+                    className='h-8 w-8 rounded-full'
+                    src={user?.photo}
+                    alt='profile_image'
+                  />
+                )}
               </Menu.Button>
             </div>
             <Transition
@@ -83,7 +95,7 @@ export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
               leaveTo='transform opacity-0 scale-95'
             >
               <Menu.Items className='absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
-                {userNavigation.map((item) => (
+                {userNavigation.map(item => (
                   <Menu.Item key={item.name}>
                     {({ active }) => (
                       <Link

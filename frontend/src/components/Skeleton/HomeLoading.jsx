@@ -3,7 +3,7 @@ import AdminCard from './AdminCard'
 
 export default function HomeLoading () {
   return (
-    <div className='px-4 sm:px-6 lg:px-8 py-6'>
+    <div className='px-8 sm:px-10 lg:px-12 py-6'>
       <div className='avatar-loading flex items-center'>
         <svg
           className='w-16 h-16 text-gray-200 dark:text-gray-700 me-4'
@@ -29,9 +29,16 @@ export default function HomeLoading () {
       {/* Cards loading */}
       <div className='cards-loading w-full pt-12'>
         <div className='w-40 h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 me-3' />
-        <div className='pt-6 load-card-cont flex gap-6 w-full justify-evenly'>
+        <div className='pt-6 load-card-cont flex gap-6 w-full justify-evenly items-center flex-wrap'>
           <AdminCard />
           <AdminCard />
+          <AdminCard />
+        </div>
+      </div>
+      {/* Recent payment activity */}
+      <div className='recent-payments pt-12'>
+        <div className='w-40 h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 me-3' />
+        <div className='payment-load-cont pt-4 w-full'>
           <AdminCard />
         </div>
       </div>
