@@ -1,8 +1,12 @@
 import { create } from 'zustand'
 import { supabase } from '..'
 import { toast } from 'sonner'
+const NODE_ENV = import.meta.env.MODE
+
+
 export const authStore = create((set, get) => ({
   user: { email: '', type: '', id: '', photo: '' },
+  base: NODE_ENV === 'development' ? 'http://localhost:8080' : '',
   captchaToken: '',
   loading: false,
   setCaptchaToken: token => set({ captchaToken: token }),
@@ -50,51 +54,112 @@ export const authStore = create((set, get) => ({
         })
     })
   },
+
+  // loginUser: async (email, password, navigate) => {
+  //   const verTID = toast.loading('Verifying')
+  //   await supabase.auth
+  //     .signInWithPassword({
+  //       email: email,
+  //       password: password,
+  //       options: { captchaToken: get().captchaToken }
+  //     })
+  //     .then(async authRes => {
+  //       if (authRes.error) return toast.error(`${authRes.error.message}`)
+  //       const authEmail = authRes.data.user.email
+  //       const userId = authRes.data.user.id
+  //       await supabase
+  //         .from('profiles')
+  //         .select('*')
+  //         .eq('id', authRes.data.user.id)
+  //         .then(({ data }) => {
+  //           const userType = data[0].user_type
+  //           const avatar = data[0].avatar
+  //           let token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
+  //           token = token ? JSON.parse(token) : {}
+  //           token['userType'] = userType
+  //           localStorage.setItem(
+  //             import.meta.env.VITE_AUTH_TOKEN,
+  //             JSON.stringify(token)
+  //           )
+  //           set({
+  //             user: {
+  //               email: authEmail,
+  //               type: userType,
+  //               id: userId,
+  //               photo: avatar
+  //             }
+  //           })
+  //           toast.dismiss(verTID)
+  //           toast.success('Login successful!', { duration: 500 })
+  //           navigate(`/${userType}/dashboard`)
+  //           return data
+  //         })
+  //       return authRes.data
+  //     })
+  //     .catch(err => {
+  //       console.log(err)
+  //       return toast.error(err.message)
+  //     })
+  // },
   loginUser: async (email, password, navigate) => {
-    const verTID = toast.loading('Verifying')
-    await supabase.auth
-      .signInWithPassword({
-        email: email,
-        password: password,
-        options: { captchaToken: get().captchaToken }
-      })
-      .then(async authRes => {
-        if (authRes.error) return toast.error(`${authRes.error.message}`)
-        const authEmail = authRes.data.user.email
-        const userId = authRes.data.user.id
-        await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', authRes.data.user.id)
-          .then(({ data }) => {
-            const userType = data[0].user_type
-            const avatar = data[0].avatar
-            let token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
-            token = token ? JSON.parse(token) : {}
-            token['userType'] = userType
-            localStorage.setItem(
-              import.meta.env.VITE_AUTH_TOKEN,
-              JSON.stringify(token)
-            )
-            set({
-              user: {
-                email: authEmail,
-                type: userType,
-                id: userId,
-                photo: avatar
-              }
-            })
-            toast.dismiss(verTID)
-            toast.success('Login successful!', { duration: 500 })
-            navigate(`/${userType}/dashboard`)
-            return data
-          })
-        return authRes.data
-      })
-      .catch(err => {
-        console.log(err)
-        return toast.error(err.message)
-      })
+    try {
+      const body = { email: email, password: password }
+      const options = {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: { 'content-type': 'application/json' }
+      }
+      const url = `${get().base}/api/auth/login`
+      const toastID = toast.loading('Logging you in...')
+      const res = await fetch(url, options)
+      const { data, error } = await res.json()
+      if (error) throw error
+      console.log('data is: ', data)
+    } catch (err) {
+      console.log(err)
+      return err
+    }
+
+    // const verTID = toast.loading('Verifying')
+    // await supabase.auth
+    //   .signInWithPassword({
+    //     email: email,
+    //     password: password,
+    //     options: { captchaToken: get().captchaToken }
+    //   })
+    // .then(async authRes => {
+    //   if (authRes.error) return toast.error(`${authRes.error.message}`)
+    //   const authEmail = authRes.data.user.email
+    //   const userId = authRes.data.user.id
+    //   await supabase
+    //     .from('profiles')
+    //     .select('*')
+    //     .eq('id', authRes.data.user.id)
+    //     .then(({ data }) => {
+    //       const userType = data[0].user_type
+    //       const avatar = data[0].avatar
+    //       let token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
+    //       token = token ? JSON.parse(token) : {}
+    //       token['userType'] = userType
+    //       localStorage.setItem(
+    //         import.meta.env.VITE_AUTH_TOKEN,
+    //         JSON.stringify(token)
+    //       )
+    //       set({
+    //         user: {
+    //           email: authEmail,
+    //           type: userType,
+    //           id: userId,
+    //           photo: avatar
+    //         }
+    //       })
+    //       toast.dismiss(verTID)
+    //       toast.success('Login successful!', { duration: 500 })
+    //       navigate(`/${userType}/dashboard`)
+    //       return data
+    //     })
+    //   return authRes.data
+    // })
   },
   checkSession: async navigate => {
     const user = get().user
