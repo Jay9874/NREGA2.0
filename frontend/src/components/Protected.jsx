@@ -10,7 +10,7 @@ export default function Protected() {
     path = newLocation.slice(0, newLocation.indexOf('/'))
   }
   const token = JSON.parse(
-    localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
+    localStorage.getItem('suid')
   )
-  return token?.userType === path ? <Outlet /> : <Navigate to='/auth/login' />
+  return token?.user?.type === path ? <Outlet /> : <Navigate to='/auth/login' />
 }
