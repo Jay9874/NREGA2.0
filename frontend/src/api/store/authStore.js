@@ -1,100 +1,91 @@
 import { create } from 'zustand'
 import { supabase } from '..'
 import { toast } from 'sonner'
+const NODE_ENV = import.meta.env.MODE
+
 export const authStore = create((set, get) => ({
   user: { email: '', type: '', id: '', photo: '' },
+  base: NODE_ENV === 'development' ? 'http://localhost:8080' : '',
   captchaToken: '',
   loading: false,
   setCaptchaToken: token => set({ captchaToken: token }),
   checkUser: async () => {
     return new Promise(async (resolve, reject) => {
-      set({ loading: true })
-      await supabase.auth
-        .getSession()
-        .then(async ({ data }) => {
-          if (!data.session) {
-            localStorage.setItem(import.meta.env.VITE_AUTH_TOKEN, null)
-            return null
+      try {
+        set({ loading: true })
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
           }
-          const authEmail = data.session.user.email
-          const userId = data.session.user.id
-          const userType = data.session.userType
-          await supabase
-            .from('profiles')
-            .select('avatar')
-            .eq('id', data.session.user.id)
-            .then(({ data }) => {
-              let token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
-              token = token ? JSON.parse(token) : {}
-              token['userType'] = userType
-              localStorage.setItem(
-                import.meta.env.VITE_AUTH_TOKEN,
-                JSON.stringify(token)
-              )
-              set({
-                user: {
-                  email: authEmail,
-                  type: userType,
-                  id: userId,
-                  photo: data[0].avatar
-                },
-                loading: false
-              })
-              resolve(get().user)
-            })
-        })
-        .catch(err => {
-          set({ loading: false })
-          toast.error(err.message)
-          throw err
-        })
+        }
+        const url = `${get().base}/api/auth/validate`
+        const res = await fetch(url, options)
+        const { data, error } = await res.json()
+        if (error) throw error
+        const { user, session } = data
+        const activeUser = {
+          email: user.email,
+          type: user.user_metadata.userType,
+          id: user.id,
+          photo: user.user_metadata.avatar
+        }
+        set({ user: activeUser })
+        localStorage.setItem(
+          'suid',
+          JSON.stringify({ session: session, user: activeUser })
+        )
+        set({ loading: false })
+        resolve(user)
+      } catch (err) {
+        set({ loading: false })
+        toast.error(err.message)
+        throw err
+      }
     })
   },
   loginUser: async (email, password, navigate) => {
-    const verTID = toast.loading('Verifying')
-    await supabase.auth
-      .signInWithPassword({
-        email: email,
-        password: password,
-        options: { captchaToken: get().captchaToken }
-      })
-      .then(async authRes => {
-        if (authRes.error) return toast.error(`${authRes.error.message}`)
-        const authEmail = authRes.data.user.email
-        const userId = authRes.data.user.id
-        await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', authRes.data.user.id)
-          .then(({ data }) => {
-            const userType = data[0].user_type
-            const avatar = data[0].avatar
-            let token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
-            token = token ? JSON.parse(token) : {}
-            token['userType'] = userType
-            localStorage.setItem(
-              import.meta.env.VITE_AUTH_TOKEN,
-              JSON.stringify(token)
-            )
-            set({
-              user: {
-                email: authEmail,
-                type: userType,
-                id: userId,
-                photo: avatar
-              }
-            })
-            toast.dismiss(verTID)
-            toast.success('Login successful!', { duration: 500 })
-            navigate(`/${userType}/dashboard`)
-            return data
-          })
-        return authRes.data
-      })
-      .catch(err => {
-        console.log(err)
-        return toast.error(err.message)
-      })
+    try {
+      set({ loading: true })
+      const body = { email: email, password: password }
+      var headers = new Headers()
+      headers.append('Content-Type', 'application/json')
+      headers.append('Accept', 'application/json')
+      const options = {
+        method: 'POST',
+        body: JSON.stringify(body),
+        credentials: 'include',
+        headers: headers
+      }
+      const url = `${get().base}/api/auth/login`
+      const toastId = toast.loading('Logging you in...')
+      const res = await fetch(url, options)
+      const { data, error } = await res.json()
+      if (error) throw error
+      const { user, session } = data
+      const activeUser = {
+        email: user.email,
+        type: user.user_metadata.userType,
+        id: user.id,
+        photo: user.user_metadata.avatar
+      }
+      set({ user: activeUser })
+      localStorage.setItem(
+        'suid',
+        JSON.stringify({ session: session, user: activeUser })
+      )
+      set({ loading: false })
+      toast.dismiss(toastId)
+      toast.success('Login successful!')
+      navigate(`/${user.user_metadata.userType}/dashboard`)
+    } catch (err) {
+      console.log(err)
+      toast.error(err.message)
+      set({ loading: false })
+      return err
+    }
   },
   checkSession: async navigate => {
     const user = get().user
@@ -111,7 +102,7 @@ export const authStore = create((set, get) => ({
     if (error) return toast.error(error.message)
     else {
       set({ user: { email: '', type: '', id: '', photo: null } })
-      localStorage.removeItem(import.meta.env.VITE_AUTH_TOKEN)
+      localStorage.removeItem('suid')
       toast.success('Logout successful!', { duration: 750 })
       return null
     }

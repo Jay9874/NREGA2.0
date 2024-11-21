@@ -173,7 +173,9 @@ export const useAdminStore = create((set, get) => ({
       }
       console.log(data)
       set({ loading: false })
+      return 
     } catch (err) {
+      set({ loading: false })
       console.log(err)
       throw err
     }

@@ -51,7 +51,7 @@ export const useWorkerStore = create((set, get) => ({
   setLoading: loading => set({ loading }),
   setProfile: async navigate => {
     try {
-      let token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN)
+      let token = localStorage.getItem('suid')
       if (!token) throw new Error('No session found!')
       token = JSON.parse(token)
       set({
