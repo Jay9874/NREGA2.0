@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
@@ -10,6 +10,7 @@ function classNames (...classes) {
 
 export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
   const { pathname } = useLocation()
+  const navigate = useNavigate()
   const { logoutUser, user, loading } = authStore()
   return (
     <div className='sticky top-0 z-40 flex h-16 flex-shrink-0 bg-white shadow'>
@@ -102,7 +103,7 @@ export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
                         to={item.href}
                         onClick={() => {
                           if (item.to === 'button') {
-                            logoutUser()
+                            logoutUser(navigate)
                           }
                         }}
                         className={classNames(
