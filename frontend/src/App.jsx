@@ -33,11 +33,9 @@ import { SignInForm, ForgotPass, ResetPass } from './components/Auth'
 import JobAttendance from './components/Admin/JobAttendance'
 
 export default function App () {
-  const { checkUser } = authStore()
-
-  useEffect(() => {
-    checkUser()
-  }, [])
+  // useEffect(() => {
+  //   checkUser()
+  // }, [])
   return (
     <BrowserRouter>
       <Routes>

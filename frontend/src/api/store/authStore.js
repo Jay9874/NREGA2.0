@@ -25,8 +25,7 @@ export const authStore = create((set, get) => ({
         const res = await fetch(url, options)
         const { data, error } = await res.json()
         if (error) throw error
-        const { user, session } = data
-        console.log(session)
+        const { user } = data
         const activeUser = {
           email: user.email,
           type: user.user_metadata.userType,
@@ -34,16 +33,12 @@ export const authStore = create((set, get) => ({
           photo: user.user_metadata.avatar
         }
         set({ user: activeUser })
-        localStorage.setItem(
-          'suid',
-          JSON.stringify({ session: session, user: activeUser })
-        )
+        localStorage.setItem('suid', JSON.stringify({ user: activeUser }))
         set({ loading: false })
-        resolve(user)
+        resolve(activeUser)
       } catch (err) {
         set({ loading: false })
-        toast.error(err.message)
-        throw err
+        reject(err)
       }
     })
   },
@@ -65,7 +60,7 @@ export const authStore = create((set, get) => ({
       const res = await fetch(url, options)
       const { data, error } = await res.json()
       if (error) throw error
-      const { user, session } = data
+      const { user } = data
       const activeUser = {
         email: user.email,
         type: user.user_metadata.userType,
@@ -73,14 +68,11 @@ export const authStore = create((set, get) => ({
         photo: user.user_metadata.avatar
       }
       set({ user: activeUser })
-      localStorage.setItem(
-        'suid',
-        JSON.stringify({ session: session, user: activeUser })
-      )
+      localStorage.setItem('suid', JSON.stringify({ user: activeUser }))
       set({ loading: false })
       toast.dismiss(toastId)
       toast.success('Login successful!')
-      navigate(`/${user.user_metadata.userType}/dashboard`)
+      navigate(`/${activeUser.type}/dashboard`)
     } catch (err) {
       console.log(err)
       toast.error(err.message)
@@ -110,10 +102,11 @@ export const authStore = create((set, get) => ({
           Accept: 'application/json'
         }
       }
-      const url = `${get().base}/api/auth/validate`
+      const url = `${get().base}/api/auth/logout`
       const res = await fetch(url, options)
       const { data, error } = await res.json()
       if (error) throw error
+      console.log('data on logout: ', data)
       toast.dismiss(toastId)
       toast.success('Logged out successfully!')
       set({ user: { email: '', type: '', id: '', photo: null } })
