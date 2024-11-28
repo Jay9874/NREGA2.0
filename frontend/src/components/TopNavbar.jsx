@@ -69,7 +69,7 @@ export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
                 <span className='sr-only'>Open user menu</span>
                 {loading ? (
                   <svg
-                    className='w-8 h-8 text-gray-200 dark:text-gray-700'
+                    className='w-8 h-8 text-gray-200 animate-pulse dark:text-gray-700'
                     aria-hidden='true'
                     xmlns='http://www.w3.org/2000/svg'
                     fill='currentColor'
@@ -100,7 +100,7 @@ export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
                   <Menu.Item key={item.name}>
                     {({ active }) => (
                       <Link
-                        to={item.href}
+                        to={item.name == 'Sign Out' ? pathname : item.href}
                         onClick={() => {
                           if (item.to === 'button') {
                             logoutUser(navigate)

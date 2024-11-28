@@ -5,10 +5,11 @@ import { toast } from 'sonner'
 
 export default function Protected () {
   const [isAuthorized, setIsAuthorized] = useState(false)
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
   const { checkUser } = authStore()
   const location = useLocation()
-
+  
   const newLocation = location.pathname.slice(1)
   var path
   if (newLocation.indexOf('/') < 1) {
@@ -25,6 +26,7 @@ export default function Protected () {
       else setIsAuthorized(false)
     } catch (err) {
       toast.error('Please login first.')
+      navigate('/auth/login')
       setLoading(true)
     }
   }

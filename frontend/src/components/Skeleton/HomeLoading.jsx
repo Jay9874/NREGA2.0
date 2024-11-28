@@ -3,7 +3,7 @@ import AdminCard from './AdminCard'
 
 export default function HomeLoading () {
   return (
-    <div className='px-8 sm:px-10 lg:px-12 py-6'>
+    <div className='px-8 sm:px-10 lg:px-12 py-6 animate-pulse'>
       <div className='avatar-loading flex items-center flex-wrap'>
         <div className='avatar-cont pl-4'>
           <svg
