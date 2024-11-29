@@ -16,9 +16,22 @@ const navigation = [
 
 export default function Home () {
   const navigate = useNavigate()
-  const { checkSession } = authStore()
+  const { checkUser } = authStore()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
+  async function checkSession () {
+    try {
+      const token = JSON.parse(localStorage.getItem('suid'))
+      if (token) {
+        const user = await checkUser()
+        navigate(`/${user.type}/dashboard`)
+        toast.success('Login successful!', { duration: 500 })
+        return null
+      } else throw new Error('No session found.')
+    } catch (err) {
+      navigate('/auth/login')
+      return null
+    }
+  }
   return (
     <>
       <div className='relative isolate overflow-hidden bg-gray-900'>
@@ -62,7 +75,7 @@ export default function Home () {
               </div>
               <div className='hidden lg:flex lg:flex-1 lg:justify-end'>
                 <button
-                  onClick={() => checkSession(navigate)}
+                  onClick={() => checkSession()}
                   className='text-sm font-semibold leading-6 text-white'
                 >
                   Log in <span aria-hidden='true'>&rarr;</span>
@@ -105,7 +118,7 @@ export default function Home () {
                     <div className='py-6'>
                       <button
                         onClick={() => {
-                          checkSession(navigate)
+                          checkSession()
                           setMobileMenuOpen(false)
                         }}
                         className='-mx-3 block rounded-lg py-2.5 px-3 text-base font-semibold leading-6 text-white hover:bg-gray-400/10'
@@ -153,11 +166,11 @@ export default function Home () {
                     Login for live Demo
                   </Link>
                   <a
-                  href='#feature'
-                  className='text-base font-semibold leading-7 text-white'
-                >
-                  Learn more <span aria-hidden='true'>→</span>
-                </a>
+                    href='#feature'
+                    className='text-base font-semibold leading-7 text-white'
+                  >
+                    Learn more <span aria-hidden='true'>→</span>
+                  </a>
                 </div>
               </div>
             </div>

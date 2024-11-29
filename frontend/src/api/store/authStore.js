@@ -18,14 +18,14 @@ export const authStore = create((set, get) => ({
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            Accept: 'application/json'
           }
         }
         const url = `${get().base}/api/auth/validate`
         const res = await fetch(url, options)
         const { data, error } = await res.json()
         if (error) throw error
-        const { user, session } = data
+        const { user } = data
         const activeUser = {
           email: user.email,
           type: user.user_metadata.userType,
@@ -33,16 +33,12 @@ export const authStore = create((set, get) => ({
           photo: user.user_metadata.avatar
         }
         set({ user: activeUser })
-        localStorage.setItem(
-          'suid',
-          JSON.stringify({ session: session, user: activeUser })
-        )
+        localStorage.setItem('suid', JSON.stringify({ user: activeUser }))
         set({ loading: false })
-        resolve(user)
+        resolve(activeUser)
       } catch (err) {
         set({ loading: false })
-        toast.error(err.message)
-        throw err
+        reject(err)
       }
     })
   },
@@ -60,11 +56,11 @@ export const authStore = create((set, get) => ({
         headers: headers
       }
       const url = `${get().base}/api/auth/login`
-      const toastId = toast.loading('Logging you in...')
+      const toastId = toast.loading('Logging you in...', {duration: Infinity})
       const res = await fetch(url, options)
       const { data, error } = await res.json()
       if (error) throw error
-      const { user, session } = data
+      const { user } = data
       const activeUser = {
         email: user.email,
         type: user.user_metadata.userType,
@@ -72,14 +68,11 @@ export const authStore = create((set, get) => ({
         photo: user.user_metadata.avatar
       }
       set({ user: activeUser })
-      localStorage.setItem(
-        'suid',
-        JSON.stringify({ session: session, user: activeUser })
-      )
+      localStorage.setItem('suid', JSON.stringify({ user: activeUser }))
       set({ loading: false })
       toast.dismiss(toastId)
       toast.success('Login successful!')
-      navigate(`/${user.user_metadata.userType}/dashboard`)
+      navigate(`/${activeUser.type}/dashboard`)
     } catch (err) {
       console.log(err)
       toast.error(err.message)
@@ -97,13 +90,32 @@ export const authStore = create((set, get) => ({
     navigate('/auth/login')
     return null
   },
-  logoutUser: async () => {
-    const { error } = await supabase.auth.signOut()
-    if (error) return toast.error(error.message)
-    else {
+  logoutUser: async navigate => {
+    try {
+      set({ loading: true })
+      const toastId = toast.loading('Logging you out...')
+      const options = {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        }
+      }
+      const url = `${get().base}/api/auth/logout`
+      const res = await fetch(url, options)
+      const { data, error } = await res.json()
+      if (error) throw error
+      toast.dismiss(toastId)
+      toast.success('Logged out successfully!')
       set({ user: { email: '', type: '', id: '', photo: null } })
       localStorage.removeItem('suid')
-      toast.success('Logout successful!', { duration: 750 })
+      navigate('/')
+      return data
+    } catch (err) {
+      set({ loading: false })
+      console.log(err)
+      toast.error(err.message)
       return null
     }
   },

@@ -8,12 +8,13 @@ import { adminNavigation } from '../utils/sidelinks'
 import HomeLoading from '../components/Skeleton/HomeLoading'
 
 export const Admin = () => {
-  const { setProfile, setEmployees, loading, setLoading } = useAdminStore()
+  const { setProfile, setEmployees, setDashboard, loading, setLoading } = useAdminStore()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   async function handleSetup () {
     try {
       setLoading(true)
       await setProfile()
+      await setDashboard()
       await setEmployees()
       setLoading(false)
     } catch (error) {

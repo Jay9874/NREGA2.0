@@ -1,4 +1,3 @@
-import { ScaleIcon } from '@heroicons/react/24/outline'
 import RecentPayment from '../RecentPayment'
 import { useAdminStore } from '../../api/store'
 import { GreetUserWithTime } from '../../api'
@@ -11,62 +10,49 @@ import {
   WrenchScrewdriverIcon
 } from '@heroicons/react/20/solid'
 import { Link } from 'react-router-dom'
+import { jobDuration } from '../../utils/dataFormating'
 
 export default function Dashboard () {
-  const payment = [
-    {
-      amount: 7800,
-      created_at: '2024-01-17T17:34:20.282973+00:00',
-      id: 7,
-      payment_for: {
-        created_at: '2023-09-01T17:29:27.52655+00:00',
-        job_deadline: '2024-01-25T23:26:35+00:00',
-        job_description: 'cutting trees ',
-        job_id: 1,
-        job_name: 'Ped Lagao',
-        job_posted_date: '2023-09-01T17:29:27.52655+00:00',
-        location_id: 1,
-        sachiv_id: 'adb7ffff-9644-4736-b6a8-671498aa34d2',
-        work_photo: null
-      },
-      payment_title: 'For Nahar Widening',
-      payment_to: '0c39cd09-906b-4897-a1e1-917a508969eb',
-      status: 'success',
-      transaction_id: 7
-    }
-  ]
-  const { profile, setDashboard } = useAdminStore()
+  const { profile, loading, employees, jobs, payments } = useAdminStore()
   const [balance, setBalance] = useState(0)
+  const totalJobDays = jobs.reduce((acc, curr) => {
+    const { created_at, job_deadline } = curr
+    const duration = jobDuration(created_at, job_deadline).days
+    acc += duration
+    return acc
+  }, 0)
+  const updatedPayment = payments.map((itm, indx) => {
+    const payment_title = itm.payment_title + ' To ' + itm.payment_to.first_name
+    const newItm = {
+      ...itm,
+      payment_title: payment_title
+    }
+    return newItm
+  })
 
   const cards = [
     {
       name: 'Workers Count',
       href: '/admin/workers',
       icon: UserGroupIcon,
-      amount: `100`
+      amount: employees.length
     },
     {
       name: 'Jobs in Gram Panchayat',
       href: '/admin/jobs',
       icon: WrenchScrewdriverIcon,
-      amount: `100`
+      amount: jobs.length
     },
     {
       name: 'Total Job Days',
-      href: '/admin/payout',
+      href: '/admin/attendance',
       icon: CalendarIcon,
-      amount: `100`
+      amount: totalJobDays
     }
   ]
-
-  async function setupDashboard () {
-    const res = await setDashboard()
-  }
-
-  useEffect(() => {
-    // setupDashboard()
-  }, [])
-  return (
+  return loading ? (
+    <HomeLoading />
+  ) : (
     <main className='flex-1 pb-8'>
       {/* Page header */}
       <div className='bg-white shadow'>
@@ -171,7 +157,7 @@ export default function Dashboard () {
         </div>
 
         {/* Recent activity */}
-        <RecentPayment heading={'Recent payments'} recentActivity={payment} />
+        <RecentPayment heading={'Recent payments'} recentActivity={updatedPayment} />
       </div>
     </main>
   )
