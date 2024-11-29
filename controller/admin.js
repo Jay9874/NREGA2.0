@@ -1,7 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
-const supabaseUrl = process.env.VITE_SUPABASE_URL
-const supabaseKey = process.env.VITE_SUPABASE_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
+import { createClient } from '../lib/supabase.js'
 import { decode } from 'base64-arraybuffer'
 
 const createUser = async (req, res) => {
@@ -17,18 +14,18 @@ const createUser = async (req, res) => {
       throw new Error('A user with this email already exists.')
     const { data: newUser, error } = await supabase.auth.signUp({
       email: email,
-      password: password,
+      password: password
     })
     if (error) throw error
     return res.status(201).send({
       data: newUser.user,
-      error: null,
+      error: null
     })
   } catch (err) {
     console.log(err)
     return res.status(409).send({
       data: null,
-      error: err.message,
+      error: err.message
     })
   }
 }
@@ -45,7 +42,7 @@ const createEmployee = async (req, res) => {
       last_name: last_name,
       email: email,
       id: id,
-      user_type: 'worker',
+      user_type: 'worker'
     }
     const filename = `${id}`
     const fileType = base64String.match(/^data:(.+);base64/)?.[1]
@@ -59,7 +56,7 @@ const createEmployee = async (req, res) => {
       .upload(`avatars/${filename}`, decode(base64), {
         contentType: fileType,
         cacheControl: '3600',
-        upsert: true,
+        upsert: true
       })
     if (errAtFile) throw errAtFile
     const { data: url, error: errAtUrl } = supabase.storage
@@ -75,13 +72,13 @@ const createEmployee = async (req, res) => {
     if (errAtEmp) throw errAtEmp
     return res.status(201).send({
       data: { profile: createdProfile, employee: createdEmp },
-      error: null,
+      error: null
     })
   } catch (err) {
     console.log(err)
     return res.status(500).send({
       data: null,
-      error: err,
+      error: err
     })
   }
 }
@@ -106,11 +103,42 @@ const fetchAadhaar = async (req, res) => {
     }
     return res.status(201).send({
       data: aadhaar[0],
-      error: null,
+      error: null
     })
   } catch (err) {
     return res.status(403).send({ data: null, error: err.message })
   }
 }
 
-export { createUser, fetchAadhaar, createEmployee }
+// Sending all the dashboard data to client
+const dashboardData = async (req, res) => {
+  try {
+    // We need worker count, total jobs, and duration of all jobs in dashboard.
+    const { adminId, locationId } = req.body
+    const supabase = createClient({ req, res })
+    const { data: workerData, error: errAtWorker } = await supabase
+      .from('worker')
+      .select(`*`)
+      .eq('address', locationId)
+    if (errAtWorker) throw errAtWorker
+    const { data: jobsData, error: errAtJobs } = await supabase
+      .from('jobs')
+      .select('*')
+      .eq('location_id', locationId)
+    if (errAtJobs) throw errAtJobs
+    // fetching last payment detail
+    const { data: paymentData, error: errAtPayment } = await supabase
+      .from('payments')
+      .select('*, payment_to(*)')
+      .eq('GPO_id', adminId)
+    if (errAtPayment) throw errAtPayment
+    return res.status(201).send({
+      data: { worker: workerData, jobs: jobsData, payments: paymentData },
+      error: null
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(501).send({ data: null, error: err })
+  }
+}
+export { createUser, fetchAadhaar, createEmployee, dashboardData }
