@@ -10,7 +10,9 @@ export const useAdminStore = create((set, get) => ({
   loading: false,
   base: NODE_ENV === 'development' ? 'http://localhost:8080' : '',
   profile: {},
-  employees: {},
+  employees: [],
+  jobs: [],
+  payments: [],
   lastAddedUser: null,
   lastAddedAadhaar: null,
   checkUser: authStore.getState().checkUser,
@@ -40,11 +42,12 @@ export const useAdminStore = create((set, get) => ({
   setProfile: async () => {
     return new Promise(async (resolve, reject) => {
       try {
-        const user = await get().checkUser()
+        const token = JSON.parse(localStorage.getItem('suid'))
+        const { id } = token.user
         const { data: profile, error } = await supabase
           .from('sachiv')
           .select(`*, location_id(*)`)
-          .eq('id', user.id)
+          .eq('id', id)
         if (error) throw error
         set({ profile: profile[0] })
         resolve(profile[0])
@@ -158,22 +161,29 @@ export const useAdminStore = create((set, get) => ({
   setDashboard: async () => {
     try {
       set({ loading: true })
-      const adminId = get().profile.id
-      console.log(adminId)
+      const { id, location_id } = get().profile
+      const body = {
+        adminId: id,
+        locationId: location_id.id
+      }
       const options = {
         method: 'POST',
-        body: JSON.stringify({ adminId: adminId }),
-        headers: { 'Content-Type': 'application/json' }
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify(body)
       }
       const url = `${get().base}/api/admin/dashboard`
       const res = await fetch(url, options)
       const { data, error } = await res.json()
       if (error) {
-        return toast.error(error)
+        console.log(error)
+        return toast.error(error.message)
       }
-      console.log(data)
-      set({ loading: false })
-      return 
+      set({ loading: false, jobs: data.jobs, payments: data.payments })
+      return data
     } catch (err) {
       set({ loading: false })
       console.log(err)
