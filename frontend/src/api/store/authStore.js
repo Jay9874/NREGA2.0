@@ -74,8 +74,8 @@ export const authStore = create((set, get) => ({
       toast.success('Login successful!')
       navigate(`/${activeUser.type}/dashboard`)
     } catch (err) {
-      console.log(err)
       toast.error(err.message)
+      toast.dismiss()
       set({ loading: false })
       return err
     }
@@ -116,6 +116,7 @@ export const authStore = create((set, get) => ({
       set({ loading: false })
       console.log(err)
       toast.error(err.message)
+      toast.dismiss()
       return null
     }
   },
