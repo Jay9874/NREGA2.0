@@ -127,13 +127,23 @@ const dashboardData = async (req, res) => {
       .eq('location_id', locationId)
     if (errAtJobs) throw errAtJobs
     // fetching last payment detail
+    // Worker counts for each jobs
+    const { data: enrollmentData, error: errAtEnrollment } = await supabase
+      .from('workers_jobs')
+      .select('*')
+    if (errAtEnrollment) throw errAtEnrollment
     const { data: paymentData, error: errAtPayment } = await supabase
       .from('payments')
       .select('*, payment_to(*)')
       .eq('GPO_id', adminId)
     if (errAtPayment) throw errAtPayment
     return res.status(201).send({
-      data: { worker: workerData, jobs: jobsData, payments: paymentData },
+      data: {
+        worker: workerData,
+        jobs: jobsData,
+        payments: paymentData,
+        enrollments: enrollmentData
+      },
       error: null
     })
   } catch (err) {

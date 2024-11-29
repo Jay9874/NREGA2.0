@@ -1,95 +1,36 @@
 import { Link } from 'react-router-dom'
 import Pagination from '../../Pagination'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
-const people = [
-  {
-    name: 'Lindsay Walton',
-    title: 'Front-end Developer',
-    department: 'Optimization',
-    email: 'lindsay.walton@example.com',
-    role: 'Member',
-    image:
-      'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  // More people...
-]
+import { useAdminStore } from '../../../api/store'
+import { jobDuration, timestampToDate } from '../../../utils/dataFormating'
+import { useEffect, useState } from 'react'
 
 const statusStyles = {
   present: 'bg-green-100 text-green-800',
-  absent: 'bg-red-100 text-gray-800',
+  absent: 'bg-red-100 text-gray-800'
 }
 const tableHeading = [
   { name: 'Name' },
   { name: 'Description' },
   { name: 'Deadline' },
   { name: 'Workers' },
-  { name: 'Progress' },
+  { name: 'Progress' }
 ]
 
-const tableData = [
-  {
-    Description: 'Plant 500 trees along B.B.Chatterjee road',
-    Presence: '2/147 Day',
-    Name: 'Ped Lagao',
-    Deadline: '2024-01-25T23:26:35+00:00',
-    id: 1,
-    Workers: 5,
-    Progress: 5,
-    start: '2023-09-01T17:29:27.52655+00:00',
-  },
-  {
-    Description: 'Plant 500 trees along B.B.Chatterjee road',
-    Presence: '2/147 Day',
-    Name: 'Ped Lagao',
-    Deadline: '2024-01-25T23:26:35+00:00',
-    id: 1,
-    Workers: 5,
-    Progress: 5,
-    start: '2023-09-01T17:29:27.52655+00:00',
-  },
-  {
-    Description: 'Plant 500 trees along B.B.Chatterjee road',
-    Presence: '2/147 Day',
-    Name: 'Ped Lagao',
-    Deadline: '2024-01-25T23:26:35+00:00',
-    id: 1,
-    Workers: 5,
-    Progress: 5,
-    start: '2023-09-01T17:29:27.52655+00:00',
-  },
-  {
-    Description: 'Plant 500 trees along B.B.Chatterjee road',
-    Presence: '2/147 Day',
-    Name: 'Ped Lagao',
-    Deadline: '2024-01-25T23:26:35+00:00',
-    id: 1,
-    Workers: 5,
-    Progress: 5,
-    start: '2023-09-01T17:29:27.52655+00:00',
-  },
-  {
-    Description: 'Plant 500 trees along B.B.Chatterjee road',
-    Presence: '2/147 Day',
-    Name: 'Ped Lagao',
-    Deadline: '2024-01-25T23:26:35+00:00',
-    id: 1,
-    Workers: 5,
-    Progress: 5,
-    start: '2023-09-01T17:29:27.52655+00:00',
-  },
-  {
-    Description: 'Plant 500 trees along B.B.Chatterjee road',
-    Presence: '2/147 Day',
-    Name: 'Ped Lagao',
-    Deadline: '2024-01-25T23:26:35+00:00',
-    id: 1,
-    Workers: 5,
-    Progress: 5,
-    start: '2023-09-01T17:29:27.52655+00:00',
-  },
-]
+export default function ViewJobs () {
+  const { jobs, enrollments, workerMap } = useAdminStore()
 
-export default function ViewJobs() {
+  const updatedJobs = jobs.map((job, index) => {
+    return {
+      ...job,
+      Name: job.job_name,
+      Description: job.job_description,
+      Progress: jobDuration(job.created_at, job.job_deadline).percentage,
+      Deadline: timestampToDate(job.job_deadline),
+      Workers: workerMap.has(job.job_id) ? workerMap.get(job.job_id) : 0
+    }
+  })
+
   return (
     <main>
       <div className='px-4 py-6 sm:px-6 lg:px-8'>
@@ -97,7 +38,8 @@ export default function ViewJobs() {
           <div className='sm:flex-auto'>
             <h1 className='text-xl font-semibold text-gray-900'>All Jobs</h1>
             <p className='mt-2 text-sm text-gray-700'>
-              created by you for your local Gram Panchayat.
+              created by you for your local Gram Panchayat. Try sorting with
+              Headings of columns.
             </p>
           </div>
           <div className='mt-4 sm:mt-0 sm:ml-16 sm:flex-none'>
@@ -111,7 +53,7 @@ export default function ViewJobs() {
         </div>
 
         {/* List all the jobs */}
-        {tableData.length === 0 ? (
+        {updatedJobs.length === 0 ? (
           <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
             <div className='rounded-xl border-0 ring-1 ring-gray-100 h-24 flex items-center justify-center'>
               <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
@@ -127,7 +69,7 @@ export default function ViewJobs() {
                 role='list'
                 className='mt-2 divide-y divide-gray-200 overflow-hidden shadow sm:hidden'
               >
-                {tableData.map((transaction, index) => (
+                {updatedJobs.map((transaction, index) => (
                   <li key={index}>
                     <a
                       href={transaction.href}
@@ -193,7 +135,7 @@ export default function ViewJobs() {
                       </tr>
                     </thead>
                     <tbody className='divide-y divide-gray-200 h-50 bg-white w-full'>
-                      {tableData.map((transaction, index) => (
+                      {updatedJobs.map((transaction, index) => (
                         <tr key={index} className='bg-white'>
                           {tableHeading.map((heading, index) =>
                             heading.name === 'Progress' ? (
@@ -225,9 +167,8 @@ export default function ViewJobs() {
                       ))}
                     </tbody>
                   </table>
-                  {/* Pagination */}
                 </div>
-                <Pagination />
+                {/* <Pagination /> */}
               </div>
             </div>
           </>

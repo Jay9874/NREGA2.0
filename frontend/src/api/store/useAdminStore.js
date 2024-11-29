@@ -13,10 +13,13 @@ export const useAdminStore = create((set, get) => ({
   employees: [],
   jobs: [],
   payments: [],
+  enrollments: [],
   lastAddedUser: null,
   lastAddedAadhaar: null,
+  workerMap: new Map(),
   checkUser: authStore.getState().checkUser,
   setLoading: loading => set({ loading: loading }),
+  setWorkerMap: map => set({ workerMap: map }),
   checkLastAadhaar: () => {
     set({ loading: true })
     const lastAddedAadhaar = JSON.parse(
@@ -182,7 +185,20 @@ export const useAdminStore = create((set, get) => ({
         console.log(error)
         return toast.error(error.message)
       }
-      set({ loading: false, jobs: data.jobs, payments: data.payments })
+
+      const newMap = new Map()
+      data.enrollments.forEach((enrollment, index) => {
+        const count = newMap.get(enrollment.job_id)
+        newMap.set(enrollment.job_id, count ? count + 1 : 1)
+        get().setWorkerMap(newMap)
+      })
+
+      set({
+        loading: false,
+        jobs: data.jobs,
+        payments: data.payments,
+        enrollments: data.enrollments
+      })
       return data
     } catch (err) {
       set({ loading: false })
