@@ -3,7 +3,7 @@ import { decode } from 'base64-arraybuffer'
 
 const createUser = async (req, res) => {
   try {
-    // const supabase = createClient({ req, res })
+    const supabase = createClient({ req, res })
     const { email, password } = req.body
     const { data: user, error: err } = await supabase
       .from('profiles')
@@ -85,6 +85,7 @@ const createEmployee = async (req, res) => {
 const fetchAadhaar = async (req, res) => {
   try {
     const { aadhaar: aadhaarNo } = req.body
+    const supabase = createClient({req, res})
     const { data: aadhaar, error } = await supabase
       .from('aadhaar_db')
       .select(`*`)

@@ -72,21 +72,23 @@ export const useAdminStore = create((set, get) => ({
       const options = {
         method: 'POST',
         body: JSON.stringify(userData),
+        credentials: 'include',
         headers: { 'content-type': 'application/json' }
       }
       const url = `${get().base}/api/admin/createuser`
-      const toastID = toast.loading('Adding User...')
+      toast.loading('Adding User...')
       const res = await fetch(url, options)
       const { data, error } = await res.json()
-      toast.dismiss(toastID)
+      toast.dismiss()
       set({ loading: false })
       if (error) throw error
       toast.success('New user added.')
       localStorage.setItem('lastAddedUser', JSON.stringify(data))
       set({ lastAddedUser: data })
       return data
-    } catch (error) {
-      throw error
+    } catch (err) {
+      console.log(err)
+      toast.error(err)
     }
   },
   setAadhaarData: async aadhaarNo => {
@@ -98,23 +100,22 @@ export const useAdminStore = create((set, get) => ({
       const options = {
         method: 'POST',
         body: JSON.stringify(userData),
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
       }
       const url = `${get().base}/api/admin/aadhaar`
       const res = await fetch(url, options)
       const { data, error } = await res.json()
-      if (error) {
-        toast.dismiss(toastId)
-        return toast.error(error)
-      }
+      set({ loading: false })
+      if (error) throw error
       const updatedData = { ...data, age: calculateAge(data.dob) }
       localStorage.setItem('lastAddedAadhaar', JSON.stringify(updatedData))
       set({ lastAddedAadhaar: updatedData })
       toast.success('Fields filled with aadhaar data.')
-      set({ loading: false })
       return updatedData
     } catch (error) {
-      return toast.error(`${error.message}, Please try again.`)
+      set({loading: false})
+      return toast.error(`${error}, Please try again.`)
     }
   },
   createEmployee: async (userData, navigate) => {
