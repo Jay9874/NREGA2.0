@@ -123,15 +123,17 @@ export const authStore = create((set, get) => ({
   recoverUser: async (email, navigate) => {
     set({ loading: true })
     const redirectURL = 'https://nrega-2-0.vercel.app/auth/reset'
+    toast.loading('Sending recovery email...')
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectURL
     })
     if (error) {
       console.log(error)
+      set({loading: false})
       return toast.error(error.message)
     } else {
-      console.log(data)
       set({ loading: false })
+      toast.dismiss()
       toast.success('Recovery email sent!', { duration: 750 })
       navigate('/')
       return null

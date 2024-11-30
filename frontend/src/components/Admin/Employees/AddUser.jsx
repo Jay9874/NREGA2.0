@@ -14,7 +14,6 @@ export default function AddUser({ onUserCreation }) {
     setUser((prev) => ({ ...prev, [name]: value }))
   }
   async function handleSubmit(e) {
-    try {
       e.preventDefault()
       if (!user.email) {
         throw new Error('Please enter a valid Email ID.')
@@ -23,9 +22,6 @@ export default function AddUser({ onUserCreation }) {
         throw new Error('Password must be atleast 8 digit long.')
       const newUser = await addUser(user)
       onUserCreation(newUser)
-    } catch (error) {
-      return toast.error(error)
-    }
   }
   return (
     <main>
@@ -49,12 +45,12 @@ export default function AddUser({ onUserCreation }) {
           <div className='relative mt-1 rounded-md shadow-sm'>
             <input
               type='email'
+              required
               name='email'
               id='email'
               value={user.email}
               onChange={handleChange}
-              className='block w-full border-gray-300 rounded-md invalid:border-pink-500 invalid:text-pink-600
-                         focus:invalid:border-pink-500 focus:invalid:ring-pink-500 sm:text-sm'
+              className='w-full focus:outline-none border-gray-300 rounded-md focus:outline:none valid:text-green-600 invalid:text-red-600 sm:text-sm'
               placeholder='you@example.com'
               aria-invalid='true'
               aria-describedby='email-error'
@@ -77,9 +73,10 @@ export default function AddUser({ onUserCreation }) {
               type='password'
               name='password'
               id='password'
+              required
               value={user.password}
               onChange={handleChange}
-              className='block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+              className='block w-full rounded-md border-gray-300 shadow-sm sm:text-sm'
               placeholder='atleast 8 digit'
               aria-describedby='password-description'
               autoComplete='new-password'
