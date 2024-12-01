@@ -10,7 +10,7 @@ export default function Sidebar ({ sidebarOpen, setSidebarOpen, navigation }) {
       <Transition.Root show={sidebarOpen} as={Fragment}>
         <Dialog
           as='div'
-          className='relative z-90 md:hidden'
+          className='relative z-40 md:hidden'
           onClose={setSidebarOpen}
         >
           <Transition.Child
@@ -25,7 +25,7 @@ export default function Sidebar ({ sidebarOpen, setSidebarOpen, navigation }) {
             <div className='fixed inset-0 bg-gray-600 bg-opacity-75' />
           </Transition.Child>
 
-          <div className='fixed inset-0 z-40 flex'>
+          <div className='fixed inset-0 z-90 flex'>
             <Transition.Child
               as={Fragment}
               enter='transition ease-in-out duration-300 transform'

@@ -56,7 +56,7 @@ export const authStore = create((set, get) => ({
         headers: headers
       }
       const url = `${get().base}/api/auth/login`
-      const toastId = toast.loading('Logging you in...', {duration: Infinity})
+      const toastId = toast.loading('Logging you in...', { duration: Infinity })
       const res = await fetch(url, options)
       const { data, error } = await res.json()
       if (error) throw error
@@ -108,7 +108,10 @@ export const authStore = create((set, get) => ({
       if (error) throw error
       toast.dismiss(toastId)
       toast.success('Logged out successfully!')
-      set({ user: { email: '', type: '', id: '', photo: null } })
+      set({
+        user: { email: '', type: '', id: '', photo: null },
+        loading: false
+      })
       localStorage.removeItem('suid')
       navigate('/')
       return data
@@ -129,7 +132,7 @@ export const authStore = create((set, get) => ({
     })
     if (error) {
       console.log(error)
-      set({loading: false})
+      set({ loading: false })
       return toast.error(error.message)
     } else {
       set({ loading: false })

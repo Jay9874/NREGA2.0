@@ -1,14 +1,20 @@
 import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/20/solid'
 import Toggle from './Toggle'
 import { useRef, useState, useEffect } from 'react'
-import { Link, useOutletContext, useParams } from 'react-router-dom'
+import {
+  Link,
+  useNavigate,
+  useOutletContext,
+  useParams
+} from 'react-router-dom'
+import { toast } from 'sonner'
 
 const work = [
   {
     name: 'Tree Plantation',
     gp: 'Kasba GP',
     coordinates: ' 129.8 N 130.7 E',
-    date: 'Today',
+    date: `Date: ${new Date().toLocaleDateString()}`,
     email: 'janecooper@example.com',
     telephone: '+1-202-555-0170',
     imageUrl:
@@ -60,9 +66,71 @@ export default function JobAttendance () {
   const [onclose] = useOutletContext()
   const [imageUploaded, setImageUploaded] = useState(false)
   const [selectedFile, setSelectedFile] = useState()
+  const [locationGrant, setlocationGrant] = useState('prompt')
+  const [location, setLocation] = useState({
+    long: '',
+    lat: ''
+  })
   const [preview, setPreview] = useState()
 
+  const navigate = useNavigate()
+
   // create a preview as a side effect, whenever selected file is changed
+  useEffect(() => {
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    }
+    function success (pos) {
+      const crd = pos.coords
+      setLocation(() => ({ long: crd.longitude, lat: crd.latitude }))
+      console.log('Your current position is:')
+      console.log(`Latitude : ${crd.latitude}`)
+      console.log(`Longitude: ${crd.longitude}`)
+      console.log(`More or less ${crd.accuracy} meters.`)
+    }
+    function error (err) {
+      console.warn(`ERROR(${err.code}): ${err.message}`)
+    }
+    navigator.geolocation.getCurrentPosition(success, error, options)
+
+    function handlePermission () {
+      navigator.permissions
+        .query({ name: 'geolocation' })
+        .then(function (result) {
+          if (result.state == 'granted') {
+            setlocationGrant('granted')
+            report(result.state)
+          } else if (result.state == 'prompt') {
+            setlocationGrant('prompt')
+            report(result.state)
+            navigator.geolocation.getCurrentPosition(
+              revealPosition,
+              positionDenied,
+              geoSettings
+            )
+          } else if (result.state == 'denied') {
+            setlocationGrant('denied')
+            toast.warning('Allow location sharing to continue.')
+            setTimeout(() => {
+              navigate('..')
+            }, 1000)
+            report(result.state)
+          }
+          result.onchange = function () {
+            report(result.state)
+          }
+        })
+    }
+
+    function report (state) {
+      console.log('Permission ' + state)
+    }
+
+    handlePermission()
+  }, [])
+
   useEffect(() => {
     if (!selectedFile) {
       setPreview(undefined)
@@ -249,20 +317,19 @@ export default function JobAttendance () {
                 </table>
               </div>
               <div className='py-4 px-6 absolute rounded-b-2xl w-full z-10 bottom-0 flex items-center gap-4 justify-center backdrop-blur backdrop-filter bg-gray-50 bg-opacity-75'>
-                <Link
-                  to='..'
-                  type='button'
+                <button
+                  disabled={locationGrant == 'denied'}
                   className='w-full inline-flex items-center justify-center rounded-full border border-transparent bg-red-100 py-1.5 text-xs font-medium text-red-700 hover:bg-red-200 bg-opacity-75'
                 >
-                  Cancel
-                </Link>
-                <Link
-                  to='..'
-                  type='button'
-                  className='w-full inline-flex items-center justify-center rounded-full border border-transparent bg-indigo-100 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-200 bg-opacity-75'
-                >
-                  Save
-                </Link>
+                  <Link to='..' type='button' className='w-full'>
+                    Cancel
+                  </Link>
+                </button>
+                <button className='w-full inline-flex items-center justify-center rounded-full border border-transparent bg-indigo-100 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-200 bg-opacity-75'>
+                  <Link to='..' type='button' className='w-full'>
+                    Save
+                  </Link>
+                </button>
               </div>
             </li>
           ))}
