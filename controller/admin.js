@@ -85,7 +85,7 @@ const createEmployee = async (req, res) => {
 const fetchAadhaar = async (req, res) => {
   try {
     const { aadhaar: aadhaarNo } = req.body
-    const supabase = createClient({req, res})
+    const supabase = createClient({ req, res })
     const { data: aadhaar, error } = await supabase
       .from('aadhaar_db')
       .select(`*`)
@@ -152,4 +152,36 @@ const dashboardData = async (req, res) => {
     return res.status(501).send({ data: null, error: err })
   }
 }
-export { createUser, fetchAadhaar, createEmployee, dashboardData }
+
+const addAttendance = async (req, res) => {
+  try {
+    const { job_id, workers } = req.body
+    const workersArr = Object.keys(workers).map((id, index) => ({
+      worker_id: id,
+      attendance_for: job_id,
+      status: workers[id].attendance
+    }))
+    console.log(job_id, workers)
+    // input multiple rows in the database
+    const supabase = createClient({ req, res })
+    const { data, error } = await supabase
+      .from('attendance')
+      .insert(workersArr)
+      .select()
+    if (error) throw error
+    return res.status(200).send({
+      data: data,
+      error: null
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(err.status).send({ data: null, error: err })
+  }
+}
+export {
+  createUser,
+  fetchAadhaar,
+  createEmployee,
+  dashboardData,
+  addAttendance
+}

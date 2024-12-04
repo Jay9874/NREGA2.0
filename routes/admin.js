@@ -6,7 +6,8 @@ import {
   createUser,
   fetchAadhaar,
   createEmployee,
-  dashboardData, 
+  dashboardData,
+  addAttendance, 
 } from '../controller/admin.js'
 
 // Defining the routes
@@ -38,4 +39,11 @@ router.post('/aadhaar', fetchAadhaar)
  **/
 router.post('/dashboard', dashboardData)
 
+
+/**
+ * @route POST api/admin/dashboard
+ * @description send all dashboard data
+ * @access public
+ **/
+router.post('/add-attendance', addAttendance)
 export { router as adminRoutes }

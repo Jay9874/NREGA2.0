@@ -12,7 +12,6 @@ export default function Toggle ({id, onToggle}) {
     if (!enabled) {
       setScanning(true)
       setTimeout(() => {
-        console.log('changing the status')
         setEnabled(true)
         onToggle('present', id)
         setScanning(false)

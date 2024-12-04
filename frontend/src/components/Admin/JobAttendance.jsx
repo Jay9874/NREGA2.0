@@ -20,9 +20,10 @@ export default function JobAttendance () {
   const [selectedFile, setSelectedFile] = useState()
   const [preview, setPreview] = useState()
   const [location, locationGrant] = useOutletContext()
-  const { profile, enrollments } = useAdminStore()
-  const [workers, setWorkers] = useState(new Map())
+  const { profile, enrollments, addAttendance } = useAdminStore()
+  const [workers, setWorkers] = useState({})
   const [work, setWork] = useState()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!selectedFile) {
@@ -46,7 +47,6 @@ export default function JobAttendance () {
   }
 
   useEffect(() => {
-    const newMap = new Map()
     const filteredJobs = enrollments.filter((job, index) => {
       const impId = job.worker_id.id
       const emp = {
@@ -55,7 +55,7 @@ export default function JobAttendance () {
         attendance: 'absent'
       }
       if (job.job_id.job_id == jobId) {
-        newMap.set(impId, emp)
+        setWorkers(prev => ({ ...prev, [impId]: emp }))
         if (!work) {
           setWork({
             name: job.job_id.job_name,
@@ -68,9 +68,17 @@ export default function JobAttendance () {
         return true
       } else return false
     })
-    setWorkers(newMap)
   }, [jobId])
-  console.log(workers)
+
+  async function saveAttendance(){
+    try{
+      const data = addAttendance(jobId, workers)
+      navigate('..')
+    }catch(err){
+      console.log(err)
+    }
+  }
+
   return (
     <div className='overlay-modal h-full flex justify-center overflow-scroll absolute top-0 w-full z-20 bg-gray-300 bg-opacity-90'>
       <div className='modal h-full w-full lg:max-w-[60%] box-border  p-4 lg:p-12'>
@@ -211,19 +219,25 @@ export default function JobAttendance () {
                   </tr>
                 </thead>
                 <tbody className='bg-white'>
-                  {workers.forEach((value, key) => {
-                    const worker = value
-                    console.log(worker.name)
+                  {Object.keys(workers).map((worker_id, index) => {
+                    const worker = workers[worker_id]
                     return (
-                      <tr key={key}>
+                      <tr key={index}>
                         <td className='border-b border-gray-200 whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8'>
                           {worker.name}
                         </td>
                         <td className='border-b border-gray-200 whitespace-nowrap flex items-center justify-end px-3 py-4 text-sm text-right text-gray-500'>
                           <Toggle
-                            onToggle={(state, id) => {
-                              worker[id].attendance = state
-                            }}
+                            onToggle={(state, id) =>
+                              setWorkers(prev => {
+                                var currEmp = workers[id]
+                                currEmp = { ...currEmp, attendance: state }
+                                return {
+                                  ...prev,
+                                  [worker_id]: currEmp
+                                }
+                              })
+                            }
                             id={worker.id}
                           />
                         </td>
@@ -242,10 +256,8 @@ export default function JobAttendance () {
                   Cancel
                 </Link>
               </button>
-              <button className='w-full inline-flex items-center justify-center rounded-full border border-transparent bg-indigo-100 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-200 bg-opacity-75'>
-                <Link to='..' type='button' className='w-full'>
-                  Save
-                </Link>
+              <button onClick={saveAttendance} className='w-full inline-flex items-center justify-center rounded-full border border-transparent bg-indigo-100 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-200 bg-opacity-75'>
+                Save
               </button>
             </div>
           </li>

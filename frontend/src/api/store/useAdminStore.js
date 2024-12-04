@@ -114,7 +114,7 @@ export const useAdminStore = create((set, get) => ({
       toast.success('Fields filled with aadhaar data.')
       return updatedData
     } catch (error) {
-      set({loading: false})
+      set({ loading: false })
       return toast.error(`${error}, Please try again.`)
     }
   },
@@ -205,6 +205,29 @@ export const useAdminStore = create((set, get) => ({
       set({ loading: false })
       console.log(err)
       throw err
+    }
+  },
+  addAttendance: async (job_id, workers) => {
+    try {
+      set({ loading: true })
+      const options = {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'Application/json',
+          Accept: 'Application/json'
+        },
+        body: JSON.stringify({ job_id: job_id, workers: workers })
+      }
+      const res = await fetch(`${get().base}/api/admin/add-attendance`, options)
+      const { data, error } = await res.json()
+      set({loading: false})
+      if (error) throw error
+      toast.success("Attendance saved successfully!")
+    } catch (err) {
+      console.log(err)
+      set({loading: false})
+      toast.error(err.message)
     }
   }
 }))
