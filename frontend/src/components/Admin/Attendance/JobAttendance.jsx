@@ -8,7 +8,7 @@ import {
   useParams
 } from 'react-router-dom'
 import { toast } from 'sonner'
-import { useAdminStore } from '../../api/store'
+import { useAdminStore } from '../../../api/store'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
