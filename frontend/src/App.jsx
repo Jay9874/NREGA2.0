@@ -1,8 +1,6 @@
 import { Worker, Auth, Home, Admin } from './pages'
-import { authStore } from './api/store'
 import { Protected, NotFound, ValidLink } from './components'
-import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import { BrowserRouter, Route, Routes} from 'react-router-dom'
 
 // Admin Components
 import {
@@ -33,9 +31,7 @@ import { SignInForm, ForgotPass, ResetPass } from './components/Auth'
 import JobAttendance from './components/Admin/JobAttendance'
 
 export default function App () {
-  // useEffect(() => {
-  //   checkUser()
-  // }, [])
+
   return (
     <BrowserRouter>
       <Routes>

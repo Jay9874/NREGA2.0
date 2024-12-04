@@ -5,18 +5,21 @@ function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Toggle () {
+export default function Toggle ({id, onToggle}) {
   const [scanning, setScanning] = useState(false)
   const [enabled, setEnabled] = useState(false)
   function onSwitch () {
     if (!enabled) {
       setScanning(true)
       setTimeout(() => {
-        console.log('changing the status')
         setEnabled(true)
+        onToggle('present', id)
         setScanning(false)
       }, 2000)
-    } else setEnabled(false)
+    } else{
+      setEnabled(false)
+      onToggle('absent', id)
+    } 
   }
   return (
     <div className='flex items-center gap-1'>

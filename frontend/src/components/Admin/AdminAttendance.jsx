@@ -1,66 +1,9 @@
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { useAdminStore } from '../../api/store'
 import { jobDuration } from '../../utils/dataFormating'
-
-const works = [
-  {
-    name: 'Tree Plantation',
-    worker_count: '30',
-    duration: '2 month',
-    location: 'Kasba GP',
-    jobId: 1
-  },
-  {
-    name: 'Tree Plantation',
-    worker_count: '30',
-    duration: '2 month',
-    location: 'Kasba GP',
-    jobId: 2
-  },
-  {
-    name: 'Tree Plantation',
-    worker_count: '30',
-    duration: '2 month',
-    location: 'Kasba GP',
-    jobId: 3
-  },
-  {
-    name: 'Tree Plantation',
-    worker_count: '30',
-    duration: '2 month',
-    location: 'Kasba GP',
-    jobId: 4
-  },
-  {
-    name: 'Tree Plantation',
-    worker_count: '30',
-    duration: '2 month',
-    location: 'Kasba GP',
-    jobId: 5
-  },
-  {
-    name: 'Tree Plantation',
-    worker_count: '30',
-    duration: '2 month',
-    location: 'Kasba GP',
-    jobId: 6
-  },
-  {
-    name: 'Tree Plantation',
-    worker_count: '30',
-    duration: '2 month',
-    location: 'Kasba GP',
-    jobId: 7
-  },
-  {
-    name: 'Tree Plantation',
-    worker_count: '30',
-    duration: '2 month',
-    location: 'Kasba GP',
-    jobId: 8
-  }
-]
+import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 
 const tableHeading = [
   { name: 'Name' },
@@ -70,12 +13,15 @@ const tableHeading = [
   { name: '' }
 ]
 
-function classNames (...classes) {
-  return classes.filter(Boolean).join(' ')
-}
-
 export default function AdminAttendance () {
   const { jobs, workerMap, profile } = useAdminStore()
+  const [locationGrant, setlocationGrant] = useState('prompt')
+  const [location, setLocation] = useState({
+    long: '',
+    lat: ''
+  })
+
+  const navigate = useNavigate()
 
   const updatedJobs = jobs.map((job, index) => {
     return {
@@ -87,13 +33,61 @@ export default function AdminAttendance () {
     }
   })
 
-  function onClose () {
-    console.log('hello')
+  function handlePermission () {
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    }
+    function success (pos) {
+      const crd = pos.coords
+      setLocation(() => ({ long: crd.longitude, lat: crd.latitude }))
+    }
+    function error (err) {
+      console.warn(`ERROR(${err.code}): ${err.message}`)
+    }
+    navigator.geolocation.getCurrentPosition(success, error, options)
+    navigator.permissions
+      .query({ name: 'geolocation' })
+      .then(function (result) {
+        if (result.state == 'granted') {
+          setlocationGrant('granted')
+        } else if (result.state == 'prompt') {
+          setlocationGrant('prompt')
+          navigator.geolocation.getCurrentPosition(
+            pos => {
+              const crd = pos.coords
+              setLocation(() => ({ long: crd.longitude, lat: crd.latitude }))
+            },
+            positionDenied,
+            {
+              enableHighAccuracy: true,
+              timeout: 5000,
+              maximumAge: 0
+            }
+          )
+        } else if (result.state == 'denied') {
+          setlocationGrant('denied')
+        }
+      })
   }
+  useEffect(() => {
+    handlePermission()
+  }, [])
+
+  async function giveAttendance (jobId) {
+    handlePermission()
+    if (locationGrant == 'denied')
+      return toast.warning('Allow location sharing to continue.')
+    return navigate(`job/${jobId}`)
+  }
+
   return (
     <main className='relative min-h-[calc(100vh-64px)]'>
       {/* The selected job attendance */}
-      <Outlet context={[onClose]} />
+      {locationGrant == 'granted' && (
+        <Outlet context={[location, locationGrant]} />
+      )}
 
       <div className='relative overflow-hidden h-full'>
         <div className='px-4 sm:px-6 lg:px-8 py-6 h-full'>
@@ -119,7 +113,7 @@ export default function AdminAttendance () {
                 </div>
               </div>
             ) : (
-              <div className='relative min-w-full max-h-[350px] align-middle sm:rounded-lg mt-8 shadow ring-1 ring-black ring-opacity-5 sm:-mx-6 md:mx-0 md:rounded-lg'>
+              <div className='min-w-full max-h-[350px] align-middle sm:rounded-lg mt-8 shadow ring-1 ring-black ring-opacity-5 sm:-mx-6 md:mx-0 md:rounded-lg'>
                 <table className='min-w-full relative  divide-y divide-gray-200'>
                   <thead className='bg-gray-50'>
                     <tr>
@@ -167,13 +161,15 @@ export default function AdminAttendance () {
                               key={index}
                               className='whitespace-nowrap w-[150px] py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'
                             >
-                              <Link to={`job/${work.job_id}`}>
+                              <button
+                                onClick={() => giveAttendance(work.job_id)}
+                              >
                                 <p className='flex items-center w-[150px] justify-between gap-2 ring-1 ring-gray-500 hover:ring-indigo-500 hover:text-indigo-700 text-gray-500 px-4 py-1 hover:bg-indigo-50 bg-gray-50 rounded-full'>
                                   <span>Attendance</span>
                                   <ion-icon name='arrow-forward-outline'></ion-icon>
                                 </p>
                                 <span className='sr-only'>{work.job_name}</span>
-                              </Link>
+                              </button>
                             </td>
                           ) : (
                             <td
