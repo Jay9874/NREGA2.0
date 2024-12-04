@@ -1,13 +1,13 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
-import { useAdminStore } from '../../api/store'
-import { jobDuration } from '../../utils/dataFormating'
+import { useAdminStore } from '../../../api/store'
+import { jobDuration, timestampToDate } from '../../../utils/dataFormating'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 
 const tableHeading = [
   { name: 'Name' },
-  { name: 'Duration' },
+  { name: 'Deadline' },
   { name: 'Location' },
   { name: 'Workers' },
   { name: '' }
@@ -27,9 +27,10 @@ export default function AdminAttendance () {
     return {
       ...job,
       Name: job.job_name,
-      Duration: `${jobDuration(job.created_at, job.job_deadline).days} Days`,
+      Deadline: timestampToDate(job.job_deadline),
       Location: profile?.location_id?.panchayat,
-      Workers: workerMap.has(job.job_id) ? workerMap.get(job.job_id) : 0
+      Workers: workerMap.has(job.job_id) ? workerMap.get(job.job_id) : 0,
+      timestamp: job.job_deadline
     }
   })
 
@@ -153,41 +154,56 @@ export default function AdminAttendance () {
                     </tr>
                   </thead>
                   <tbody className='bg-white'>
-                    {updatedJobs.map((work, workIdx) => (
-                      <tr key={workIdx}>
-                        {tableHeading.map((heading, index) =>
-                          heading.name == '' ? (
-                            <td
-                              key={index}
-                              className='whitespace-nowrap w-[150px] py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'
-                            >
-                              <button
-                                onClick={() => giveAttendance(work.job_id)}
+                    {updatedJobs.map((work, workIdx) => {
+                      var deadline = new Date(work.timestamp)
+                      var now = new Date()
+                      deadline.setHours(0, 0, 0, 0)
+                      now.setHours(0, 0, 0, 0)
+                      return (
+                        <tr key={workIdx}>
+                          {tableHeading.map((heading, index) =>
+                            heading.name == '' ? (
+                              <td
+                                key={index}
+                                className='whitespace-nowrap w-[150px] py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'
                               >
-                                <p className='flex items-center w-[150px] justify-between gap-2 ring-1 ring-gray-500 hover:ring-indigo-500 hover:text-indigo-700 text-gray-500 px-4 py-1 hover:bg-indigo-50 bg-gray-50 rounded-full'>
-                                  <span>Attendance</span>
-                                  <ion-icon name='arrow-forward-outline'></ion-icon>
-                                </p>
-                                <span className='sr-only'>{work.job_name}</span>
-                              </button>
-                            </td>
-                          ) : (
-                            <td
-                              key={index}
-                              className={`${
-                                index == 1 || index == 2
-                                  ? 'hidden lg:table-cell'
-                                  : ''
-                              } whitespace-nowrap px-3 py-4 text-sm text-gray-500`}
-                            >
-                              {/* <p className='truncate text-gray-500 group-hover:text-gray-900'> */}
-                              {work[heading.name]}
-                              {/* </p> */}
-                            </td>
-                          )
-                        )}
-                      </tr>
-                    ))}
+                                {deadline.getTime() < now.getTime() ? (
+                                  <p className='flex items-center w-[150px] justify-between gap-2 ring-1 ring-green-500 text-green-500 px-4 py-1 bg-gray-50 rounded-full'>
+                                    <span>Completed</span>
+                                    <ion-icon color="success" name="checkmark-outline"></ion-icon>
+                                  </p>
+                                ) : (
+                                  <button
+                                    onClick={() => giveAttendance(work.job_id)}
+                                  >
+                                    <p className='flex items-center w-[150px] justify-between gap-2 ring-1 ring-indigo-500 text-indigo-700 px-4 py-1 bg-indigo-50 rounded-full'>
+                                      <span>Attendance</span>
+                                      <ion-icon name='arrow-forward-outline'></ion-icon>
+                                    </p>
+                                    <span className='sr-only'>
+                                      {work.job_name}
+                                    </span>
+                                  </button>
+                                )}
+                              </td>
+                            ) : (
+                              <td
+                                key={index}
+                                className={`${
+                                  index == 1 || index == 2
+                                    ? 'hidden lg:table-cell'
+                                    : ''
+                                } whitespace-nowrap px-3 py-4 text-sm text-gray-500`}
+                              >
+                                {/* <p className='truncate text-gray-500 group-hover:text-gray-900'> */}
+                                {work[heading.name]}
+                                {/* </p> */}
+                              </td>
+                            )
+                          )}
+                        </tr>
+                      )
+                    })}
                   </tbody>
                 </table>
               </div>

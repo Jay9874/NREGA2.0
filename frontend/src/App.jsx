@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Routes} from 'react-router-dom'
 import {
   AdminDashboard,
   AdminAttendance,
+  JobAttendance,
   Jobs as AdminJobs,
   Progress,
   ViewEmployees,
@@ -28,7 +29,6 @@ import {
 
 // Auth components
 import { SignInForm, ForgotPass, ResetPass } from './components/Auth'
-import JobAttendance from './components/Admin/JobAttendance'
 
 export default function App () {
 
