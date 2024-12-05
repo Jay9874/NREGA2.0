@@ -7,6 +7,7 @@ import logo from '../assets/images/logo.png'
 import { authStore } from '../api/store'
 import { useNavigate } from 'react-router-dom'
 import { Feature, Contact, Footer } from '../components/Home'
+import { toast } from 'sonner'
 
 const navigation = [
   { name: 'Features', href: '#feature' },
@@ -16,11 +17,13 @@ const navigation = [
 
 export default function Home () {
   const navigate = useNavigate()
-  const { checkUser } = authStore()
+  const { checkUser, demoLogin } = authStore()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [expandedActionBtn, setExpandedActionBtn] = useState(false)
   async function checkSession () {
     try {
       const token = JSON.parse(localStorage.getItem('suid'))
+      console.log(token)
       if (token) {
         const user = await checkUser()
         navigate(`/${user.type}/dashboard`)
@@ -28,6 +31,7 @@ export default function Home () {
         return null
       } else throw new Error('No session found.')
     } catch (err) {
+      console.log('err: ', err)
       navigate('/auth/login')
       return null
     }
@@ -75,7 +79,7 @@ export default function Home () {
               </div>
               <div className='hidden lg:flex lg:flex-1 lg:justify-end'>
                 <button
-                  onClick={() => checkSession()}
+                  onClick={checkSession}
                   className='text-sm font-semibold leading-6 text-white'
                 >
                   Log in <span aria-hidden='true'>&rarr;</span>
@@ -158,18 +162,65 @@ export default function Home () {
                   volunteer to do unskilled manual work and for matters
                   connected therewith or incidental thereto.
                 </p>
-                <div className='mt-10 flex-wrap flex items-center justify-center gap-x-6'>
-                  <Link
-                    to='/auth/login'
-                    className='rounded-3xl bg-green-500 px-8 py-1.5 text-base font-semibold leading-7  shadow-sm hover:bg-green-400 text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-400'
+                <div className='mt-10 flex-wrap flex justify-center gap-x-6'>
+                  <div
+                    className={`${
+                      expandedActionBtn ? 'rounded-b-none' : ''
+                    } relative w-[200px] transition-all duration-100 ease-in-out rounded-[20px] bg-green-500  text-base font-semibold leading-7  shadow-sm text-black`}
                   >
-                    Login for live Demo
-                  </Link>
+                    <button
+                      onClick={() => setExpandedActionBtn(!expandedActionBtn)}
+                      className={` flex items-center justify-between z-20 px-2 py-1.5 h-[40px] w-full`}
+                    >
+                      <span className='px-1.5'>Click for live Action</span>
+                      <div className='h-[75%] w-[1px] bg-black rounded-full'></div>
+                      <span
+                        className={`flex items-center transition-all duration-200 ease-in-out ${
+                          expandedActionBtn ? 'rotate-180' : ''
+                        }`}
+                      >
+                        <ion-icon
+                          color='dark'
+                          name='caret-down-outline'
+                        ></ion-icon>
+                      </span>
+                    </button>
+                    <div
+                      className={`${
+                        expandedActionBtn ? '' : 'hidden'
+                      } absolute z-10 -bottom-50 w-full py-1.5`}
+                    >
+                      <button onClick={()=>demoLogin('jayprakashsharma225@gmail.com', 'admin', navigate)} className='bg-green-500 py-1.5 w-full flex justify-between items-center pl-3.5 pr-2'>
+                        <span>Demo as Admin</span>
+                        <ion-icon
+                          color='light'
+                          name='arrow-forward-outline'
+                        ></ion-icon>
+                      </button>
+                      <button onClick={()=>demoLogin('jay.gdsc@gmail.com', 'worker', navigate)} className='bg-green-500 w-full mt-[1px] py-1.5 flex justify-between items-center pl-3.5 pr-2'>
+                        <span>Demo as Worker</span>
+                        <ion-icon
+                          color='light'
+                          name='arrow-forward-outline'
+                        ></ion-icon>
+                      </button>
+                      <button
+                        onClick={checkSession}
+                        className='bg-green-500 mt-[1px] w-full rounded-b-[20px] py-1.5 flex justify-between items-center pl-3.5 pr-2'
+                      >
+                        <span>Normal Login</span>
+                        <ion-icon
+                          color='light'
+                          name='arrow-forward-outline'
+                        ></ion-icon>
+                      </button>
+                    </div>
+                  </div>
                   <a
                     href='#feature'
-                    className='text-base font-semibold leading-7 text-white'
+                    className={`text-base flex items-center font-semibold leading-7 text-white`}
                   >
-                    Learn more <span aria-hidden='true'>→</span>
+                    <span aria-hidden='true'>Learn more →</span>
                   </a>
                 </div>
               </div>

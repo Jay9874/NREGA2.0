@@ -117,7 +117,6 @@ export const authStore = create((set, get) => ({
       return data
     } catch (err) {
       set({ loading: false })
-      console.log(err)
       toast.error(err.message)
       toast.dismiss()
       return null

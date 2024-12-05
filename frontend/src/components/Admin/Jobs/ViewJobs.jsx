@@ -18,7 +18,7 @@ const tableHeading = [
 ]
 
 export default function ViewJobs () {
-  const { jobs, enrollments, workerMap } = useAdminStore()
+  const { jobs, workerMap, profile } = useAdminStore()
 
   const updatedJobs = jobs.map((job, index) => {
     return {
@@ -38,8 +38,8 @@ export default function ViewJobs () {
           <div className='sm:flex-auto'>
             <h1 className='text-xl font-semibold text-gray-900'>All Jobs</h1>
             <p className='mt-2 text-sm text-gray-700'>
-              created by you for your local Gram Panchayat. Try sorting with
-              Headings of columns.
+              <span className='text-gray-800'>Created by you in <b>{profile?.location_id?.panchayat}</b> Gram Panchayat.</span><br/>
+              <span className='text-md  font-semibold'><i>Click Heading of a column to sort.</i></span>
             </p>
           </div>
           <div className='mt-4 sm:mt-0 sm:ml-16 sm:flex-none'>
