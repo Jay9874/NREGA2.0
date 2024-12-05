@@ -25,7 +25,8 @@ export default function Protected () {
       if (user.type == path) setIsAuthorized(true)
       else setIsAuthorized(false)
     } catch (err) {
-      toast.error('Please login first.')
+      localStorage.removeItem('suid')
+      toast.error('You are unauthorized, please login first.')
       navigate('/auth/login')
       setLoading(true)
     }

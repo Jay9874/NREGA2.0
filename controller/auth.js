@@ -42,6 +42,7 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
+    console.log('Called the logout.')
     const supabase = createClient({ req, res })
     const { error } = await supabase.auth.signOut()
     if (error) throw error
@@ -97,9 +98,16 @@ const pageRefresh = async (req, res) => {
       error: null
     })
   } catch (err) {
-    console.log(err)
-    return res.status(403).send({
-      data: null,
+    const supabase = createClient({req, res})
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+      return res.status(error.status).send({
+        data: null,
+        error: error
+      })
+    }
+    return res.status(200).send({
+      data: 'signed out successfully',
       error: err
     })
   }
@@ -126,4 +134,4 @@ const updateMeta = async (req, res) => {
   }
 }
 
-export { confirmSignup, login, logout, signup, pageRefresh, updateMeta}
+export { confirmSignup, login, logout, signup, pageRefresh, updateMeta }
