@@ -17,7 +17,7 @@ const navigation = [
 
 export default function Home () {
   const navigate = useNavigate()
-  const { checkUser } = authStore()
+  const { checkUser, demoLogin } = authStore()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [expandedActionBtn, setExpandedActionBtn] = useState(false)
   async function checkSession () {
@@ -79,7 +79,7 @@ export default function Home () {
               </div>
               <div className='hidden lg:flex lg:flex-1 lg:justify-end'>
                 <button
-                  onClick={() => checkSession()}
+                  onClick={checkSession}
                   className='text-sm font-semibold leading-6 text-white'
                 >
                   Log in <span aria-hidden='true'>&rarr;</span>
@@ -164,18 +164,16 @@ export default function Home () {
                 </p>
                 <div className='mt-10 flex-wrap flex justify-center gap-x-6'>
                   <div
-                    to='/auth/login'
-                    className={`relative ${
-                      expandedActionBtn ? 'h-[130px]' : 'h-[40px]'
-                    } w-[200px] overflow-hidden transition-all duration-200 ease-in-out rounded-3xl bg-green-500  text-base font-semibold leading-7  shadow-sm text-black`}
+                    className={`${
+                      expandedActionBtn ? 'rounded-b-none' : ''
+                    } relative w-[200px] transition-all duration-100 ease-in-out rounded-[20px] bg-green-500  text-base font-semibold leading-7  shadow-sm text-black`}
                   >
                     <button
                       onClick={() => setExpandedActionBtn(!expandedActionBtn)}
-                      className={`absolute ${
-                        expandedActionBtn ? 'border-b-0 border-slate-500' : ''
-                      } top-0 transition-all duration-1000 ease-in-out flex items-center justify-between z-20 px-2 py-1.5 bg-green-500 h-[40px] w-full`}
+                      className={` flex items-center justify-between z-20 px-2 py-1.5 h-[40px] w-full`}
                     >
                       <span className='px-1.5'>Click for live Action</span>
+                      <div className='h-[75%] w-[1px] bg-black rounded-full'></div>
                       <span
                         className={`flex items-center transition-all duration-200 ease-in-out ${
                           expandedActionBtn ? 'rotate-180' : ''
@@ -187,15 +185,40 @@ export default function Home () {
                         ></ion-icon>
                       </span>
                     </button>
-                    <div className='absolute z-10 bottom-0 w-full py-1.5 px-1.5'>
-                      <div>Demo as Admin</div>
-                      <div>Demo as Worker</div>
-                      <div>Normal Login</div>
+                    <div
+                      className={`${
+                        expandedActionBtn ? '' : 'hidden'
+                      } absolute z-10 -bottom-50 w-full py-1.5`}
+                    >
+                      <button onClick={()=>demoLogin('jayprakashsharma225@gmail.com', 'admin', navigate)} className='bg-green-500 py-1.5 w-full flex justify-between items-center pl-3.5 pr-2'>
+                        <span>Demo as Admin</span>
+                        <ion-icon
+                          color='light'
+                          name='arrow-forward-outline'
+                        ></ion-icon>
+                      </button>
+                      <button onClick={()=>demoLogin('jay.gdsc@gmail.com', 'worker', navigate)} className='bg-green-500 w-full mt-[1px] py-1.5 flex justify-between items-center pl-3.5 pr-2'>
+                        <span>Demo as Worker</span>
+                        <ion-icon
+                          color='light'
+                          name='arrow-forward-outline'
+                        ></ion-icon>
+                      </button>
+                      <button
+                        onClick={checkSession}
+                        className='bg-green-500 mt-[1px] w-full rounded-b-[20px] py-1.5 flex justify-between items-center pl-3.5 pr-2'
+                      >
+                        <span>Normal Login</span>
+                        <ion-icon
+                          color='light'
+                          name='arrow-forward-outline'
+                        ></ion-icon>
+                      </button>
                     </div>
                   </div>
                   <a
                     href='#feature'
-                    className='text-base flex items-center font-semibold leading-7 text-white'
+                    className={`text-base flex items-center font-semibold leading-7 text-white`}
                   >
                     <span aria-hidden='true'>Learn more →</span>
                   </a>
