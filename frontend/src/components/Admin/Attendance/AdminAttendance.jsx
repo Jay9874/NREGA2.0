@@ -98,8 +98,8 @@ export default function AdminAttendance () {
                 Select a Job to add attendance
               </h1>
               <p className='mt-2 text-sm text-gray-700'>
-                A list of all the jobs in your Gram Panchayat. You can sort with
-                job name, location, duration and workers.
+                <span className='text-gray-800'>List of all the jobs in <b>{profile?.location_id?.panchayat}</b> Gram Panchayat.</span><br/>
+              <span className='text-md  font-semibold'><i>To sort, click Heading for job name, location, duration or workers</i></span>
               </p>
             </div>
           </div>
@@ -170,7 +170,7 @@ export default function AdminAttendance () {
                                 {deadline.getTime() < now.getTime() ? (
                                   <p className='flex items-center w-[150px] justify-between gap-2 ring-1 ring-green-500 text-green-500 px-4 py-1 bg-gray-50 rounded-full'>
                                     <span>Completed</span>
-                                    <ion-icon color="success" name="checkmark-outline"></ion-icon>
+                                    <ion-icon color="success" name="checkmark-done-outline"></ion-icon>
                                   </p>
                                 ) : (
                                   <button
@@ -178,7 +178,7 @@ export default function AdminAttendance () {
                                   >
                                     <p className='flex items-center w-[150px] justify-between gap-2 ring-1 ring-indigo-500 text-indigo-700 px-4 py-1 bg-indigo-50 rounded-full'>
                                       <span>Attendance</span>
-                                      <ion-icon name='arrow-forward-outline'></ion-icon>
+                                      <ion-icon color="tertiary" name='arrow-forward-outline'></ion-icon>
                                     </p>
                                     <span className='sr-only'>
                                       {work.job_name}

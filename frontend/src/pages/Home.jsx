@@ -7,6 +7,7 @@ import logo from '../assets/images/logo.png'
 import { authStore } from '../api/store'
 import { useNavigate } from 'react-router-dom'
 import { Feature, Contact, Footer } from '../components/Home'
+import { toast } from 'sonner'
 
 const navigation = [
   { name: 'Features', href: '#feature' },
@@ -18,9 +19,11 @@ export default function Home () {
   const navigate = useNavigate()
   const { checkUser } = authStore()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [expandedActionBtn, setExpandedActionBtn] = useState(false)
   async function checkSession () {
     try {
       const token = JSON.parse(localStorage.getItem('suid'))
+      console.log(token)
       if (token) {
         const user = await checkUser()
         navigate(`/${user.type}/dashboard`)
@@ -28,6 +31,7 @@ export default function Home () {
         return null
       } else throw new Error('No session found.')
     } catch (err) {
+      console.log('err: ', err)
       navigate('/auth/login')
       return null
     }
@@ -158,18 +162,42 @@ export default function Home () {
                   volunteer to do unskilled manual work and for matters
                   connected therewith or incidental thereto.
                 </p>
-                <div className='mt-10 flex-wrap flex items-center justify-center gap-x-6'>
-                  <Link
+                <div className='mt-10 flex-wrap flex justify-center gap-x-6'>
+                  <div
                     to='/auth/login'
-                    className='rounded-3xl bg-green-500 px-8 py-1.5 text-base font-semibold leading-7  shadow-sm hover:bg-green-400 text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-400'
+                    className={`relative ${
+                      expandedActionBtn ? 'h-[130px]' : 'h-[40px]'
+                    } w-[200px] overflow-hidden transition-all duration-200 ease-in-out rounded-3xl bg-green-500  text-base font-semibold leading-7  shadow-sm text-black`}
                   >
-                    Login for live Demo
-                  </Link>
+                    <button
+                      onClick={() => setExpandedActionBtn(!expandedActionBtn)}
+                      className={`absolute ${
+                        expandedActionBtn ? 'border-b-0 border-slate-500' : ''
+                      } top-0 transition-all duration-1000 ease-in-out flex items-center justify-between z-20 px-2 py-1.5 bg-green-500 h-[40px] w-full`}
+                    >
+                      <span className='px-1.5'>Click for live Action</span>
+                      <span
+                        className={`flex items-center transition-all duration-200 ease-in-out ${
+                          expandedActionBtn ? 'rotate-180' : ''
+                        }`}
+                      >
+                        <ion-icon
+                          color='dark'
+                          name='caret-down-outline'
+                        ></ion-icon>
+                      </span>
+                    </button>
+                    <div className='absolute z-10 bottom-0 w-full py-1.5 px-1.5'>
+                      <div>Demo as Admin</div>
+                      <div>Demo as Worker</div>
+                      <div>Normal Login</div>
+                    </div>
+                  </div>
                   <a
                     href='#feature'
-                    className='text-base font-semibold leading-7 text-white'
+                    className='text-base flex items-center font-semibold leading-7 text-white'
                   >
-                    Learn more <span aria-hidden='true'>→</span>
+                    <span aria-hidden='true'>Learn more →</span>
                   </a>
                 </div>
               </div>
