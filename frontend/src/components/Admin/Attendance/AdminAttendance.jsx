@@ -118,7 +118,6 @@ export default function AdminAttendance () {
                     scope='col'
                     className='py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6'
                   >
-                    {/* Name */}
                     <a href='#' className='group inline-flex'>
                       Name
                       <span className='invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible'>
