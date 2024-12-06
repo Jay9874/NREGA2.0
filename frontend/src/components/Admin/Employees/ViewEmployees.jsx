@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAdminStore } from '../../../api/store'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
 
 export default function ViewEmployees () {
   const { employees, profile } = useAdminStore()
@@ -34,90 +35,141 @@ export default function ViewEmployees () {
                 </div>
               </div>
             ) : (
-              <div className='overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg'>
-                <table className='min-w-full divide-y divide-gray-300'>
-                  <thead className='bg-gray-50'>
+              <div className='no-scrollbar -mx-2 max-h-[420px] relative sm:mx-0 mt-2 overflow-scroll shadow ring-1 ring-black ring-opacity-5 rounded-lg'>
+                <table className='relative min-w-full divide-y divide-gray-300'>
+                  <thead className='bg-gray-50 sticky z-10 top-0 bg-opacity-75 backdrop-blur-sm'>
                     <tr>
                       <th
                         scope='col'
                         className='py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6'
                       >
-                        Name
+                        <a href='#' className='group inline-flex'>
+                          Name
+                          <span className='invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible'>
+                            <ChevronDownIcon
+                              className='h-5 w-5'
+                              aria-hidden='true'
+                            />
+                          </span>
+                        </a>
                       </th>
                       <th
                         scope='col'
-                        className='px-3 py-3.5 text-left text-sm font-semibold text-gray-900'
+                        className='hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell'
                       >
-                        Aadhaar
+                        <a href='#' className='group inline-flex'>
+                          Aadhaar
+                          <span className='invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible'>
+                            <ChevronDownIcon
+                              className='h-5 w-5'
+                              aria-hidden='true'
+                            />
+                          </span>
+                        </a>
                       </th>
                       <th
                         scope='col'
-                        className='px-3 py-3.5 text-left text-sm font-semibold text-gray-900'
+                        className='hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 md:table-cell'
                       >
-                        Mobile
+                        <a href='#' className='group inline-flex'>
+                          Mobile
+                          <span className='invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible'>
+                            <ChevronDownIcon
+                              className='h-5 w-5'
+                              aria-hidden='true'
+                            />
+                          </span>
+                        </a>
                       </th>
                       <th
                         scope='col'
-                        className='px-3 py-3.5 text-left text-sm font-semibold text-gray-900'
+                        className='hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sm:table-cell'
                       >
-                        Age
+                        <a href='#' className='group inline-flex'>
+                          Age
+                          <span className='invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible'>
+                            <ChevronDownIcon
+                              className='h-5 w-5'
+                              aria-hidden='true'
+                            />
+                          </span>
+                        </a>
                       </th>
                       <th
                         scope='col'
-                        className='relative py-3.5 pl-3 pr-4 sm:pr-6'
+                        className='relative py-3.5 px-2 sm:pr-6'
                       >
-                        <span className='sr-only'>Edit</span>
+                        <span className='sr-only'>Status</span>
                       </th>
                     </tr>
                   </thead>
                   <tbody className='divide-y divide-gray-200 bg-white'>
-                    {employees.map((person, index) => (
-                      <tr key={index}>
-                        <td className='whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6'>
-                          <div className='flex items-center'>
+                    {employees.map((employee, employeeId) => (
+                      <tr key={employeeId}>
+                        <td className='w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-6'>
+                        <div className='flex items-center'>
                             <div className='h-10 w-10 flex-shrink-0'>
                               <img
                                 className='h-10 w-10 rounded-full'
-                                src={person.photo}
+                                src={employee.photo}
                                 alt='profile_img'
                               />
                             </div>
                             <div className='ml-4'>
                               <div className='font-medium text-gray-900'>
-                                {person.first_name} {person.last_name}
+                                {employee.first_name} {employee.last_name}
                               </div>
                               <div className='text-gray-500'>
-                                {person.mgnrega_id}
+                                {employee.mgnrega_id}
                               </div>
                             </div>
                           </div>
+                          <dl className='font-normal lg:hidden pl-14'>
+                            <dt className='sr-only'>Aadhaar Number</dt>
+                            <dd className='mt-1 truncate '>
+                              <span className='text-gray-700'>Aadhaar: </span>
+                              <span className='text-gray-500'>
+                                {employee.aadhar_no}
+                              </span>
+                            </dd>
+                            <dt className='sr-only lg:hidden'>Mobile Number</dt>
+                            <dd className='mt-1 truncate text-gray-500 md:hidden'>
+                              <span className='text-gray-700'>Mobile: </span>
+                              <span className='text-gray-500'>
+                                {employee.mobile_no}
+                              </span>
+                            </dd>
+                            <dt className='sr-only md:hidden'>Age</dt>
+                            <dd className='mt-1 truncate text-gray-500 sm:hidden'>
+                              <span className='text-gray-700'>Age: </span>
+                              <span className='text-gray-500'>
+                                {employee.age}
+                              </span>
+                            </dd>
+                          </dl>
                         </td>
-                        <td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
-                          <div className='text-gray-900'>
-                            {person.aadhar_no}
-                          </div>
+                        <td className='hidden px-3 py-4 text-sm text-gray-500 lg:table-cell'>
+                          {employee.aadhar_no}
                         </td>
-                        <td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
-                          {/* <span className='inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800'> */}
-                          <span className='inline-flex rounded-full px-2 text-xs font-semibold leading-5'>
-                            {person.mobile_no}
-                          </span>
+                        <td className='hidden truncate px-3 py-4 text-sm text-gray-500 md:table-cell'>
+                          {employee.mobile_no}
                         </td>
-                        <td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
-                          {person.age} yr
+                        <td className='hidden px-3 py-4 text-sm text-gray-500 sm:table-cell'>
+                          {employee.age}
                         </td>
-                        <td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'>
+                        <td className='py-4 pr-4 text-right text-sm font-medium w-[30px]'>
                           <Link
-                            to={`/admin/workers/edit/${person.id}`}
+                            to={`/admin/workers/edit/${employee.id}`}
                             className='text-indigo-600 hover:text-indigo-900'
                           >
-                            Edit<span className='sr-only'>, {person.name}</span>
+                            Edit<span className='sr-only'>, {employee.name}</span>
                           </Link>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+                <div className='sticky bottom-0 h-[25px] w-full bg-gradient-to-t  from-gray-50' />
               </div>
             )}
           </div>

@@ -110,7 +110,7 @@ export default function AdminAttendance () {
             </div>
           </div>
         ) : (
-          <div className='no-scrollbar -mx-2 max-h-[400px] relative sm:mx-0 mt-8 overflow-scroll shadow ring-1 ring-black ring-opacity-5 rounded-lg'>
+          <div className='no-scrollbar -mx-2 max-h-[420px] relative sm:mx-0 mt-8 overflow-scroll shadow ring-1 ring-black ring-opacity-5 rounded-lg'>
             <table className='relative min-w-full divide-y divide-gray-300'>
               <thead className='bg-gray-50 sticky z-10 top-0 bg-opacity-75 backdrop-blur-sm'>
                 <tr>
