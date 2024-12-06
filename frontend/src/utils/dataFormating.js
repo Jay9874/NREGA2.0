@@ -21,7 +21,7 @@ function timeToString (timestamp) {
   const year = date.getFullYear()
   const month = date.getMonth() // Months are zero-indexed in JavaScript.
   const day = date.getDate()
-  return { string: `${year}-${month}-${day}`, year: year, month: month+1 }
+  return { string: `${year}-${month}-${day}`, year: year, month: month + 1 }
 }
 
 function getDay (num) {
@@ -67,6 +67,16 @@ function formatLocation (locationObj) {
 function formatLocationShort (locationObj) {
   return `${locationObj.panchayat}, ${locationObj.block}`
 }
+
+function getToday () {
+  var now = new Date()
+  now.setHours(0, 0, 0, 0)
+  const year = now.getFullYear()
+  const month = now.getMonth() // Months are zero-indexed in JavaScript.
+  const day = now.getDate()
+  var nowString = `${year}-${month+1}-${day}`
+  return nowString
+}
 function calculateAge (birthday) {
   const newBirthday = new Date(birthday)
   const ageDifMs = Date.now() - newBirthday
@@ -79,5 +89,6 @@ export {
   formatLocation,
   formatLocationShort,
   calculateAge,
-  timeToString
+  timeToString,
+  getToday
 }

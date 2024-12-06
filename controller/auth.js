@@ -101,7 +101,7 @@ const pageRefresh = async (req, res) => {
     const supabase = createClient({req, res})
     const { error } = await supabase.auth.signOut()
     if (error) {
-      return res.status(error.status).send({
+      return res.status(403).send({
         data: null,
         error: error
       })

@@ -5,14 +5,6 @@ import { jobDuration, timestampToDate } from '../../../utils/dataFormating'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 
-const tableHeading = [
-  { name: 'Name' },
-  { name: 'Deadline' },
-  { name: 'Location' },
-  { name: 'Workers' },
-  { name: '' }
-]
-
 export default function AdminAttendance () {
   const { jobs, workerMap, profile } = useAdminStore()
   const [locationGrant, setlocationGrant] = useState('prompt')
@@ -20,7 +12,6 @@ export default function AdminAttendance () {
     long: '',
     lat: ''
   })
-
   const navigate = useNavigate()
 
   const updatedJobs = jobs.map((job, index) => {
@@ -28,12 +19,11 @@ export default function AdminAttendance () {
       ...job,
       Name: job.job_name,
       Deadline: timestampToDate(job.job_deadline),
-      Location: profile?.location_id?.panchayat,
+      Duration: `${jobDuration(job.created_at, job.job_deadline).days} Days`,
       Workers: workerMap.has(job.job_id) ? workerMap.get(job.job_id) : 0,
       timestamp: job.job_deadline
     }
   })
-
   function handlePermission () {
     const options = {
       enableHighAccuracy: true,
@@ -82,134 +72,184 @@ export default function AdminAttendance () {
       return toast.warning('Allow location sharing to continue.')
     return navigate(`job/${jobId}`)
   }
-
   return (
-    <main className='relative min-h-[calc(100vh-64px)]'>
-      {/* The selected job attendance */}
+    <main className='relative h-[calc(100vh-65px)] w-full overflow-scroll'>
+      {/* Overlay model for job attendance */}
       {locationGrant == 'granted' && (
         <Outlet context={[location, locationGrant]} />
       )}
+      <div className='absolute top-0 w-full px-4 sm:px-6 lg:px-8 pb-4'>
+        <div className='sm:flex sm:items-center'>
+          <div className='sm:flex-auto'>
+            <h1 className='mt-2 text-xl font-semibold text-gray-900'>
+              Select a Job to add attendance
+            </h1>
+            <p className='mt-2 text-sm text-gray-700'>
+              <span className='text-gray-800'>
+                List of all the jobs in <b>{profile?.location_id?.panchayat}</b>{' '}
+                Gram Panchayat.
+              </span>
+              <br />{' '}
+              <span className='text-md  font-semibold'>
+                <i>
+                  To sort, click Heading for job name, location, duration or
+                  workers
+                </i>
+              </span>
+            </p>
+          </div>
+        </div>
 
-      <div className='relative overflow-hidden h-full'>
-        <div className='px-4 sm:px-6 lg:px-8 py-6 h-full'>
-          <div className='sm:flex sm:items-center'>
-            <div className='sm:flex-auto'>
-              <h1 className='text-xl font-semibold text-gray-900'>
-                Select a Job to add attendance
-              </h1>
-              <p className='mt-2 text-sm text-gray-700'>
-                <span className='text-gray-800'>List of all the jobs in <b>{profile?.location_id?.panchayat}</b> Gram Panchayat.</span><br/>
-              <span className='text-md  font-semibold'><i>To sort, click Heading for job name, location, duration or workers</i></span>
+        {/* Displaying the list of job to add attendance */}
+        {updatedJobs.length == 0 ? (
+          <div className='mx-auto w-full px-6 text-center pt-4'>
+            <div className='rounded-xl border-0 ring-1 ring-gray-100 h-24 flex items-center justify-center'>
+              <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
+                Seems nothing here, please try again!
               </p>
             </div>
           </div>
-          <div className='mt-8 flex gap-2 overflow-scroll flex-wrap md:flex-nowrap lg:flex-row flex-col-reverse items-center lg:items-start'>
-            {/* Job Container */}
-            {updatedJobs.length == 0 ? (
-              <div className='mx-auto w-full px-6 text-center pt-4'>
-                <div className='rounded-xl border-0 ring-1 ring-gray-100 h-24 flex items-center justify-center'>
-                  <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
-                    Seems nothing here, please try again!
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className='min-w-full max-h-[350px] align-middle sm:rounded-lg mt-8 shadow ring-1 ring-black ring-opacity-5 sm:-mx-6 md:mx-0 md:rounded-lg'>
-                <table className='min-w-full relative  divide-y divide-gray-200'>
-                  <thead className='bg-gray-50'>
-                    <tr>
-                      {tableHeading.map((heading, index) =>
-                        heading.name == '' ? (
-                          <th
-                            key={index}
-                            scope='col'
-                            className='relative py-3.5 pl-3 pr-4 sm:pr-6'
-                          >
-                            <span className='sr-only'>Status</span>
-                          </th>
+        ) : (
+          <div className='no-scrollbar -mx-2 max-h-[420px] relative sm:mx-0 mt-8 overflow-scroll shadow ring-1 ring-black ring-opacity-5 rounded-lg'>
+            <table className='relative min-w-full divide-y divide-gray-300'>
+              <thead className='bg-gray-50 sticky z-10 top-0 bg-opacity-75 backdrop-blur-sm'>
+                <tr>
+                  <th
+                    scope='col'
+                    className='py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6'
+                  >
+                    <a href='#' className='group inline-flex'>
+                      Name
+                      <span className='invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible'>
+                        <ChevronDownIcon
+                          className='h-5 w-5'
+                          aria-hidden='true'
+                        />
+                      </span>
+                    </a>
+                  </th>
+                  <th
+                    scope='col'
+                    className='hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell'
+                  >
+                    <a href='#' className='group inline-flex'>
+                      Deadline
+                      <span className='invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible'>
+                        <ChevronDownIcon
+                          className='h-5 w-5'
+                          aria-hidden='true'
+                        />
+                      </span>
+                    </a>
+                  </th>
+                  <th
+                    scope='col'
+                    className='hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell'
+                  >
+                    <a href='#' className='group inline-flex'>
+                      Duration
+                      <span className='invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible'>
+                        <ChevronDownIcon
+                          className='h-5 w-5'
+                          aria-hidden='true'
+                        />
+                      </span>
+                    </a>
+                  </th>
+                  <th
+                    scope='col'
+                    className='hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sm:table-cell'
+                  >
+                    <a href='#' className='group inline-flex'>
+                      Workers
+                      <span className='invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible'>
+                        <ChevronDownIcon
+                          className='h-5 w-5'
+                          aria-hidden='true'
+                        />
+                      </span>
+                    </a>
+                  </th>
+                  <th scope='col' className='relative py-3.5 pl-3 pr-4 sm:pr-6'>
+                    <span className='sr-only'>Status</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className='divide-y divide-gray-200 bg-white'>
+                {updatedJobs.map((work, workIdx) => {
+                  var deadline = new Date(work.timestamp)
+                  var now = new Date()
+                  deadline.setHours(0, 0, 0, 0)
+                  now.setHours(0, 0, 0, 0)
+                  return (
+                    <tr key={workIdx}>
+                      <td className='w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-6'>
+                        {work.Name}
+                        <dl className='font-normal lg:hidden'>
+                          <dt className='sr-only'>Deadline</dt>
+                          <dd className='mt-1 truncate '>
+                            <span className='text-gray-700'>Deadline: </span>
+                            <span className='text-gray-500'>
+                              {work.Deadline}
+                            </span>
+                          </dd>
+                          <dt className='sr-only md:hidden'>Duration</dt>
+                          <dd className='mt-1 truncate text-gray-500 lg:hidden'>
+                            <span className='text-gray-700'>Duration: </span>
+                            <span className='text-gray-500'>
+                              {work.Duration}
+                            </span>
+                          </dd>
+                          <dt className='sr-only md:hidden'>Workers</dt>
+                          <dd className='mt-1 truncate text-gray-500 sm:hidden'>
+                            <span className='text-gray-700'>Workers: </span>
+                            <span className='text-gray-500'>
+                              {work.Workers}
+                            </span>
+                          </dd>
+                        </dl>
+                      </td>
+                      <td className='hidden px-3 py-4 text-sm text-gray-500 lg:table-cell'>
+                        {work.Deadline}
+                      </td>
+                      <td className='hidden truncate px-3 py-4 text-sm text-gray-500 lg:table-cell'>
+                        {work.Duration}
+                      </td>
+                      <td className='hidden px-3 py-4 text-sm text-gray-500 sm:table-cell'>
+                        {work.Workers}
+                      </td>
+                      <td className='py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6 w-[150px]'>
+                        {deadline.getTime() < now.getTime() ? (
+                          <p className='flex items-center w-[150px] justify-between gap-2 ring-1 ring-green-500 text-green-500 px-4 py-1 bg-gray-50 rounded-full'>
+                            Completed
+                            <span className='sr-only'>, {work.Name}</span>
+                            <ion-icon
+                              color='success'
+                              name='checkmark-done-outline'
+                            ></ion-icon>
+                          </p>
                         ) : (
-                          <th
-                            key={index}
-                            scope='col'
-                            className={`sticky ${
-                              index == 1 || index == 2
-                                ? 'hidden lg:table-cell'
-                                : ''
-                            } top-0 bg-gray-50 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 
-                            z-10 border-b border-gray-300 bg-opacity-75 backdrop-blur backdrop-filter
-                        `}
-                          >
-                            <a href='#' className='group inline-flex'>
-                              {heading.name}
-                              <span className='invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible'>
-                                <ChevronDownIcon
-                                  className='h-5 w-5'
-                                  aria-hidden='true'
-                                />
-                              </span>
-                            </a>
-                          </th>
-                        )
-                      )}
+                          <button onClick={() => giveAttendance(work.job_id)}>
+                            <p className='flex items-center w-[150px] justify-between gap-2 ring-1 ring-indigo-500 text-indigo-700 px-4 py-1 bg-indigo-50 rounded-full'>
+                              Attendance
+                              <span className='sr-only'>, {work.Name}</span>
+                              <ion-icon
+                                color='tertiary'
+                                name='arrow-forward-outline'
+                              ></ion-icon>
+                            </p>
+                            <span className='sr-only'>{work.job_name}</span>
+                          </button>
+                        )}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className='bg-white'>
-                    {updatedJobs.map((work, workIdx) => {
-                      var deadline = new Date(work.timestamp)
-                      var now = new Date()
-                      deadline.setHours(0, 0, 0, 0)
-                      now.setHours(0, 0, 0, 0)
-                      return (
-                        <tr key={workIdx}>
-                          {tableHeading.map((heading, index) =>
-                            heading.name == '' ? (
-                              <td
-                                key={index}
-                                className='whitespace-nowrap w-[150px] py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'
-                              >
-                                {deadline.getTime() < now.getTime() ? (
-                                  <p className='flex items-center w-[150px] justify-between gap-2 ring-1 ring-green-500 text-green-500 px-4 py-1 bg-gray-50 rounded-full'>
-                                    <span>Completed</span>
-                                    <ion-icon color="success" name="checkmark-done-outline"></ion-icon>
-                                  </p>
-                                ) : (
-                                  <button
-                                    onClick={() => giveAttendance(work.job_id)}
-                                  >
-                                    <p className='flex items-center w-[150px] justify-between gap-2 ring-1 ring-indigo-500 text-indigo-700 px-4 py-1 bg-indigo-50 rounded-full'>
-                                      <span>Attendance</span>
-                                      <ion-icon color="tertiary" name='arrow-forward-outline'></ion-icon>
-                                    </p>
-                                    <span className='sr-only'>
-                                      {work.job_name}
-                                    </span>
-                                  </button>
-                                )}
-                              </td>
-                            ) : (
-                              <td
-                                key={index}
-                                className={`${
-                                  index == 1 || index == 2
-                                    ? 'hidden lg:table-cell'
-                                    : ''
-                                } whitespace-nowrap px-3 py-4 text-sm text-gray-500`}
-                              >
-                                {/* <p className='truncate text-gray-500 group-hover:text-gray-900'> */}
-                                {work[heading.name]}
-                                {/* </p> */}
-                              </td>
-                            )
-                          )}
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                  )
+                })}
+              </tbody>
+            </table>
+            <div className='sticky bottom-0 h-[25px] w-full bg-gradient-to-t  from-gray-50'/>
           </div>
-        </div>
+        )}
       </div>
     </main>
   )
