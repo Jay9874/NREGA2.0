@@ -9,6 +9,7 @@ import {
 } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAdminStore } from '../../../api/store'
+import { getToday } from '../../../utils/dataFormating'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
@@ -24,7 +25,6 @@ export default function JobAttendance () {
   const [workers, setWorkers] = useState({})
   const [work, setWork] = useState()
   const navigate = useNavigate()
-
 
   useEffect(() => {
     if (!selectedFile) {
@@ -53,7 +53,8 @@ export default function JobAttendance () {
       const emp = {
         id: job.worker_id.id,
         name: job.worker_id.first_name + ' ' + job.worker_id.last_name,
-        attendance: 'absent'
+        attendance: 'absent',
+        attendance_uid: job.worker_id.id + '-' + getToday()
       }
       if (job.job_id.job_id == jobId) {
         setWorkers(prev => ({ ...prev, [impId]: emp }))

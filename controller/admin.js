@@ -159,14 +159,15 @@ const addAttendance = async (req, res) => {
     const workersArr = Object.keys(workers).map((id, index) => ({
       worker_id: id,
       attendance_for: job_id,
-      status: workers[id].attendance
+      status: workers[id].attendance,
+      attendance_uid: workers[id].attendance_uid
     }))
     console.log(job_id, workers)
     // input multiple rows in the database
     const supabase = createClient({ req, res })
     const { data, error } = await supabase
       .from('attendance')
-      .insert(workersArr)
+      .upsert(workersArr)
       .select()
     if (error) throw error
     return res.status(200).send({
