@@ -20,19 +20,19 @@ export default function Dashboard () {
       name: 'Attendance',
       href: '/worker/attendance',
       icon: CalendarDaysIcon,
-      amount: `${totalPresent}/100 Day`
+      value: `${totalPresent}/100 Day`
     },
     {
       name: 'Working on',
       href: '/worker/jobs',
       icon: BuildingOfficeIcon,
-      amount: `${lastAttendance.work_name} at ${lastAttendance.location}`
+      value: `${lastAttendance.work_name} at ${lastAttendance.location}`
     },
     {
       name: 'Account balance',
       href: '/worker/payment',
       icon: ScaleIcon,
-      amount: `₹${balance?.toFixed(2)}`
+      value: `₹${balance?.toFixed(2)}`
     }
   ]
   useEffect(() => {
@@ -119,12 +119,12 @@ export default function Dashboard () {
                     </div>
                     <div className='ml-5 w-0 flex-1'>
                       <dl>
-                        <dt className='truncate text-sm font-medium text-gray-500'>
+                        <dt className='text-sm font-medium text-gray-700'>
                           {card.name}
                         </dt>
                         <dd>
-                          <div className='text-lg font-medium text-gray-900'>
-                            {card.amount}
+                          <div className='text-sm font-medium text-gray-500'>
+                            {card.value}
                           </div>
                         </dd>
                       </dl>
@@ -147,6 +147,9 @@ export default function Dashboard () {
         </div>
 
         {/* Recent activity */}
+        <h2 className='mx-auto flex justify-between items-center mt-8 mb-4 max-w-6xl px-4 text-lg font-medium leading-6 text-gray-900 sm:px-6 lg:px-8'>
+          <span>Recent payments</span><Link to='/worker/payment' className='text-sm text-cyan-700 hover:text-cyan-900 font-semibold'>View all</Link>
+        </h2>
         <RecentPayment heading={'Recent Activity'} recentActivity={payment} />
       </div>
     </main>

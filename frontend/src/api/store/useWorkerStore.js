@@ -110,7 +110,15 @@ export const useWorkerStore = create((set, get) => ({
         .select(`*, payment_for(*)`)
         .eq('payment_to', get().user.id)
         .order('created_at', { ascending: false })
-      set({ payment: payments })
+
+      const updatedPayments = payments.map((payment, index) => ({
+        ...payment,
+        Transaction: payment.payment_title,
+        Amount: payment.amount.toFixed(2),
+        Date: timestampToDate(payment.created_at),
+        Status: payment.status
+      }))
+      set({ payment: updatedPayments })
       return payments
     } catch (error) {
       toast.error(error.message)
