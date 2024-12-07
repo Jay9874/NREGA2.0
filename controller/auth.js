@@ -42,7 +42,6 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
-    console.log('Called the logout.')
     const supabase = createClient({ req, res })
     const { error } = await supabase.auth.signOut()
     if (error) throw error

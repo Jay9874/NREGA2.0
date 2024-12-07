@@ -9,7 +9,6 @@ import {
   timeToString
 } from '../../utils/dataFormating'
 import { genDates } from '../../utils/generate_date'
-import { authStore } from './authStore'
 
 export const useWorkerStore = create((set, get) => ({
   user: { email: '', type: '', id: '', photo: '' },
@@ -111,7 +110,15 @@ export const useWorkerStore = create((set, get) => ({
         .select(`*, payment_for(*)`)
         .eq('payment_to', get().user.id)
         .order('created_at', { ascending: false })
-      set({ payment: payments })
+
+      const updatedPayments = payments.map((payment, index) => ({
+        ...payment,
+        Transaction: payment.payment_title,
+        Amount: payment.amount.toFixed(2),
+        Date: timestampToDate(payment.created_at),
+        Status: payment.status
+      }))
+      set({ payment: updatedPayments })
       return payments
     } catch (error) {
       toast.error(error.message)
@@ -303,9 +310,10 @@ export const useWorkerStore = create((set, get) => ({
     return {
       ...item,
       Work: item.job_name,
-      Location: formatLocation(item.location_id),
+      Location: formatLocationShort(item.location_id),
       Status: hasEnrolled ? 'enrolled' : 'unenrolled',
-      Started: timestampToDate(item.created_at),
+      Started: `${timestampToDate(item.created_at)}`,
+      Deadline: `${timestampToDate(item.job_deadline)}`,
       Duration: `${jobDuration(item.created_at, item.job_deadline).days} Day`
     }
   }

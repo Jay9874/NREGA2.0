@@ -1,22 +1,20 @@
 import Dropdown from '../Dropdown'
 import { filterLoop } from '../../utils/locationDrops'
-import { TableRow } from '../TableRow'
 import { useWorkerStore } from '../../api/store'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import Calendar from './Calendar'
+import DynamicTable from '../DynamicTable'
+import { ChevronRightIcon } from '@heroicons/react/20/solid'
 
-const statusStyles = {
-  present: 'bg-green-100 text-green-800',
-  absent: 'bg-red-100 text-gray-800',
-}
+
 const tableHeading = [
-  { name: 'Work' },
-  { name: 'Location' },
-  { name: 'Presence' },
+  { name: 'Work', css_normal: '', css_list: '' },
+  { name: 'Location', css_normal: 'lg:table-cell hidden', css_list: 'lg:table-cell' },
+  { name: 'Presence', css_normal: 'sm:table-cell hidden', css_list: 'table-cell sm:hidden' }
 ]
 
-export default function Attendance() {
+export default function Attendance () {
   const {
     attendances,
     setAttendance,
@@ -26,7 +24,7 @@ export default function Attendance() {
     setAttendancePopup,
     isAttendanceActive,
     selectAttendance,
-    setAttndPopupData,
+    setAttndPopupData
   } = useWorkerStore()
   const [filterInitialized, setFilterInitialized] = useState(false)
   const [loadFilter, setLoadFilter] = useState(false)
@@ -38,22 +36,22 @@ export default function Attendance() {
     state: '',
     district: '',
     block: '',
-    panchayat: '',
+    panchayat: ''
   })
   const filterLoopcallback = [
     { callback: setDistricts },
     { callback: setBlocks },
-    { callback: setPanchayats },
+    { callback: setPanchayats }
   ]
 
   // filter only the required locations
-  async function filterData(id, value) {
+  async function filterData (id, value) {
     return locations.filter(
-      (location) => location[filterLoop[id].landmark] === value
+      location => location[filterLoop[id].landmark] === value
     )
   }
   // looping to fill child filters
-  async function getLandmarkData(id, value) {
+  async function getLandmarkData (id, value) {
     return new Promise(async (resolve, reject) => {
       try {
         filterLoop[id].landmarkValue = value
@@ -62,20 +60,20 @@ export default function Attendance() {
           state: '',
           district: '',
           block: '',
-          panchayat: '',
+          panchayat: ''
         }
         for (let i = id; i < 3; i++) {
           const landmarkValue =
             i === id ? value : filterLoop[i - 1].landmarkValue
           const newLocations = await filterData(i, landmarkValue)
           const fetchedLandmarkData = await newLocations.map(
-            (location) => location[filterLoop[i].toFetch]
+            location => location[filterLoop[i].toFetch]
           )
           filterLoopcallback[i].callback([...new Set(fetchedLandmarkData)])
           selection[filterLoop[i].toFetch] = fetchedLandmarkData[0]
-          setSelected((prev) => ({
+          setSelected(prev => ({
             ...prev,
-            [filterLoop[i].toFetch]: fetchedLandmarkData[0],
+            [filterLoop[i].toFetch]: fetchedLandmarkData[0]
           }))
           filterLoop[i].fetchedDatas = fetchedLandmarkData
           filterLoop[i].landmarkValue = fetchedLandmarkData[0]
@@ -89,10 +87,10 @@ export default function Attendance() {
   }
 
   // Initialize filter
-  async function initFilter() {
+  async function initFilter () {
     return new Promise((resolve, reject) => {
       try {
-        const fetchedStates = locations.map((location) => location.state)
+        const fetchedStates = locations.map(location => location.state)
         setStates([...new Set(fetchedStates)])
         var result = getLandmarkData(0, fetchedStates[0])
         result.state = fetchedStates[0]
@@ -106,18 +104,18 @@ export default function Attendance() {
     })
   }
   // Handle filter change
-  async function handleChange(id, label, value) {
-    setSelected((prev) => ({ ...prev, [label]: value }))
+  async function handleChange (id, label, value) {
+    setSelected(prev => ({ ...prev, [label]: value }))
     await getLandmarkData(id, value)
     setLoadFilter(true)
   }
-  async function handlePanchayatChange(id, label, value) {
-    setSelected((prev) => ({ ...prev, [label]: value }))
+  async function handlePanchayatChange (id, label, value) {
+    setSelected(prev => ({ ...prev, [label]: value }))
     setLoadFilter(true)
   }
 
   // Handle row click
-  async function handleRowClick(e, row) {
+  async function handleRowClick (e, row) {
     try {
       await setAttndPopupData(row)
       await selectAttendance(row)
@@ -149,14 +147,14 @@ export default function Attendance() {
       )}
 
       {/* Attendance filter */}
-      <main className='flex-1 pb-8 relative z-10'>
+      <main className='flex-1 pb-8 relative z-10 px-4'>
         <div className='px-4 py-6 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8'>
           <div className='border-b border-gray-200 pb-5'>
             <h3 className='text-lg font-medium leading-6 text-gray-900'>
               Your Attendance
             </h3>
             <p className='mt-2 max-w-4xl text-sm text-gray-500'>
-              Across locations. Change State, Block, District and Panchayat to
+              Across locations. Change State, Block, District or Panchayat to
               view specific attendance.
             </p>
           </div>
@@ -219,16 +217,18 @@ export default function Attendance() {
             </div>
           </div>
         ) : (
-          <TableRow
-            tableHeading={tableHeading}
-            tableData={attendances}
-            statusStyles={statusStyles}
+          <DynamicTable
+            data={attendances}
+            headings={tableHeading}
             loading={loadingAttendance}
             rowNext={true}
             rowClick={handleRowClick}
+            actionHeader='View'
+            actionButton={ChevronRightIcon}
           />
         )}
       </main>
     </div>
   )
 }
+

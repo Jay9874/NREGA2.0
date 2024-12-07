@@ -155,9 +155,20 @@ export default function Dashboard () {
             ))}
           </div>
         </div>
-
+        <h2 className='mx-auto flex justify-between items-center mt-8 mb-4 max-w-6xl px-4 text-lg font-medium leading-6 text-gray-900 sm:px-6 lg:px-8'>
+          <span>Recent payments</span>
+          <Link
+            to='/admin/payout'
+            className='text-sm text-cyan-700 hover:text-cyan-900 font-semibold'
+          >
+            View all
+          </Link>
+        </h2>
         {/* Recent activity */}
-        <RecentPayment heading={'Recent payments'} recentActivity={updatedPayment} />
+        <RecentPayment
+          heading={'Recent payments'}
+          recentActivity={updatedPayment}
+        />
       </div>
     </main>
   )
