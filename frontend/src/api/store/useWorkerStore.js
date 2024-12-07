@@ -9,7 +9,6 @@ import {
   timeToString
 } from '../../utils/dataFormating'
 import { genDates } from '../../utils/generate_date'
-import { authStore } from './authStore'
 
 export const useWorkerStore = create((set, get) => ({
   user: { email: '', type: '', id: '', photo: '' },
@@ -303,9 +302,10 @@ export const useWorkerStore = create((set, get) => ({
     return {
       ...item,
       Work: item.job_name,
-      Location: formatLocation(item.location_id),
+      Location: formatLocationShort(item.location_id),
       Status: hasEnrolled ? 'enrolled' : 'unenrolled',
-      Started: timestampToDate(item.created_at),
+      Started: `${timestampToDate(item.created_at)}`,
+      Deadline: `${timestampToDate(item.job_deadline)}`,
       Duration: `${jobDuration(item.created_at, item.job_deadline).days} Day`
     }
   }

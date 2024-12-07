@@ -1,12 +1,13 @@
-import { TableRow } from '../TableRow'
 import { useWorkerStore } from '../../api/store'
+import DynamicTable from '../DynamicTable'
+
 
 const tableHeading = [
-  { name: 'Work' },
-  { name: 'Location' },
-  { name: 'Duration' },
-  { name: 'Started' },
-  { name: 'Status' },
+  { name: 'Work', css_normal: '', css_list: '' },
+  { name: 'Location', css_normal: 'lg:table-cell hidden', css_list: 'lg:table-cell' },
+  { name: 'Deadline', css_normal: 'md:table-cell hidden', css_list: 'md:hidden' },
+  { name: 'Started', css_normal: 'sm:table-cell hidden', css_list: 'sm:hidden' },
+  { name: 'Status', css_normal: '', css_list: 'hidden' },
 ]
 
 const statusStyles = {
@@ -26,7 +27,7 @@ const Jobs = () => {
     { label: 'Deadline', value: lastWork.deadline },
   ]
   return (
-    <main>
+    <main className='px-4'>
       <div className='px-4 pt-6 pb-1 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8 '>
         <div className=' pb-2'>
           <h3 className='text-lg font-medium leading-6 text-gray-900'>
@@ -79,12 +80,13 @@ const Jobs = () => {
           </div>
         </div>
       ) : (
-        <TableRow
-          tableHeading={tableHeading}
-          tableData={nearbyJobs}
-          statusStyles={statusStyles}
-          rowNext={null}
-        />
+        <DynamicTable
+            data={nearbyJobs}
+            headings={tableHeading}
+            rowNext={null}
+            statusStyles={statusStyles}
+            // rowClick={handleRowClick}
+          />
       )}
     </main>
   )
