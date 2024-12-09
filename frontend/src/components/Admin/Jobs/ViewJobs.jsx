@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { useAdminStore } from '../../../api/store'
 import { jobDuration, timestampToDate } from '../../../utils/dataFormating'
+import { useEffect } from 'react'
 
 
 export default function ViewJobs () {
@@ -18,6 +19,9 @@ export default function ViewJobs () {
       Workers: workerMap.has(job.job_id) ? workerMap.get(job.job_id) : 0
     }
   })
+  useEffect(()=>{
+    console.log("mounted jobs")
+  }, [])
 
   return (
     <main>

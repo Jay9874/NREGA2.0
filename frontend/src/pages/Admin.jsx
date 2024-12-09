@@ -23,6 +23,7 @@ export const Admin = () => {
     }
   }
   useEffect(() => {
+    console.log("mounted admin.jsx")
     handleSetup()
   }, [])
   return (
