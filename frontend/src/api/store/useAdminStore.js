@@ -253,7 +253,6 @@ export const useAdminStore = create((set, get) => ({
       } = await res.json()
       set({ loading: false })
       if (error) throw error
-      console.log(payments)
       set({ gpo: gpo[0] })
       const updatedPayments = payments.map((payment, index) => ({
         ...payment,
