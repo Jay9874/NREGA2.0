@@ -1,7 +1,6 @@
 import RecentPayment from '../RecentPayment'
 import { useAdminStore } from '../../api/store'
 import { GreetUserWithTime } from '../../api'
-import { useEffect, useState } from 'react'
 import {
   MapPinIcon,
   CheckCircleIcon,
@@ -11,10 +10,10 @@ import {
 } from '@heroicons/react/20/solid'
 import { Link } from 'react-router-dom'
 import { jobDuration } from '../../utils/dataFormating'
+import HomeLoading from '../Skeleton/HomeLoading'
 
 export default function Dashboard () {
-  const { profile, loading, employees, jobs, payments } = useAdminStore()
-  const [balance, setBalance] = useState(0)
+  const { profile, employees, jobs, payments, loading} = useAdminStore()
   const totalJobDays = jobs.reduce((acc, curr) => {
     const { created_at, job_deadline } = curr
     const duration = jobDuration(created_at, job_deadline).days

@@ -39,18 +39,18 @@ export default function DynamicTable ({
         <tbody className='divide-y divide-gray-200 bg-white'>
           {data.map((itm, index) => {
             return (
-              <tr key={itm.id}>
+              <tr key={index}>
                 {headings.map((header, idx) =>
                   idx == 0 ? (
                     <td
-                      key={idx * 10 + index}
+                     key={`${index}_${idx}`}
                       className='w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-6'
                     >
                       {itm[header.name]}
                       <dl className='font-normal lg:hidden'>
                         {headings.slice(1).map((smallHeader, headerIdx) => (
                           <dd
-                            key={headerIdx * index}
+                            key={`${index}_${idx}_${headerIdx}`}
                             className={`mt-1 text-gray-500 ${smallHeader.css_list}`}
                           >
                             <span className='text-gray-700'>
@@ -65,7 +65,7 @@ export default function DynamicTable ({
                     </td>
                   ) : header.name === 'Status' ? (
                     <td
-                      key={index}
+                      key={`${index}_${idx}`}
                       className='whitespace-nowrap px-6 py-4 text-sm text-gray-500 md:block'
                     >
                       <span
@@ -79,7 +79,7 @@ export default function DynamicTable ({
                     </td>
                   ) : (
                     <td
-                      key={idx}
+                     key={`${index}_${idx}`}
                       className={`${header.css_normal} truncate px-3 py-4 text-sm text-gray-500`}
                     >
                       {itm[header.name]}

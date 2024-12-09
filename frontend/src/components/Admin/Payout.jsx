@@ -34,9 +34,7 @@ export default function Payout () {
     { label: 'Unpaid', value: `₹50,000 / 20 workers` },
     { label: 'Compensation', value: '₹36,000' }
   ]
-  useEffect(()=>{
-    console.log('mounted payout')
-  }, [])
+
   return (
     <main className='px-4 py-6 sm:px-6 lg:px-8'>
       <div>

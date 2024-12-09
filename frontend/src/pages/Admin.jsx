@@ -8,7 +8,14 @@ import { adminNavigation } from '../utils/sidelinks'
 import HomeLoading from '../components/Skeleton/HomeLoading'
 
 export const Admin = () => {
-  const { setProfile, setEmployees, setDashboard, loading, setLoading, payout } = useAdminStore()
+  const {
+    setProfile,
+    setEmployees,
+    setDashboard,
+    loading,
+    setLoading,
+    payout
+  } = useAdminStore()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   async function handleSetup () {
     try {
@@ -23,7 +30,6 @@ export const Admin = () => {
     }
   }
   useEffect(() => {
-    console.log("mounted admin.jsx")
     handleSetup()
   }, [])
   return (

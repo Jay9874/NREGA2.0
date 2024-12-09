@@ -5,9 +5,7 @@ import { useEffect } from 'react'
 
 export default function ViewEmployees () {
   const { employees, profile } = useAdminStore()
-  useEffect(() => {
-    console.log('mounted workers')
-  }, [])
+
   return (
     <div className='px-4 py-6 sm:px-6 lg:px-8'>
       <div className='sm:flex sm:items-center'>
@@ -125,7 +123,7 @@ export default function ViewEmployees () {
                               <div className='flex items-center text-sm font-medium capitalize text-gray-500 sm:mr-6 sm:mt-0'>
                                 <span>
                                   <CheckCircleIcon
-                                    className='mr-1.5 h-5 w-5 flex-shrink-0 text-green-400'
+                                    className='mr-0.5 h-5 w-5 flex-shrink-0 text-green-400'
                                     aria-hidden='true'
                                   />
                                 </span>

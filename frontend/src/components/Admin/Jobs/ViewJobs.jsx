@@ -19,9 +19,6 @@ export default function ViewJobs () {
       Workers: workerMap.has(job.job_id) ? workerMap.get(job.job_id) : 0
     }
   })
-  useEffect(()=>{
-    console.log("mounted jobs")
-  }, [])
 
   return (
     <main>

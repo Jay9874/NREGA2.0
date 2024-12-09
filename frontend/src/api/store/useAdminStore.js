@@ -164,48 +164,47 @@ export const useAdminStore = create((set, get) => ({
 
   // Dashboard Data fetching functions
   setDashboard: async () => {
-    try {
-      set({ loading: true })
-      const { id, location_id } = get().profile
-      const body = {
-        adminId: id,
-        locationId: location_id.id
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { id, location_id } = await get().profile
+        const body = {
+          adminId: id,
+          locationId: location_id.id
+        }
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+          },
+          body: JSON.stringify(body)
+        }
+        const url = `${get().base}/api/admin/dashboard`
+        const res = await fetch(url, options)
+        const { data, error } = await res.json()
+        if (error) {
+          console.log(error)
+          return toast.error(error.message)
+        }
+        const newMap = new Map()
+        data.enrollments.forEach((enrollment, index) => {
+          const count = newMap.get(enrollment.job_id.job_id)
+          newMap.set(enrollment.job_id.job_id, count ? count + 1 : 1)
+          get().setWorkerMap(newMap)
+        })
+        set({
+          jobs: data.jobs,
+          payments: data.payments,
+          enrollments: data.enrollments
+        })
+        resolve(data)
+      } catch (err) {
+        console.log(err)
+        throw err
       }
-      const options = {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json'
-        },
-        body: JSON.stringify(body)
-      }
-      const url = `${get().base}/api/admin/dashboard`
-      const res = await fetch(url, options)
-      const { data, error } = await res.json()
-      if (error) {
-        console.log(error)
-        return toast.error(error.message)
-      }
-
-      const newMap = new Map()
-      data.enrollments.forEach((enrollment, index) => {
-        const count = newMap.get(enrollment.job_id.job_id)
-        newMap.set(enrollment.job_id.job_id, count ? count + 1 : 1)
-        get().setWorkerMap(newMap)
-      })
-      set({
-        loading: false,
-        jobs: data.jobs,
-        payments: data.payments,
-        enrollments: data.enrollments
-      })
-      return data
-    } catch (err) {
-      set({ loading: false })
-      console.log(err)
-      throw err
-    }
+    })
+    
   },
   addAttendance: async (job_id, workers) => {
     try {
@@ -232,7 +231,6 @@ export const useAdminStore = create((set, get) => ({
   },
   payout: async () => {
     try {
-      set({ loading: true })
       const profile = get().profile
       const options = {
         method: 'POST',
@@ -251,7 +249,6 @@ export const useAdminStore = create((set, get) => ({
         data: { payments, gpo },
         error
       } = await res.json()
-      set({ loading: false })
       if (error) throw error
       set({ gpo: gpo[0] })
       const updatedPayments = payments.map((payment, index) => ({
@@ -265,7 +262,6 @@ export const useAdminStore = create((set, get) => ({
       return gpo
     } catch (err) {
       console.log(err)
-      set({ loading: false })
       toast.error(err.message)
     }
   }

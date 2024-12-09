@@ -64,7 +64,6 @@ export default function AdminAttendance () {
   }
   useEffect(() => {
     handlePermission()
-    console.log("mounted adminattendance.jsx")
   }, [])
 
   async function giveAttendance (jobId) {
