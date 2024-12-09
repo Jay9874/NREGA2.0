@@ -114,7 +114,7 @@ export const useWorkerStore = create((set, get) => ({
       const updatedPayments = payments.map((payment, index) => ({
         ...payment,
         Transaction: payment.payment_title,
-        Amount: payment.amount.toFixed(2),
+        Amount: `₹${payment.amount.toFixed(2)}`,
         Date: timestampToDate(payment.created_at),
         Status: payment.status
       }))
