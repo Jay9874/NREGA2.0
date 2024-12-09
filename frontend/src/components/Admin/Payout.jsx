@@ -36,18 +36,19 @@ export default function Payout () {
   ]
   console.log(gpo, payments)
   return (
-    <main className='px-4'>
-      <div className='px-6 pt-6'>
+    <main className='px-4 py-6 sm:px-6 lg:px-8'>
+      <div>
         <div className=' pb-2'>
           <h3 className='text-lg font-medium leading-6 text-gray-900'>
             Payment summary
           </h3>
           <p className='mt-2 max-w-4xl text-sm text-gray-700'>
-           for this financial year.<br />
+            for the financial year <b>{gpo?.fy}</b>.<br />
             <i>
               {'_'}
-              Labour rate at your Gram Panchayat is{' '}<b>{`₹${gpo?.labour_rate}/day`}.</b>
-            </i>      
+              Labour rate at your Gram Panchayat is{' '}
+              <b>{`₹${gpo?.labour_rate}/day`}.</b>
+            </i>
           </p>
         </div>
         <div className=' bg-white pb-1 sm:pb-4 border-gray-200'>
@@ -86,7 +87,7 @@ export default function Payout () {
         </div>
       </div>
       {/* Recent Payments */}
-      <h2 className='mx-auto mt-8 max-w-6xl px-4 text-lg font-medium leading-6 text-gray-900 sm:px-6 lg:px-8'>
+      <h2 className='mx-auto mt-8 max-w-6xl text-lg font-medium leading-6 text-gray-900'>
         All payments
       </h2>
       {payments?.length === 0 ? (

@@ -5,10 +5,10 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid'
 export default function ViewEmployees () {
   const { employees, profile } = useAdminStore()
   return (
-    <div className='px-4 sm:px-6 lg:px-8'>
+    <div className='px-4 py-6 sm:px-6 lg:px-8'>
       <div className='sm:flex sm:items-center'>
-        <div className='sm:flex-auto pt-6'>
-          <h1 className='text-xl font-semibold text-gray-900'>Workers</h1>
+        <div className='sm:flex-auto'>
+          <h1 className='text-lg font-medium leading-6 text-gray-900'>Workers</h1>
           <p className='mt-2 text-sm text-gray-700'>
             A list of all the workers in your{' '}
             <b>{profile?.location_id?.panchayat}</b> Gram Panchayat.
