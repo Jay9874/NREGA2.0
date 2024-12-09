@@ -1,14 +1,18 @@
 import { Link } from 'react-router-dom'
 import { useAdminStore } from '../../../api/store'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { ChevronDownIcon, CheckCircleIcon } from '@heroicons/react/20/solid'
+import { useEffect } from 'react'
 
 export default function ViewEmployees () {
   const { employees, profile } = useAdminStore()
+
   return (
     <div className='px-4 py-6 sm:px-6 lg:px-8'>
       <div className='sm:flex sm:items-center'>
         <div className='sm:flex-auto'>
-          <h1 className='text-lg font-medium leading-6 text-gray-900'>Workers</h1>
+          <h1 className='text-lg font-medium leading-6 text-gray-900'>
+            Workers
+          </h1>
           <p className='mt-2 text-sm text-gray-700'>
             A list of all the workers in your{' '}
             <b>{profile?.location_id?.panchayat}</b> Gram Panchayat.
@@ -95,10 +99,7 @@ export default function ViewEmployees () {
                           </span>
                         </a>
                       </th>
-                      <th
-                        scope='col'
-                        className='relative py-3.5 px-2 sm:pr-6'
-                      >
+                      <th scope='col' className='relative py-3.5 px-2 sm:pr-6'>
                         <span className='sr-only'>Status</span>
                       </th>
                     </tr>
@@ -107,7 +108,7 @@ export default function ViewEmployees () {
                     {employees.map((employee, employeeId) => (
                       <tr key={employeeId}>
                         <td className='w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-6'>
-                        <div className='flex items-center'>
+                          <div className='flex items-center'>
                             <div className='h-10 w-10 flex-shrink-0'>
                               <img
                                 className='h-10 w-10 rounded-full'
@@ -119,8 +120,14 @@ export default function ViewEmployees () {
                               <div className='font-medium text-gray-900'>
                                 {employee.first_name} {employee.last_name}
                               </div>
-                              <div className='text-gray-500'>
-                                {employee.mgnrega_id}
+                              <div className='flex items-center text-sm font-medium capitalize text-gray-500 sm:mr-6 sm:mt-0'>
+                                <span>
+                                  <CheckCircleIcon
+                                    className='mr-0.5 h-5 w-5 flex-shrink-0 text-green-400'
+                                    aria-hidden='true'
+                                  />
+                                </span>
+                                <span>{employee.mgnrega_id}</span>
                               </div>
                             </div>
                           </div>
@@ -162,7 +169,8 @@ export default function ViewEmployees () {
                             to={`/admin/workers/edit/${employee.id}`}
                             className='text-indigo-600 hover:text-indigo-900'
                           >
-                            Edit<span className='sr-only'>, {employee.name}</span>
+                            Edit
+                            <span className='sr-only'>, {employee.name}</span>
                           </Link>
                         </td>
                       </tr>
