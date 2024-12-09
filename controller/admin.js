@@ -179,10 +179,38 @@ const addAttendance = async (req, res) => {
     return res.status(err.status).send({ data: null, error: err })
   }
 }
+
+const payout = async (req, res) => {
+  try {
+    const { adminId, locationId } = req.body
+    const supabase = createClient({ req, res })
+    const { data, error } = await supabase
+      .from('payments')
+      .select('*, payment_to(*)')
+      .eq('GPO_id', adminId)
+    if (error) throw error
+    const { data: gpoDetail, error: errAtGpo } = await supabase
+      .from('panchayats')
+      .select('*')
+      .eq('location', locationId)
+    if (errAtGpo) throw errAtGpo
+    return res.status(200).send({
+      data: { gpo: gpoDetail, payments: data },
+      error: null
+    })
+  } catch (err) {
+    console.log('error is: ', err)
+    return res.status(501).send({
+      data: null,
+      error: err
+    })
+  }
+}
 export {
   createUser,
   fetchAadhaar,
   createEmployee,
   dashboardData,
-  addAttendance
+  addAttendance,
+  payout
 }

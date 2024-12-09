@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { supabase } from '..'
-import { calculateAge } from '../../utils/dataFormating'
+import { calculateAge, timestampToDate } from '../../utils/dataFormating'
 import { authStore } from './authStore'
 import { toast } from 'sonner'
 const NODE_ENV = import.meta.env.MODE
@@ -16,6 +16,7 @@ export const useAdminStore = create((set, get) => ({
   enrollments: [],
   lastAddedUser: null,
   lastAddedAadhaar: null,
+  gpo: {},
   workerMap: new Map(),
   checkUser: authStore.getState().checkUser,
   setLoading: loading => set({ loading: loading }),
@@ -193,7 +194,6 @@ export const useAdminStore = create((set, get) => ({
         newMap.set(enrollment.job_id.job_id, count ? count + 1 : 1)
         get().setWorkerMap(newMap)
       })
-
       set({
         loading: false,
         jobs: data.jobs,
@@ -221,12 +221,52 @@ export const useAdminStore = create((set, get) => ({
       }
       const res = await fetch(`${get().base}/api/admin/add-attendance`, options)
       const { data, error } = await res.json()
-      set({loading: false})
+      set({ loading: false })
       if (error) throw error
-      toast.success("Attendance saved successfully!")
+      toast.success('Attendance saved successfully!')
     } catch (err) {
       console.log(err)
-      set({loading: false})
+      set({ loading: false })
+      toast.error(err.message)
+    }
+  },
+  payout: async () => {
+    try {
+      set({ loading: true })
+      const profile = get().profile
+      const options = {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'Application/json',
+          Accept: 'Application/json'
+        },
+        body: JSON.stringify({
+          locationId: profile.location_id.id,
+          adminId: profile.id
+        })
+      }
+      const res = await fetch(`${get().base}/api/admin/payout`, options)
+      const {
+        data: { payments, gpo },
+        error
+      } = await res.json()
+      set({ loading: false })
+      if (error) throw error
+      console.log(payments)
+      set({ gpo: gpo[0] })
+      const updatedPayments = payments.map((payment, index) => ({
+        ...payment,
+        Transaction: `To ${payment.payment_to.first_name} ${payment.payment_to.last_name}, ID: ${payment.payment_to.mgnrega_id}`,
+        Amount: `₹${payment.amount.toFixed(2)}`,
+        Date: timestampToDate(payment.created_at),
+        Status: payment.status
+      }))
+      set({ payments: updatedPayments })
+      return gpo
+    } catch (err) {
+      console.log(err)
+      set({ loading: false })
       toast.error(err.message)
     }
   }
