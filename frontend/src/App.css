@@ -4,20 +4,40 @@
 :root {
   --popup-offset-lg: 512px;
   --popup-offset-sm: 160px;
-  --ion-color-tertiary: #6030ff;
+  --ion-color-tertiary: #4f46e5;
   --ion-color-secondary-rgb: 96,48,255;
   --ion-color-secondary-contrast: #fff;
   --ion-color-secondary-contrast-rgb: 255,255,255;
   --ion-color-secondary-shade: #542ae0;
   --ion-color-secondary-tint: #7045ff;
 
-  --ion-color-success: #22c55e;
+  --ion-color-success: #16a34a;
   --ion-color-success-rgb: 37, 194, 94;
   --ion-color-success-contrast: #fff;
   --ion-color-success-contrast-rgb: 255,255,255;
-  --ion-color-success-shade: #16a34a;
-  --ion-color-success-tint: #4ade80;
+  --ion-color-success-shade: #15803d;
+  --ion-color-success-tint: #22c55e;
 }
+
+.pulseBtn {
+  /* border:1px solid rgba(0, 195, 22); */
+  box-shadow: 0 0 0 0 rgba(0, 195, 22, 0.4);
+  -moz-animation: pulsebtn 2s infinite;
+  -webkit-animation: pulsebtn 2s infinite;
+  animation: pulsebtn 2s infinite;
+  }
+  
+  @keyframes pulsebtn {
+      0% {
+          box-shadow: 0 0 0 0 rgb(0, 195, 22, 1);
+      }
+      70% {
+          box-shadow: 0 0 0 4px rgba(0, 195, 22, 0);
+      }
+      100% {
+          box-shadow: 0 0 0 10px rgba(0, 195, 22, 0);
+      }
+  }
 
 
 * {

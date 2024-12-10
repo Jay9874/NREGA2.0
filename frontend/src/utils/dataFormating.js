@@ -68,6 +68,10 @@ function formatLocationShort (locationObj) {
   return `${locationObj.panchayat}, ${locationObj.block}`
 }
 
+function formatLocationToGP(locationObj){
+  return `${locationObj.panchayat}`
+}
+
 function getToday () {
   var now = new Date()
   now.setHours(0, 0, 0, 0)
@@ -88,6 +92,7 @@ export {
   jobDuration,
   formatLocation,
   formatLocationShort,
+  formatLocationToGP,
   calculateAge,
   timeToString,
   getToday

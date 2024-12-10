@@ -1,18 +1,29 @@
 import { useWorkerStore } from '../../api/store'
 import DynamicTable from '../DynamicTable'
 
-
 const tableHeading = [
   { name: 'Work', css_normal: '', css_list: '' },
-  { name: 'Location', css_normal: 'lg:table-cell hidden', css_list: 'lg:table-cell' },
-  { name: 'Deadline', css_normal: 'md:table-cell hidden', css_list: 'md:hidden' },
-  { name: 'Started', css_normal: 'sm:table-cell hidden', css_list: 'sm:hidden' },
-  { name: 'Status', css_normal: '', css_list: 'hidden' },
+  {
+    name: 'Location',
+    css_normal: 'lg:table-cell hidden',
+    css_list: 'lg:table-cell'
+  },
+  {
+    name: 'Deadline',
+    css_normal: 'md:table-cell hidden',
+    css_list: 'md:hidden'
+  },
+  {
+    name: 'Started',
+    css_normal: 'sm:table-cell hidden',
+    css_list: 'sm:hidden'
+  },
+  { name: 'Status', css_normal: '', css_list: 'hidden' }
 ]
 
 const statusStyles = {
   enrolled: 'bg-green-100 text-green-800',
-  unenrolled: 'bg-red-100 text-gray-800',
+  unenrolled: 'bg-red-100 text-gray-800'
 }
 
 const Jobs = () => {
@@ -20,12 +31,25 @@ const Jobs = () => {
   const highlight = [
     {
       label: 'Your presence',
-      value: `${lastWork.presence}/${lastWork.duration} Day`,
+      value: `${lastWork.presence}/${lastWork.duration} Day`
     },
     { label: 'Labours', value: lastWork.labours },
     { label: 'Completion', value: `${lastWork.completion}%` },
-    { label: 'Deadline', value: lastWork.deadline },
+    { label: 'Deadline', value: lastWork.deadline }
   ]
+  const updatedJobs = nearbyJobs.map(job => ({
+    ...job,
+    Location: (
+      <span>
+        <div className='inline-block relative h-[14px] w-[14px]'>
+          <div className='pulseBtn absolute top-[2.1px] left-[4.90px] inline-block h-[4px] w-[4px] rounded-full'></div>
+          <ion-icon color='success' name='pin'></ion-icon>
+        </div>
+        <span className='text-green-700 font-medium'>{job.locationObj.dist} Km </span>
+        <span>from {job.locationObj.gp} GP</span>
+      </span>
+    )
+  }))
   return (
     <main className='px-4'>
       <div className='px-4 pt-6 pb-1 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8 '>
@@ -81,12 +105,11 @@ const Jobs = () => {
         </div>
       ) : (
         <DynamicTable
-            data={nearbyJobs}
-            headings={tableHeading}
-            rowNext={null}
-            statusStyles={statusStyles}
-            // rowClick={handleRowClick}
-          />
+          data={updatedJobs}
+          headings={tableHeading}
+          rowNext={null}
+          statusStyles={statusStyles}
+        />
       )}
     </main>
   )
