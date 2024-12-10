@@ -158,7 +158,7 @@ export default function Dashboard () {
           <span>Recent payments</span>
           <Link
             to='/admin/payout'
-            className='text-sm text-cyan-700 hover:text-cyan-900 font-semibold'
+            className='text-sm text-cyan-700 hover:text-cyan-900 font-medium'
           >
             View all
           </Link>

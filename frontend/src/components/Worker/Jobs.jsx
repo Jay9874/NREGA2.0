@@ -1,18 +1,30 @@
+import { toast } from 'sonner'
 import { useWorkerStore } from '../../api/store'
 import DynamicTable from '../DynamicTable'
 
-
 const tableHeading = [
   { name: 'Work', css_normal: '', css_list: '' },
-  { name: 'Location', css_normal: 'lg:table-cell hidden', css_list: 'lg:table-cell' },
-  { name: 'Deadline', css_normal: 'md:table-cell hidden', css_list: 'md:hidden' },
-  { name: 'Started', css_normal: 'sm:table-cell hidden', css_list: 'sm:hidden' },
-  { name: 'Status', css_normal: '', css_list: 'hidden' },
+  {
+    name: 'Location',
+    css_normal: 'lg:table-cell hidden',
+    css_list: 'lg:table-cell'
+  },
+  {
+    name: 'Deadline',
+    css_normal: 'md:table-cell hidden',
+    css_list: 'md:hidden'
+  },
+  {
+    name: 'Started',
+    css_normal: 'sm:table-cell hidden',
+    css_list: 'sm:hidden'
+  },
+  { name: 'Status', css_normal: '', css_list: 'hidden' }
 ]
 
 const statusStyles = {
   enrolled: 'bg-green-100 text-green-800',
-  unenrolled: 'bg-red-100 text-gray-800',
+  unenrolled: 'bg-red-100 text-gray-800'
 }
 
 const Jobs = () => {
@@ -20,12 +32,38 @@ const Jobs = () => {
   const highlight = [
     {
       label: 'Your presence',
-      value: `${lastWork.presence}/${lastWork.duration} Day`,
+      value: `${lastWork.presence}/${lastWork.duration} Day`
     },
     { label: 'Labours', value: lastWork.labours },
     { label: 'Completion', value: `${lastWork.completion}%` },
-    { label: 'Deadline', value: lastWork.deadline },
+    { label: 'Deadline', value: lastWork.deadline }
   ]
+  async function enroll (jobId) {
+    toast.success('Application sent.')
+  }
+  const updatedJobs = nearbyJobs.map(job => ({
+    ...job,
+    Location: (
+      <span>
+        <span className='text-indigo-700 font-medium'>
+          {job.locationObj.dist} Km{' '}
+        </span>
+        <span>from {job.locationObj.gp} GP</span>
+      </span>
+    ),
+    Status:
+      job.Status == 'enrolled' ? (
+        'enrolled'
+      ) : (
+        <button onClick={() => enroll(job.job_id)}>
+          <p className='flex items-center w-[80px] justify-between gap-1 ring-1 ring-indigo-500 text-indigo-700 px-2.5 py-0.5 bg-indigo-50 rounded-full'>
+            Enroll
+            <span className='sr-only'>, {job.job_name}</span>
+            <ion-icon color='tertiary' name='arrow-forward-outline'></ion-icon>
+          </p>
+        </button>
+      )
+  }))
   return (
     <main className='px-4'>
       <div className='px-4 pt-6 pb-1 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8 '>
@@ -68,7 +106,10 @@ const Jobs = () => {
       </div>
       {/* Drowpdown */}
       <h2 className='mx-auto mt-8 max-w-6xl px-4 text-lg font-medium leading-6 text-gray-900 sm:px-6 lg:px-8'>
-        Jobs near You
+        Jobs near you{' '}
+        <p className='max-w-4xl text-sm text-gray-500 font-normal'>
+          within 15 Km
+        </p>
       </h2>
 
       {nearbyJobs.length === 0 ? (
@@ -81,12 +122,11 @@ const Jobs = () => {
         </div>
       ) : (
         <DynamicTable
-            data={nearbyJobs}
-            headings={tableHeading}
-            rowNext={null}
-            statusStyles={statusStyles}
-            // rowClick={handleRowClick}
-          />
+          data={updatedJobs}
+          headings={tableHeading}
+          rowNext={null}
+          statusStyles={statusStyles}
+        />
       )}
     </main>
   )

@@ -19,7 +19,9 @@ export default function DynamicTable ({
               <th
                 scope='col'
                 key={index}
-                className={`${header.css_normal} py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6`}
+                className={`${header.css_normal} ${
+                  index == 0 ? 'pl-4 sm:pl-6 pr-3' : 'px-3'
+                } py-3.5 px-3 text-left text-sm font-semibold text-gray-900`}
               >
                 <a href='#' className='group inline-flex'>
                   {header.name}
@@ -30,7 +32,7 @@ export default function DynamicTable ({
               </th>
             ))}
             {actionHeader && (
-              <th scope='col' className='relative py-3.5 pl-3 pr-4 sm:pr-6'>
+              <th scope='col' className='relative py-3.5 px-3 sm:pr-6'>
                 <span className='sr-only'>{actionHeader}</span>
               </th>
             )}
@@ -43,7 +45,7 @@ export default function DynamicTable ({
                 {headings.map((header, idx) =>
                   idx == 0 ? (
                     <td
-                     key={`${index}_${idx}`}
+                      key={`${index}_${idx}`}
                       className='w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-6'
                     >
                       {itm[header.name]}
@@ -66,7 +68,7 @@ export default function DynamicTable ({
                   ) : header.name === 'Status' ? (
                     <td
                       key={`${index}_${idx}`}
-                      className='whitespace-nowrap px-6 py-4 text-sm text-gray-500 md:block'
+                      className='whitespace-nowrap pl-3 pr-4 py-4 text-sm text-gray-500'
                     >
                       <span
                         className={classNames(
@@ -79,7 +81,7 @@ export default function DynamicTable ({
                     </td>
                   ) : (
                     <td
-                     key={`${index}_${idx}`}
+                      key={`${index}_${idx}`}
                       className={`${header.css_normal} truncate px-3 py-4 text-sm text-gray-500`}
                     >
                       {itm[header.name]}
