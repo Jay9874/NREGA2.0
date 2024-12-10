@@ -1,3 +1,4 @@
+import { toast } from 'sonner'
 import { useWorkerStore } from '../../api/store'
 import DynamicTable from '../DynamicTable'
 
@@ -37,18 +38,31 @@ const Jobs = () => {
     { label: 'Completion', value: `${lastWork.completion}%` },
     { label: 'Deadline', value: lastWork.deadline }
   ]
+  async function enroll (jobId) {
+    toast.success('Application sent.')
+  }
   const updatedJobs = nearbyJobs.map(job => ({
     ...job,
     Location: (
       <span>
-        <div className='inline-block relative h-[14px] w-[14px]'>
-          <div className='pulseBtn absolute top-[2.1px] left-[4.90px] inline-block h-[4px] w-[4px] rounded-full'></div>
-          <ion-icon color='success' name='pin'></ion-icon>
-        </div>
-        <span className='text-green-700 font-medium'>{job.locationObj.dist} Km </span>
+        <span className='text-indigo-700 font-medium'>
+          {job.locationObj.dist} Km{' '}
+        </span>
         <span>from {job.locationObj.gp} GP</span>
       </span>
-    )
+    ),
+    Status:
+      job.Status == 'enrolled' ? (
+        'enrolled'
+      ) : (
+        <button onClick={() => enroll(job.job_id)}>
+          <p className='flex items-center w-[80px] justify-between gap-1 ring-1 ring-indigo-500 text-indigo-700 px-2.5 py-0.5 bg-indigo-50 rounded-full'>
+            Enroll
+            <span className='sr-only'>, {job.job_name}</span>
+            <ion-icon color='tertiary' name='arrow-forward-outline'></ion-icon>
+          </p>
+        </button>
+      )
   }))
   return (
     <main className='px-4'>
@@ -92,7 +106,10 @@ const Jobs = () => {
       </div>
       {/* Drowpdown */}
       <h2 className='mx-auto mt-8 max-w-6xl px-4 text-lg font-medium leading-6 text-gray-900 sm:px-6 lg:px-8'>
-        Jobs near You
+        Jobs near you{' '}
+        <p className='max-w-4xl text-sm text-gray-500 font-normal'>
+          within 15 Km
+        </p>
       </h2>
 
       {nearbyJobs.length === 0 ? (

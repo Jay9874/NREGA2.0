@@ -10,7 +10,7 @@ import { ChevronRightIcon } from '@heroicons/react/20/solid'
 
 const tableHeading = [
   { name: 'Work', css_normal: '', css_list: '' },
-  { name: 'Location', css_normal: 'lg:table-cell hidden', css_list: 'lg:table-cell' },
+  { name: 'Deadline', css_normal: 'lg:table-cell hidden', css_list: 'lg:table-cell' },
   { name: 'Presence', css_normal: 'sm:table-cell hidden', css_list: 'table-cell sm:hidden' }
 ]
 
@@ -212,7 +212,7 @@ export default function Attendance () {
           <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
             <div className='rounded-xl border-0 ring-1 ring-gray-100 h-24 flex items-center justify-center'>
               <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
-                Fetching Attendance...
+                Fetching attendance...
               </p>
             </div>
           </div>

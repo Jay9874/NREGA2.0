@@ -84,7 +84,19 @@ export const useWorkerStore = create((set, get) => ({
         .select(`*, location_id(*)`)
         .eq('location_id', locationId)
         .then(async ({ data }) => {
-          const result = await Promise.all(data.map(get().getEnrollment))
+          const sortedJobs = data.filter((job, index) => {
+            const [lat1, lon1] = job.geotag
+            const [lat2, lon2] = job.location_id.geotag
+            const distanceBtwCords = distance(
+              lat1,
+              lon1,
+              lat2,
+              lon2,
+              'K'
+            ).toFixed(2)
+            return distanceBtwCords <= 15
+          })
+          const result = await Promise.all(sortedJobs.map(get().getEnrollment))
           set({ nearbyJobs: result })
           return result
         })
@@ -188,6 +200,7 @@ export const useWorkerStore = create((set, get) => ({
                 Location: job.Location,
                 start: job.created_at,
                 end: job.job_deadline,
+                Deadline: timestampToDate(job.job_deadline),
                 Presence: `${presence.length}/${job.Duration}`
               }
             ]
