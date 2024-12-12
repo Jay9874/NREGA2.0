@@ -1,3 +1,14 @@
+const moment  =  require('moment');
+
+function formatMessage(username, text) {
+  return {
+    username,
+    text,
+    time: moment().format('h:mm a')
+  };
+}
+
+
 function timestampToDate (timestamp) {
   // Create a new JavaScript Date object from the PostgreSQL timestamp.
   const date = new Date(timestamp)
@@ -95,5 +106,6 @@ export {
   formatLocationToGP,
   calculateAge,
   timeToString,
-  getToday
+  getToday,
+  formatMessage
 }

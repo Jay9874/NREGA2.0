@@ -56,7 +56,7 @@ const Jobs = () => {
         'enrolled'
       ) : (
         <button onClick={() => enroll(job.job_id)}>
-          <p className='flex items-center w-[80px] justify-between gap-1 ring-1 ring-indigo-500 text-indigo-700 px-2.5 py-0.5 bg-indigo-50 rounded-full'>
+          <p className='-ml-2 flex items-center w-[80px] justify-between gap-1 ring-1 ring-indigo-500 text-indigo-700 px-2.5 py-0.5 bg-indigo-50 rounded-full'>
             Enroll
             <span className='sr-only'>, {job.job_name}</span>
             <ion-icon color='tertiary' name='arrow-forward-outline'></ion-icon>
