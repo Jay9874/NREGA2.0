@@ -1,6 +1,7 @@
 import { Worker, Auth, Home, Admin } from './pages'
 import { Protected, NotFound, ValidLink } from './components'
 import { BrowserRouter, Route, Routes} from 'react-router-dom'
+import { socket } from './api/socket.js'
 
 // Admin Components
 import {
@@ -29,6 +30,7 @@ import {
 
 // Auth components
 import { SignInForm, ForgotPass, ResetPass } from './components/Auth'
+import { socket } from './api/socket'
 
 export default function App () {
 
