@@ -162,7 +162,6 @@ const addAttendance = async (req, res) => {
       status: workers[id].attendance,
       attendance_uid: workers[id].attendance_uid
     }))
-    console.log(job_id, workers)
     // input multiple rows in the database
     const supabase = createClient({ req, res })
     const { data, error } = await supabase

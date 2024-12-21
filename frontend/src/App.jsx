@@ -1,8 +1,8 @@
 import { Worker, Auth, Home, Admin } from './pages'
 import { Protected, NotFound, ValidLink } from './components'
-import { BrowserRouter, Route, Routes} from 'react-router-dom'
-import { socket } from './api/socket.js'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { useEffect } from 'react'
+import { socket } from './api/socket'
 
 // Admin Components
 import {
@@ -33,30 +33,9 @@ import {
 import { SignInForm, ForgotPass, ResetPass } from './components/Auth'
 
 export default function App () {
-
   useEffect(() => {
-    function onConnect() {
-      setIsConnected(true);
-    }
-
-    function onDisconnect() {
-      setIsConnected(false);
-    }
-
-    function onFooEvent(value) {
-      setFooEvents(previous => [...previous, value]);
-    }
-
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-    socket.on('foo', onFooEvent);
-
-    return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-      socket.off('foo', onFooEvent);
-    };
-  }, []);
+    socket.emit('new_message', 'Socket connected')
+  }, [])
 
   return (
     <BrowserRouter>

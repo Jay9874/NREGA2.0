@@ -1,6 +1,8 @@
 import { toast } from 'sonner'
 import { useWorkerStore } from '../../api/store'
 import DynamicTable from '../DynamicTable'
+import { useEffect } from 'react'
+import { socket } from '../../api/socket'
 
 const tableHeading = [
   { name: 'Work', css_normal: '', css_list: '' },
@@ -38,8 +40,9 @@ const Jobs = () => {
     { label: 'Completion', value: `${lastWork.completion}%` },
     { label: 'Deadline', value: lastWork.deadline }
   ]
-  async function enroll (jobId) {
-    toast.success('Application sent.')
+  async function enroll (jobId, sachivId) {
+    toast.loading("Applying...")
+    socket.emit('apply_to_job', { jobId: jobId, sachivId: sachivId })
   }
   const updatedJobs = nearbyJobs.map(job => ({
     ...job,
@@ -55,7 +58,7 @@ const Jobs = () => {
       job.Status == 'enrolled' ? (
         'enrolled'
       ) : (
-        <button onClick={() => enroll(job.job_id)}>
+        <button onClick={() => enroll(job.job_id, job.sachiv_id)}>
           <p className='-ml-2 flex items-center w-[80px] justify-between gap-1 ring-1 ring-indigo-500 text-indigo-700 px-2.5 py-0.5 bg-indigo-50 rounded-full'>
             Enroll
             <span className='sr-only'>, {job.job_name}</span>
@@ -64,6 +67,7 @@ const Jobs = () => {
         </button>
       )
   }))
+
   return (
     <main className='px-4'>
       <div className='px-4 pt-6 pb-1 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8 '>

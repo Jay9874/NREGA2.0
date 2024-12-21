@@ -31,7 +31,6 @@ export default function Home () {
         return null
       } else throw new Error('No session found.')
     } catch (err) {
-      console.log('err: ', err)
       navigate('/auth/login')
       return null
     }
