@@ -205,11 +205,26 @@ const payout = async (req, res) => {
     })
   }
 }
+
+const jobEnrollment = async (req, res) => {
+  try {
+    const { jobId, sachivId, startDate, jobDays } = req.body
+    const supabase = createClient({ req, res })
+    const { data, error } = await supabase.from('job_application').insert()
+  } catch (err) {
+    console.log(err)
+    return res.status(err.status).json({
+      data: null,
+      error: err
+    })
+  }
+}
 export {
   createUser,
   fetchAadhaar,
   createEmployee,
   dashboardData,
   addAttendance,
-  payout
+  payout,
+  jobEnrollment
 }

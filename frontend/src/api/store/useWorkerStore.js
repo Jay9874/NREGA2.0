@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { supabase } from '..'
 import { toast } from 'sonner'
+const NODE_ENV = import.meta.env.MODE
 import {
   timestampToDate,
   jobDuration,
@@ -14,6 +15,7 @@ import { distance } from '../../utils/getLocation'
 
 export const useWorkerStore = create((set, get) => ({
   user: { email: '', type: '', id: '', photo: '' },
+  base: NODE_ENV === 'development' ? 'http://localhost:8080' : '',
   loading: false,
   dataLoaded: false,
   loadingAttendance: false,
@@ -338,5 +340,31 @@ export const useWorkerStore = create((set, get) => ({
       Deadline: `${timestampToDate(item.job_deadline)}`,
       Duration: `${jobDuration(item.created_at, item.job_deadline).days} Day`
     }
+  },
+  applyToJob: (jobId, sachivId, startDate, timeDuration) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const user = get().user
+        const detail = {
+          starting_date: startDate,
+          time_period: timeDuration,
+          job: jobId,
+          to_sachiv: sachivId,
+          by_worker: user.id
+        }
+        const options = {
+          method: 'POST',
+          body: JSON.stringify({ jobDetail: detail }),
+          credentials: 'include',
+          headers: { 'content-type': 'application/json' }
+        }
+        const res = await fetch(`${get().base}/api/worker/apply`, options)
+        const { data, error } = await res.json()
+        if (error) throw error
+        resolve(data)
+      } catch (err) {
+        reject(err)
+      }
+    })
   }
 }))

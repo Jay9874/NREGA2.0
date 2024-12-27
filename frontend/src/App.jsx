@@ -31,6 +31,7 @@ import {
 
 // Auth components
 import { SignInForm, ForgotPass, ResetPass } from './components/Auth'
+import EnrollJob from './components/Worker/EnrollJob'
 
 export default function App () {
   useEffect(() => {
@@ -53,7 +54,9 @@ export default function App () {
           <Route path='worker' element={<Worker />}>
             <Route path='dashboard' element={<Dashboard />} />
             <Route path='profile' element={<Profile />} />
-            <Route path='jobs' element={<Jobs />} />
+            <Route path='jobs' element={<Jobs />}>
+              <Route path='enroll/:jobId' element={<EnrollJob />} />
+            </Route>
             <Route path='payment' element={<Payment />} />
             <Route path='attendance' element={<Attendance />} />
             <Route path='*' element={<NotFound path='worker' />} />

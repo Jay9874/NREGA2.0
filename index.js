@@ -15,10 +15,9 @@ const PORT = process.env.PORT || 8080
 
 // Importing routes and custom middlewares
 import { adminRoutes } from './routes/admin.js'
+import { workerRoutes } from './routes/worker.js'
 import { authRoutes } from './routes/auth.js'
 import { checkSession } from './middleware/checkSession.js'
-import { createClient } from './lib/supabase.js'
-
 
 // server-side
 const io = new Server(server, {
@@ -43,10 +42,10 @@ app.use(bodyParser.json({ limit: '50mb' }))
 // Static files like css, img, js and more
 app.use(express.static(path.resolve(__dirname, 'frontend', 'dist')))
 
-
 // Defining api routes methods
 app.use('/api/auth', authRoutes)
 app.use('/api/admin', checkSession, adminRoutes)
+app.use('/api/worker', checkSession, workerRoutes)
 app.use('/api/test', (req, res) => {
   res.send(`Hello from the server\n Directory is ${__dirname}`)
 })
@@ -69,15 +68,10 @@ io.on('connection', socket => {
   socket.on('new_message', msg => {
     console.log(msg)
   })
-  socket.on('apply_to_job', async(obj)=>{
-    const supabase = createClient({req, res})
-    const {data, error} = await supabase
-    .from('job_application')
-    .insert()
-
+  socket.on('apply_to_job', async obj => {
+    console.log(obj)
   })
 })
-
 
 // Error handler middleware
 app.use((err, req, res, next) => {
@@ -86,7 +80,6 @@ app.use((err, req, res, next) => {
     error: err
   })
 })
-
 
 // Listenning for requests
 server.listen(PORT, () => {
