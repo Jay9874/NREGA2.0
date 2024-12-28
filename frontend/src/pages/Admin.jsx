@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Sidebar, TopNavbar, Banner } from '../components'
 import { useAdminStore } from '../api/store'
+import { socket } from '../api/socket'
 // Constants imports
 import { adminTopNavigation } from '../utils/dashboard_toplink'
 import { adminNavigation } from '../utils/sidelinks'
@@ -16,6 +17,8 @@ export const Admin = () => {
     setLoading,
     payout
   } = useAdminStore()
+
+  const [isConnected, setIsConnected] = useState(socket.connected)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   async function handleSetup () {
     try {
@@ -31,6 +34,27 @@ export const Admin = () => {
   }
   useEffect(() => {
     handleSetup()
+    function onConnect () {
+      setIsConnected(true)
+    }
+
+    function onDisconnect () {
+      setIsConnected(false)
+    }
+
+    function onFooEvent (value) {
+      setFooEvents(previous => [...previous, value])
+    }
+
+    socket.on('connect', onConnect)
+    socket.on('disconnect', onDisconnect)
+    socket.on('foo', onFooEvent)
+
+    return () => {
+      socket.off('connect', onConnect)
+      socket.off('disconnect', onDisconnect)
+      socket.off('foo', onFooEvent)
+    }
   }, [])
   return (
     <>
@@ -39,7 +63,7 @@ export const Admin = () => {
         setSidebarOpen={setSidebarOpen}
         navigation={adminNavigation}
       />
-      <div className='flex flex-1 flex-col md:pl-64'>
+      <div className='flex flex-1 flex-col md:ml-64'>
         <Banner text='The admin panel is being built.' />
         <TopNavbar
           setSidebarOpen={setSidebarOpen}

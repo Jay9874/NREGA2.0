@@ -1,3 +1,13 @@
+import moment from 'moment'
+
+function formatMessage (username, text) {
+  return {
+    username,
+    text,
+    time: moment().format('h:mm a')
+  }
+}
+
 function timestampToDate (timestamp) {
   // Create a new JavaScript Date object from the PostgreSQL timestamp.
   const date = new Date(timestamp)
@@ -68,7 +78,7 @@ function formatLocationShort (locationObj) {
   return `${locationObj.panchayat}, ${locationObj.block}`
 }
 
-function formatLocationToGP(locationObj){
+function formatLocationToGP (locationObj) {
   return `${locationObj.panchayat}`
 }
 
@@ -78,7 +88,7 @@ function getToday () {
   const year = now.getFullYear()
   const month = now.getMonth() // Months are zero-indexed in JavaScript.
   const day = now.getDate()
-  var nowString = `${year}-${month+1}-${day}`
+  var nowString = `${year}-${month + 1}-${day}`
   return nowString
 }
 function calculateAge (birthday) {
@@ -95,5 +105,6 @@ export {
   formatLocationToGP,
   calculateAge,
   timeToString,
-  getToday
+  getToday,
+  formatMessage
 }

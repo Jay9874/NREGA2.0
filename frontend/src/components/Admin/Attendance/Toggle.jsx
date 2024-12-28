@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Switch } from '@headlessui/react'
+import { toast } from 'sonner'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
@@ -11,14 +12,17 @@ export default function Toggle ({id, onToggle}) {
   function onSwitch () {
     if (!enabled) {
       setScanning(true)
+      toast.loading('Scanning fingerprint...')
       setTimeout(() => {
         setEnabled(true)
         onToggle('present', id)
         setScanning(false)
+        toast.dismiss()
       }, 2000)
     } else{
       setEnabled(false)
       onToggle('absent', id)
+      toast.dismiss()
     } 
   }
   return (

@@ -125,6 +125,39 @@ ion-icon{
   color: gray;
 }
 
+
+/* Neo button styling */
+/* .neo-btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #e8e8e8;
+  box-shadow:  -8px -4px 8px 0px #ffffff,
+  8px 4px 12px 0px #d1d9e6,
+             4px 4px 4px 0px #d1d9e6 inset,
+             -4px -4px 4px 0px #ffffff inset;
+             ;
+} */
+
+/* .neo-btn{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border-radius: 50%;
+  box-shadow: -5px -5px 9px rgba(255,255,255,0.45), 5px 5px 9px rgba(94,104,121,0.3);
+}
+.neo-btn::after{
+  content: '';
+  position: absolute;
+  height: 80%;
+  width: 80%;
+  background-color: transparent;
+  border-radius: 50%;
+  box-shadow: inset -5px -5px 9px rgba(255,255,255,0.45), inset 5px 5px 9px rgba(94,104,121,0.3);
+} */
+
 @media screen and (max-width: 768px) {
   .month-str-container span {
     width: calc(100vw - var(--popup-offset-sm));

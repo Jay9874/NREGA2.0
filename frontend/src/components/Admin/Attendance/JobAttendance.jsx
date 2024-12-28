@@ -62,7 +62,7 @@ export default function JobAttendance () {
           setWork({
             name: job.job_id.job_name,
             gp: `${profile?.location_id?.panchayat} GP`,
-            coordinates: '129.8, 130.7',
+            coordinates: `${job.job_id.geotag[0]}, ${job.job_id.geotag[1]}`,
             live: location,
             date: `Date: ${new Date().toLocaleDateString()}`
           })
@@ -74,15 +74,20 @@ export default function JobAttendance () {
 
   async function saveAttendance () {
     try {
-      const data = addAttendance(jobId, workers)
+      toast.loading("Saving attendance...")
+      const data = await addAttendance(jobId, workers)
+      toast.dismiss()
+      toast.success("Attendance saved successfully.")
       navigate('..')
     } catch (err) {
       console.log(err)
+      toast.dismiss()
+      return toast.error('Something went wrong!')
     }
   }
 
   return (
-    <div className='overlay-modal overscroll-contain h-full overflow-scroll sticky top-0 w-full z-20 bg-gray-300 bg-opacity-90'>
+    <div className='overlay-modal overscroll-contain h-full overflow-scroll sticky top-0 w-full backdrop-blur-sm z-20 bg-gray-300 bg-opacity-75'>
       <div className='flex justify-center px-4 py-6'>
         <div className='rounded-lg bg-white'>
           <div className='flex w-full items-center gap-2 flex-wrap justify-between p-6'>
@@ -96,7 +101,7 @@ export default function JobAttendance () {
                 </span>
               </div>
               <p className='mt-1 truncate text-sm text-gray-500'>
-                Co-ordinate: {work?.coordinates}
+                Geo-tag: {work?.coordinates}
               </p>
               <p className='mt-1 truncate text-sm text-gray-500'>
                 Live: {`${work?.live?.lat}, ${work?.live?.long}`}

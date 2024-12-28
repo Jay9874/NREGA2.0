@@ -1,6 +1,8 @@
 import { Worker, Auth, Home, Admin } from './pages'
 import { Protected, NotFound, ValidLink } from './components'
-import { BrowserRouter, Route, Routes} from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { useEffect } from 'react'
+import { socket } from './api/socket'
 
 // Admin Components
 import {
@@ -29,8 +31,13 @@ import {
 
 // Auth components
 import { SignInForm, ForgotPass, ResetPass } from './components/Auth'
+import EnrollJob from './components/Worker/EnrollJob'
 
 export default function App () {
+  useEffect(() => {
+    socket.connect()
+    socket.emit('new_message', 'Socket connected')
+  }, [])
 
   return (
     <BrowserRouter>
@@ -48,7 +55,9 @@ export default function App () {
           <Route path='worker' element={<Worker />}>
             <Route path='dashboard' element={<Dashboard />} />
             <Route path='profile' element={<Profile />} />
-            <Route path='jobs' element={<Jobs />} />
+            <Route path='jobs' element={<Jobs />}>
+              <Route path='enroll/:jobId' element={<EnrollJob />} />
+            </Route>
             <Route path='payment' element={<Payment />} />
             <Route path='attendance' element={<Attendance />} />
             <Route path='*' element={<NotFound path='worker' />} />

@@ -204,30 +204,34 @@ export const useAdminStore = create((set, get) => ({
         throw err
       }
     })
-    
   },
-  addAttendance: async (job_id, workers) => {
-    try {
-      set({ loading: true })
-      const options = {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'Application/json',
-          Accept: 'Application/json'
-        },
-        body: JSON.stringify({ job_id: job_id, workers: workers })
+  addAttendance: (job_id, workers) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        set({ loading: true })
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify({ job_id: job_id, workers: workers })
+        }
+        const res = await fetch(
+          `${get().base}/api/admin/add-attendance`,
+          options
+        )
+        const { data, error } = await res.json()
+        set({ loading: false })
+        if (error) throw error
+        resolve(data)
+      } catch (err) {
+        console.log(err)
+        set({ loading: false })
+        reject(err)
       }
-      const res = await fetch(`${get().base}/api/admin/add-attendance`, options)
-      const { data, error } = await res.json()
-      set({ loading: false })
-      if (error) throw error
-      toast.success('Attendance saved successfully!')
-    } catch (err) {
-      console.log(err)
-      set({ loading: false })
-      toast.error(err.message)
-    }
+    })
   },
   payout: async () => {
     try {
