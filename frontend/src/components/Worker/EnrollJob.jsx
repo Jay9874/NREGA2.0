@@ -10,7 +10,7 @@ export default function EnrollJob () {
   const [loadingJobDetail, setLoadingJobDetail] = useState(true)
   const [entitlement, setEntitlement] = useState()
   const [job, setJob] = useState({})
-  const [startDate, setStartDate] = useState()
+  const [startDate, setStartDate] = useState('')
   const { jobId } = useParams()
   const navigate = useNavigate()
   const { applyToJob, nearbyJobs, setNearbyJobs } = useWorkerStore()

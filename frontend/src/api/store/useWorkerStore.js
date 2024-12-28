@@ -103,11 +103,11 @@ export const useWorkerStore = create((set, get) => ({
               sortedJobs.map(get().getEnrollment)
             )
             set({ nearbyJobs: result })
-            return result
+            resolve(result)
           })
       } catch (error) {
         toast.error(error.message)
-        throw error
+        reject(error)
       }
     })
   },
