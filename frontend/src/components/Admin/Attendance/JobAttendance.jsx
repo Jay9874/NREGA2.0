@@ -87,7 +87,7 @@ export default function JobAttendance () {
   }
 
   return (
-    <div className='overlay-modal overscroll-contain h-full overflow-scroll sticky top-0 w-full z-20 bg-gray-300 bg-opacity-90'>
+    <div className='overlay-modal overscroll-contain h-full overflow-scroll sticky top-0 w-full backdrop-blur-sm z-20 bg-gray-300 bg-opacity-75'>
       <div className='flex justify-center px-4 py-6'>
         <div className='rounded-lg bg-white'>
           <div className='flex w-full items-center gap-2 flex-wrap justify-between p-6'>

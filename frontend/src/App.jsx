@@ -35,6 +35,7 @@ import EnrollJob from './components/Worker/EnrollJob'
 
 export default function App () {
   useEffect(() => {
+    socket.connect()
     socket.emit('new_message', 'Socket connected')
   }, [])
 

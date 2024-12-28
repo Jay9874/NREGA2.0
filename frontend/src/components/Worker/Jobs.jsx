@@ -76,7 +76,7 @@ const Jobs = () => {
 
   return (
     <main className='relative'>
-      <Outlet context={[sachivId, jobToEnroll]} />
+      <Outlet />
       <div className='px-4'>
         <div className='px-4 pt-6 pb-1 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8 '>
           <div className=' pb-2'>

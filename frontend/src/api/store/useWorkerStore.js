@@ -79,33 +79,37 @@ export const useWorkerStore = create((set, get) => ({
     }
   },
   setNearbyJobs: async () => {
-    try {
-      const locationId = get().profile.address.id
-      await supabase
-        .from('jobs')
-        .select(`*, location_id(*)`)
-        .eq('location_id', locationId)
-        .then(async ({ data }) => {
-          const sortedJobs = data.filter((job, index) => {
-            const [lat1, lon1] = job.geotag
-            const [lat2, lon2] = job.location_id.geotag
-            const distanceBtwCords = distance(
-              lat1,
-              lon1,
-              lat2,
-              lon2,
-              'K'
-            ).toFixed(2)
-            return distanceBtwCords <= 15
+    return new Promise(async (resolve, reject) => {
+      try {
+        const locationId = get().profile.address.id
+        await supabase
+          .from('jobs')
+          .select(`*, location_id(*)`)
+          .eq('location_id', locationId)
+          .then(async ({ data }) => {
+            const sortedJobs = data.filter((job, index) => {
+              const [lat1, lon1] = job.geotag
+              const [lat2, lon2] = job.location_id.geotag
+              const distanceBtwCords = distance(
+                lat1,
+                lon1,
+                lat2,
+                lon2,
+                'K'
+              ).toFixed(2)
+              return distanceBtwCords <= 15
+            })
+            const result = await Promise.all(
+              sortedJobs.map(get().getEnrollment)
+            )
+            set({ nearbyJobs: result })
+            return result
           })
-          const result = await Promise.all(sortedJobs.map(get().getEnrollment))
-          set({ nearbyJobs: result })
-          return result
-        })
-    } catch (error) {
-      toast.error(error.message)
-      throw error
-    }
+      } catch (error) {
+        toast.error(error.message)
+        throw error
+      }
+    })
   },
   setAllJobs: async () => {
     try {

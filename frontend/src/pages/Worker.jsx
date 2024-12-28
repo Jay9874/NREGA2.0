@@ -53,7 +53,7 @@ export const Worker = () => {
         setSidebarOpen={setSidebarOpen}
         navigation={workerNavigation}
       />
-      <div className='flex flex-1 flex-col md:pl-64'>
+      <div className='flex flex-1 flex-col md:ml-64'>
         <TopNavbar
           setSidebarOpen={setSidebarOpen}
           userNavigation={workerTopNavigation}
