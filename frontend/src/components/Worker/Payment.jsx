@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useWorkerStore } from '../../api/store'
 import { timestampToDate } from '../../utils/dataFormating'
 import DynamicTable from '../DynamicTable'
@@ -33,6 +34,7 @@ export default function Payment () {
     { label: 'Transc. ID', value: payment[0]?.transaction_id },
     { label: 'Status', value: payment[0]?.status }
   ]
+
   return (
     <main className='px-4'>
       <div className='px-6 pt-6'>

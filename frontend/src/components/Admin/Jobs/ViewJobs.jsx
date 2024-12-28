@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { useAdminStore } from '../../../api/store'
 import { jobDuration, timestampToDate } from '../../../utils/dataFormating'
+import { useEffect } from 'react'
 
 
 export default function ViewJobs () {

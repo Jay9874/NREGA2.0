@@ -104,12 +104,12 @@ export default function Calendar () {
   ) : (
     <div className='min-h-1/2'>
       <div className='bg-white shadow-md px-6 py-6 rounded-md border-1 border-gray-200'>
-        <h2 className='text-lg font-semibold text-gray-900'>
-          Daily Attendances <span className='text-gray-400'>of the site</span>
+        <h2 className='text-md font-medium text-gray-900'>
+          Daily Attendances <span className='text-gray-500'>of the site</span>
         </h2>
 
         {/* The calendar codes */}
-        <div className='mt-6 text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:mt-9 xl:col-start-9'>
+        <div className='mt-2 text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:mt-9 xl:col-start-9'>
           <div className='w-full text-gray-700'>
             <div className='main-month-container'>
               <div className='calendar-btn-container'>
@@ -138,7 +138,7 @@ export default function Calendar () {
                       key={index}
                     >
                       <div className='flex items-center justify-center h-full'>
-                        <p>{element.str}</p>
+                        <p className='text-sm'>{element.str}</p>
                       </div>
                     </div>
                   ))}
@@ -201,15 +201,15 @@ export default function Calendar () {
         <div className='mt-2'>
           <div className='flex  items-center'>
             <div className='w-6 h-3 bg-green-500 inline-block rounded-sm' />{' '}
-            <span className='whitespace-pre'> Present</span>
+            <span className='whitespace-pre font-normal text-sm text-gray-500'> Present</span>
           </div>
           <div className='flex  items-center'>
             <div className='w-6 h-3 bg-red-500 inline-block rounded-sm' />{' '}
-            <span className='whitespace-pre'> Absent</span>
+            <span className='whitespace-pre font-normal text-sm text-gray-500'> Absent</span>
           </div>
           <div className='flex  items-center'>
             <div className='w-6 h-3 bg-gray-200 inline-block rounded-sm' />{' '}
-            <span className='whitespace-pre'> Not Given</span>
+            <span className='whitespace-pre font-normal text-sm text-gray-500'> Not given</span>
           </div>
         </div>
         <button

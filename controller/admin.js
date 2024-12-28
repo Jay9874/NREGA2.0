@@ -162,7 +162,6 @@ const addAttendance = async (req, res) => {
       status: workers[id].attendance,
       attendance_uid: workers[id].attendance_uid
     }))
-    console.log(job_id, workers)
     // input multiple rows in the database
     const supabase = createClient({ req, res })
     const { data, error } = await supabase
@@ -206,11 +205,26 @@ const payout = async (req, res) => {
     })
   }
 }
+
+const jobEnrollment = async (req, res) => {
+  try {
+    const { jobId, sachivId, startDate, jobDays } = req.body
+    const supabase = createClient({ req, res })
+    const { data, error } = await supabase.from('job_application').insert()
+  } catch (err) {
+    console.log(err)
+    return res.status(err.status).json({
+      data: null,
+      error: err
+    })
+  }
+}
 export {
   createUser,
   fetchAadhaar,
   createEmployee,
   dashboardData,
   addAttendance,
-  payout
+  payout,
+  jobEnrollment
 }
