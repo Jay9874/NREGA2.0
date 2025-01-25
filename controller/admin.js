@@ -122,6 +122,7 @@ const dashboardData = async (req, res) => {
       .select(`*`)
       .eq('address', locationId)
     if (errAtWorker) throw errAtWorker
+    console.log("workers: ", workerData)
     const { data: jobsData, error: errAtJobs } = await supabase
       .from('jobs')
       .select('*')
@@ -130,8 +131,8 @@ const dashboardData = async (req, res) => {
     // fetching last payment detail
     // Worker counts for each jobs
     const { data: enrollmentData, error: errAtEnrollment } = await supabase
-      .from('workers_jobs')
-      .select('*, worker_id(*), job_id(*)')
+      .from('job_enrollments')
+      .select('*, by_worker(*), job(*)')
     if (errAtEnrollment) throw errAtEnrollment
     const { data: paymentData, error: errAtPayment } = await supabase
       .from('payments')

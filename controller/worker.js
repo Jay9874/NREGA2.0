@@ -1,3 +1,8 @@
+import {
+  formatLocationToGP,
+  jobDuration,
+  timestampToDate
+} from '../frontend/src/utils/dataFormating.js'
 import { createClient } from '../lib/supabase.js'
 
 const applyToJob = async (req, res) => {
@@ -52,4 +57,63 @@ const entitlement = async (req, res) => {
   }
 }
 
-export { applyToJob, entitlement }
+const nearbyJobs = async (req, res) => {
+  try {
+    const { locationId, workerId } = req.body
+    const supabase = createClient({ req, res })
+    await supabase
+      .from('jobs')
+      .select(`*, location_id(*)`)
+      .eq('location_id', locationId)
+      .then(async ({ data }) => {
+        const sortedJobs = data.filter((job, index) => {
+          const [lat1, lon1] = job.geotag
+          const [lat2, lon2] = job.location_id.geotag
+          const distanceBtwCords = distance(
+            lat1,
+            lon1,
+            lat2,
+            lon2,
+            'K'
+          ).toFixed(2)
+          return distanceBtwCords <= 15
+        })
+        const result = await Promise.all(sortedJobs.map(get().getEnrollment))
+        const { data: enrollment, error: errAtEnrol } = await supabase
+          .from('workers_jobs')
+          .select(`*`)
+          .eq('job_id', item.job_id)
+          .eq('worker_id', workerId)
+        if (error) {
+          return error
+        }
+        const hasEnrolled = data.length > 0 ? true : false
+        const [lat1, lon1] = item.geotag
+        const [lat2, lon2] = item.location_id.geotag
+        const distanceBtwCords = distance(lat1, lon1, lat2, lon2, 'K')
+        const response = {
+          ...item,
+          Work: item.job_name,
+          Location: `${formatLocationToGP(item.location_id)}`,
+          locationObj: {
+            dist: distanceBtwCords.toFixed(2),
+            gp: formatLocationToGP(item.location_id)
+          },
+          Status: hasEnrolled ? 'enrolled' : 'unenrolled',
+          Started: `${timestampToDate(item.created_at)}`,
+          Deadline: `${timestampToDate(item.job_deadline)}`,
+          Duration: `${
+            jobDuration(item.created_at, item.job_deadline).days
+          } Day`
+        }
+      })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send({
+      data: null,
+      error: err
+    })
+  }
+}
+
+export { applyToJob, entitlement, nearbyJobs }
