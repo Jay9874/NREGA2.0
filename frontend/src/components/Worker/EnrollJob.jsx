@@ -87,7 +87,7 @@ export default function EnrollJob () {
   }, [jobId])
   return (
     <div className='h-[100vh] overflow-scroll top-0 md:w-[calc(100%-256px)] w-full backdrop-blur-sm fixed z-20 bg-gray-300 bg-opacity-75'>
-      <div className='flex justify-center items-center min-h-full px-4 py-6'>
+      <div className='flex justify-center items-center min-h-full px-4 pb-6 pt-[70px] overflow-scroll'>
         <div className='rounded-lg w-96 bg-white'>
           <div className='flex w-full items-center gap-2 flex-wrap justify-between p-6'>
             <div className='flex-1'>

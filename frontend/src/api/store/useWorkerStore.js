@@ -265,19 +265,19 @@ export const useWorkerStore = create((set, get) => ({
       const { days, percentage } = jobDuration(job.created_at, job.job_deadline)
       const presence = attendance.length
       const { data } = await supabase
-        .from('workers_jobs')
-        .select(`*, job_id(*, location_id(*))`)
-        .eq('job_id', job.job_id)
+        .from('job_enrollments')
+        .select(`*, job(*, location_id(*))`)
+        .eq('job', job.job_id)
       set({
         lastWork: {
-          location: data[0].job_id.location_id,
+          location: data[0].job.location_id,
           name: job.job_name,
           presence: presence,
           labours: data.length,
           deadline: deadline,
           duration: days,
           completion: percentage,
-          desc: data[0].job_id.job_description
+          desc: data[0].job.job_description
         }
       })
     } catch (error) {
@@ -289,10 +289,10 @@ export const useWorkerStore = create((set, get) => ({
   setLocations: async () => {
     try {
       const { data: jobs } = await supabase
-        .from('workers_jobs')
-        .select(`*, job_id(location_id(*))`)
-        .eq('worker_id', get().user.id)
-      const result = jobs.map(item => item.job_id.location_id)
+        .from('job_enrollments')
+        .select(`*, job(location_id(*))`)
+        .eq('by_worker', get().user.id)
+      const result = jobs.map(item => item.job.location_id)
       set({ locations: result })
     } catch (error) {
       console.log(error)
@@ -320,10 +320,10 @@ export const useWorkerStore = create((set, get) => ({
   },
   getEnrollment: async item => {
     const { data, error } = await supabase
-      .from('workers_jobs')
+      .from('job_enrollments')
       .select(`*`)
-      .eq('job_id', item.job_id)
-      .eq('worker_id', get().user.id)
+      .eq('job', item.job_id)
+      .eq('by_worker', get().user.id)
     if (error) {
       return error
     }
