@@ -14,7 +14,6 @@ const applyToJob = async (req, res) => {
       status: 'applied',
       remark: 'The application is under processing.'
     }
-    console.log(jobDetail)
     const supabase = createClient({ req, res })
     const { data, error } = await supabase
       .from('job_applications')

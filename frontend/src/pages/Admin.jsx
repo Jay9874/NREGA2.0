@@ -7,6 +7,7 @@ import { socket } from '../api/socket'
 import { adminTopNavigation } from '../utils/dashboard_toplink'
 import { adminNavigation } from '../utils/sidelinks'
 import HomeLoading from '../components/Skeleton/HomeLoading'
+import NotificationPanel from '../components/NotificationPanel'
 
 export const Admin = () => {
   const {
@@ -17,6 +18,7 @@ export const Admin = () => {
     setLoading,
     payout
   } = useAdminStore()
+
 
   const [isConnected, setIsConnected] = useState(socket.connected)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -70,6 +72,7 @@ export const Admin = () => {
           userNavigation={adminTopNavigation}
         />
         {loading ? <HomeLoading /> : <Outlet />}
+        <NotificationPanel />
       </div>
     </>
   )

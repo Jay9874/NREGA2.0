@@ -31,7 +31,6 @@ const createUser = async (req, res) => {
 }
 const createEmployee = async (req, res) => {
   try {
-    console.log(req.body)
     const base64String = req.body.queryImage
     const base64 = base64String.split('base64,')[1]
     const user = req.body
@@ -122,7 +121,6 @@ const dashboardData = async (req, res) => {
       .select(`*`)
       .eq('address', locationId)
     if (errAtWorker) throw errAtWorker
-    console.log("workers: ", workerData)
     const { data: jobsData, error: errAtJobs } = await supabase
       .from('jobs')
       .select('*')

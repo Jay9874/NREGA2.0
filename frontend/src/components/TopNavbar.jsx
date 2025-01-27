@@ -11,7 +11,9 @@ function classNames (...classes) {
 export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const { logoutUser, user, loading } = authStore()
+  const { logoutUser, user, loading, setNotificationPanel, notificationPanel } =
+    authStore()
+
   return (
     <div className='sticky z-30 top-0 flex h-16 flex-shrink-0 bg-white shadow'>
       <button
@@ -48,6 +50,7 @@ export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
         >
           <button
             type='button'
+            onClick={()=>setNotificationPanel(true)}
             className='rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
           >
             <span className='sr-only'>View notifications</span>
