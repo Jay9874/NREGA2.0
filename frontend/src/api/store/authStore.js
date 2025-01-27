@@ -8,6 +8,8 @@ export const authStore = create((set, get) => ({
   base: NODE_ENV === 'development' ? 'http://localhost:8080' : '',
   captchaToken: '',
   loading: false,
+  notificationPanel: false,
+  setNotificationPanel: status => set({ notificationPanel: status }),
   setCaptchaToken: token => set({ captchaToken: token }),
   checkUser: async () => {
     return new Promise(async (resolve, reject) => {
