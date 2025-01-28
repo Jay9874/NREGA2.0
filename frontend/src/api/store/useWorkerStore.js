@@ -17,6 +17,7 @@ export const useWorkerStore = create((set, get) => ({
   user: { email: '', type: '', id: '', photo: '' },
   base: NODE_ENV === 'development' ? 'http://localhost:8080' : '',
   loading: false,
+  notifications: [],
   dataLoaded: false,
   loadingAttendance: false,
   isAttendanceActive: false,
