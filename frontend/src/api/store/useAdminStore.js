@@ -8,6 +8,7 @@ const NODE_ENV = import.meta.env.MODE
 export const useAdminStore = create((set, get) => ({
   user: authStore.getState().user,
   loading: false,
+  notifications: [],
   base: NODE_ENV === 'development' ? 'http://localhost:8080' : '',
   profile: {},
   employees: [],

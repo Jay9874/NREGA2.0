@@ -50,11 +50,12 @@ export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
         >
           <button
             type='button'
-            onClick={()=>setNotificationPanel(true)}
-            className='rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+            onClick={() => setNotificationPanel(true)}
+            className='relative rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
           >
             <span className='sr-only'>View notifications</span>
             <BellIcon className='h-6 w-6' aria-hidden='true' />
+            <span className='absolute top-0 right-0 block h-2 w-2 rounded-full bg-green-400 ring-2 ring-white' />
           </button>
 
           {/* Profile dropdown */}
