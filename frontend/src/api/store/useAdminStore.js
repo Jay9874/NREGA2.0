@@ -191,7 +191,10 @@ export const useAdminStore = create((set, get) => ({
         const newMap = new Map()
         data.enrollments.forEach((enrollment, index) => {
           const count = newMap.get(enrollment.job.job_id)
-          newMap.set(enrollment.job.job_id, count ? count + 1 : 1)
+          if (enrollment.status == 'enrolled') {
+            newMap.set(enrollment.job.job_id, count ? count + 1 : 1)
+          }
+
           get().setWorkerMap(newMap)
         })
         set({
@@ -269,5 +272,5 @@ export const useAdminStore = create((set, get) => ({
       console.log(err)
       toast.error(err.message)
     }
-  }
+  },
 }))

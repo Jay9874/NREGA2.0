@@ -97,7 +97,7 @@ const pageRefresh = async (req, res) => {
       error: null
     })
   } catch (err) {
-    const supabase = createClient({req, res})
+    const supabase = createClient({ req, res })
     const { error } = await supabase.auth.signOut()
     if (error) {
       return res.status(403).send({
@@ -133,4 +133,33 @@ const updateMeta = async (req, res) => {
   }
 }
 
-export { confirmSignup, login, logout, signup, pageRefresh, updateMeta }
+const getNotification = async (req, res) => {
+  try {
+    const { userId, type } = req.body
+    const supabase = createClient({ req, res })
+    const table =
+      type == 'worker' ? 'worker_notifications' : 'sachiv_notifications'
+    const { data, error } = await supabase.from(table).select('*')
+    if (error) throw error
+    return res.status(200).send({
+      data: data,
+      error: null
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send({
+      data: null,
+      error: err
+    })
+  }
+}
+
+export {
+  confirmSignup,
+  login,
+  logout,
+  signup,
+  pageRefresh,
+  updateMeta,
+  getNotification
+}

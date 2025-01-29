@@ -1,6 +1,7 @@
 import { Outlet, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { authStore, useWorkerStore } from '../api/store'
+import { socket } from '../api/socket'
 // Importing all the components
 import { Sidebar, TopNavbar } from '../components'
 
@@ -9,6 +10,7 @@ import { workerNavigation } from '../utils/sidelinks'
 import { workerTopNavigation } from '../utils/dashboard_toplink'
 import HomeLoading from '../components/Skeleton/HomeLoading'
 import NotificationPanel from '../components/NotificationPanel'
+import { toast } from 'sonner'
 
 export const Worker = () => {
   const navigate = useNavigate()
@@ -26,6 +28,8 @@ export const Worker = () => {
     setLastAttendance
   } = useWorkerStore()
 
+  const { user, notifications, setNotifications } = authStore()
+
   async function handleSetup () {
     try {
       setLoading(true)
@@ -36,6 +40,7 @@ export const Worker = () => {
       await setLastAttendance()
       await setAllJobs()
       await setNearbyJobs()
+      await setNotifications()
       setLoading(false)
       setDataLoaded(true)
     } catch (error) {
@@ -45,7 +50,14 @@ export const Worker = () => {
 
   useEffect(() => {
     handleSetup()
+    socket.connect()
+    socket.emit('join', user.id)
   }, [])
+
+  socket.on('error', error => {
+    console.log('error occurred: ', error)
+    toast.error(error.message)
+  })
 
   return (
     <>
@@ -60,7 +72,7 @@ export const Worker = () => {
           userNavigation={workerTopNavigation}
         />
         {loading === true ? <HomeLoading /> : <Outlet />}
-        <NotificationPanel />
+        <NotificationPanel type={user.type} notifications={notifications} />
       </div>
     </>
   )

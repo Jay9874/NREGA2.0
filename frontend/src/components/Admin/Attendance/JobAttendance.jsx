@@ -49,20 +49,20 @@ export default function JobAttendance () {
 
   useEffect(() => {
     const filteredJobs = enrollments.filter((job, index) => {
-      const impId = job.worker_id.id
+      const impId = job.by_worker.id
       const emp = {
-        id: job.worker_id.id,
-        name: job.worker_id.first_name + ' ' + job.worker_id.last_name,
+        id: job.by_worker.id,
+        name: job.by_worker.first_name + ' ' + job.by_worker.last_name,
         attendance: 'absent',
-        attendance_uid: job.worker_id.id + '-' + getToday()
+        attendance_uid: job.by_worker.id + '-' + getToday()
       }
-      if (job.job_id.job_id == jobId) {
+      if (job.job.job_id == jobId) {
         setWorkers(prev => ({ ...prev, [impId]: emp }))
         if (!work) {
           setWork({
-            name: job.job_id.job_name,
+            name: job.job.job_name,
             gp: `${profile?.location_id?.panchayat} GP`,
-            coordinates: `${job.job_id.geotag[0]}, ${job.job_id.geotag[1]}`,
+            coordinates: `${job.job.geotag[0]}, ${job.job.geotag[1]}`,
             live: location,
             date: `Date: ${new Date().toLocaleDateString()}`
           })

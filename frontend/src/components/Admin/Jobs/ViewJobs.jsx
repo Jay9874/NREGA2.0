@@ -15,7 +15,7 @@ export default function ViewJobs () {
       Description: job.job_description,
       Progress: `${jobDuration(job.created_at, job.job_deadline).percentage}`,
       Deadline:  `${timestampToDate(job.job_deadline)}`,
-      Created:  `${timestampToDate(job.created_at)}`,
+      Started:  `${timestampToDate(job.job_start_date)}`,
       Workers: workerMap.has(job.job_id) ? workerMap.get(job.job_id) : 0
     }
   })
@@ -92,7 +92,7 @@ export default function ViewJobs () {
                     className='hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell'
                   >
                     <a href='#' className='group inline-flex'>
-                      Created
+                      Started
                       <span className='invisible ml-2 flex-none rounded text-gray-400 group-hover:visible group-focus:visible'>
                         <ChevronDownIcon
                           className='h-5 w-5'
@@ -158,7 +158,7 @@ export default function ViewJobs () {
                       {work.Description}
                     </td>
                     <td className='hidden px-3 py-4 text-sm text-gray-500 lg:table-cell'>
-                      {work.Created}
+                      {work.Started}
                   
                     </td>
                     <td className='hidden px-3 py-4 text-sm text-gray-500 sm:table-cell'>

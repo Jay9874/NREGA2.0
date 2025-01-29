@@ -4,8 +4,9 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 import { authStore } from '../api/store'
 import NotificationCard from './NotificationCard'
 
-export default function NotificationPanel ({notifications}) {
+export default function NotificationPanel ({ notifications, type }) {
   const { notificationPanel, setNotificationPanel } = authStore()
+  console.log(notifications, type)
   return (
     <Transition.Root show={notificationPanel} as={Fragment}>
       <Dialog as='div' className='relative z-40' onClose={setNotificationPanel}>
@@ -61,13 +62,13 @@ export default function NotificationPanel ({notifications}) {
               </div>
 
               <div className='overflow-scroll py-6'>
-                <NotificationCard/>
-                <NotificationCard/>
-                <NotificationCard/>
-                <NotificationCard/>
-                <NotificationCard/>
-                <NotificationCard/>
-                <NotificationCard/>
+                <NotificationCard />
+                <NotificationCard />
+                <NotificationCard />
+                <NotificationCard />
+                <NotificationCard />
+                <NotificationCard />
+                <NotificationCard />
               </div>
             </Dialog.Panel>
           </Transition.Child>

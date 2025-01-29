@@ -12,6 +12,7 @@ import {
 } from '../../utils/dataFormating'
 import { genDates } from '../../utils/generate_date'
 import { distance } from '../../utils/getLocation'
+import { socket } from '../socket'
 
 export const useWorkerStore = create((set, get) => ({
   user: { email: '', type: '', id: '', photo: '' },
@@ -267,18 +268,19 @@ export const useWorkerStore = create((set, get) => ({
       const presence = attendance.length
       const { data } = await supabase
         .from('job_enrollments')
-        .select(`*, job(*, location_id(*))`)
+        .select(`job`)
         .eq('job', job.job_id)
+        .eq('status', 'enrolled')
       set({
         lastWork: {
-          location: data[0].job.location_id,
-          name: job.job_name,
+          location: job?.location_id,
+          name: job?.job_name,
           presence: presence,
           labours: data.length,
           deadline: deadline,
           duration: days,
           completion: percentage,
-          desc: data[0].job.job_description
+          desc: job?.job_description
         }
       })
     } catch (error) {
@@ -328,7 +330,7 @@ export const useWorkerStore = create((set, get) => ({
     if (error) {
       return error
     }
-    const hasEnrolled = data.length > 0 ? true : false
+    const hasInput = data.length == 0 ? false : true
     const [lat1, lon1] = item.geotag
     const [lat2, lon2] = item.location_id.geotag
     const distanceBtwCords = distance(lat1, lon1, lat2, lon2, 'K')
@@ -340,36 +342,47 @@ export const useWorkerStore = create((set, get) => ({
         dist: distanceBtwCords.toFixed(2),
         gp: formatLocationToGP(item.location_id)
       },
-      Status: hasEnrolled ? 'enrolled' : 'unenrolled',
+      Status: hasInput ? data[0].status : 'unenrolled',
       Started: `${timestampToDate(item.created_at)}`,
       Deadline: `${timestampToDate(item.job_deadline)}`,
       Duration: `${jobDuration(item.created_at, item.job_deadline).days} Day`
     }
   },
-  applyToJob: (jobId, sachivId, startDate, timeDuration) => {
+  applyToJob: (jobId, sachivId, startDate, timeDuration, locationId) => {
     return new Promise(async (resolve, reject) => {
       try {
+        socket.addEventListener('error', event => {
+          console.log('websocket error: ', event)
+          throw event
+        })
         const user = get().user
         const detail = {
           starting_date: startDate,
           time_period: timeDuration,
           job: jobId,
           to_sachiv: sachivId,
-          by_worker: user.id
+          by_worker: user.id,
+          location_id: locationId
         }
-        const options = {
-          method: 'POST',
-          body: JSON.stringify({ jobDetail: detail }),
-          credentials: 'include',
-          headers: { 'content-type': 'application/json' }
-        }
-        const res = await fetch(`${get().base}/api/worker/apply`, options)
-        const { data, error } = await res.json()
-        if (error) throw error
-        resolve(data)
+        // const options = {
+        //   method: 'POST',
+        //   body: JSON.stringify({ jobDetail: detail }),
+        //   credentials: 'include',
+        //   headers: { 'content-type': 'application/json' }
+        // }
+        // const res = await fetch(`${get().base}/api/worker/apply`, options)
+        // const { data, error } = await res.json()
+        // if (error) throw error
+        socket.emit('sendApplication', detail)
+        socket.on('receiveNotification', async notification => {
+          await get().setNearbyJobs()
+          console.log('received notification: ', notification)
+          resolve(notification)
+        })
       } catch (err) {
         reject(err)
       }
     })
-  }
+  },
+  loadNotifications: async () => {}
 }))

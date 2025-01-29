@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Sidebar, TopNavbar, Banner } from '../components'
-import { useAdminStore } from '../api/store'
+import { authStore, useAdminStore } from '../api/store'
 import { socket } from '../api/socket'
 // Constants imports
 import { adminTopNavigation } from '../utils/dashboard_toplink'
@@ -19,6 +19,7 @@ export const Admin = () => {
     payout
   } = useAdminStore()
 
+  const { user, notifications, setNotifications } = authStore()
 
   const [isConnected, setIsConnected] = useState(socket.connected)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -29,35 +30,45 @@ export const Admin = () => {
       await setDashboard()
       await setEmployees()
       await payout()
+      await setNotifications()
       setLoading(false)
     } catch (error) {
       return error
     }
   }
+  // useEffect(() => {
+  //   handleSetup()
+  //   function onConnect () {
+  //     setIsConnected(true)
+  //   }
+
+  //   function onDisconnect () {
+  //     setIsConnected(false)
+  //   }
+
+  //   function onFooEvent (value) {
+  //     setFooEvents(previous => [...previous, value])
+  //   }
+
+  //   socket.on('connect', onConnect)
+  //   socket.on('disconnect', onDisconnect)
+  //   socket.on('foo', onFooEvent)
+
+  //   return () => {
+  //     socket.off('connect', onConnect)
+  //     socket.off('disconnect', onDisconnect)
+  //     socket.off('foo', onFooEvent)
+  //   }
+  // }, [])
+
   useEffect(() => {
     handleSetup()
-    function onConnect () {
-      setIsConnected(true)
-    }
-
-    function onDisconnect () {
-      setIsConnected(false)
-    }
-
-    function onFooEvent (value) {
-      setFooEvents(previous => [...previous, value])
-    }
-
-    socket.on('connect', onConnect)
-    socket.on('disconnect', onDisconnect)
-    socket.on('foo', onFooEvent)
-
-    return () => {
-      socket.off('connect', onConnect)
-      socket.off('disconnect', onDisconnect)
-      socket.off('foo', onFooEvent)
-    }
+    socket.connect()
+    socket.emit('join', user.id)
   }, [])
+  socket.on('newNotification', notification => {
+    console.log(notification)
+  })
   return (
     <>
       <Sidebar
@@ -72,7 +83,7 @@ export const Admin = () => {
           userNavigation={adminTopNavigation}
         />
         {loading ? <HomeLoading /> : <Outlet />}
-        <NotificationPanel />
+        <NotificationPanel type={user.type} notifications={notifications} />
       </div>
     </>
   )
