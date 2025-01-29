@@ -170,25 +170,29 @@ export const authStore = create((set, get) => ({
     }
     await loginUser(email, password, navigate)
   },
-  setNotification: async () => {
-    try {
-      const { id, type } = get().user
-      const options = {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'Application/json',
-          Accept: 'Application/json'
-        },
-        body: JSON.stringify({ userId: id, type: type })
+  setNotifications: async () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { id, type } = get().user
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify({ userId: id, type: type })
+        }
+        const res = await fetch(`${get().base}/api/auth/notification`, options)
+        const { data, error } = await res.json()
+        if (error) throw error
+        set({ notifications: data })
+        resolve(data)
+      } catch (err) {
+        console.log(err)
+        toast.error(err)
+        reject(null)
       }
-      const res = await fetch(`${get().base}/api/auth/notification`, options)
-      const { data, error } = await res.json()
-      if (error) throw error
-      set({ notifications: data })
-    } catch (err) {
-      console.log(err)
-      toast.error(err)
-    }
+    })
   }
 }))

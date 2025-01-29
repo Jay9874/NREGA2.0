@@ -10,6 +10,8 @@ import HomeLoading from '../components/Skeleton/HomeLoading'
 import NotificationPanel from '../components/NotificationPanel'
 
 export const Admin = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
   const {
     setProfile,
     setEmployees,
@@ -18,11 +20,9 @@ export const Admin = () => {
     setLoading,
     payout
   } = useAdminStore()
+  const { user, notifications, setNotifications, addToNotifications } =
+    authStore()
 
-  const { user, notifications, setNotifications } = authStore()
-
-  const [isConnected, setIsConnected] = useState(socket.connected)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
   async function handleSetup () {
     try {
       setLoading(true)
@@ -36,39 +36,17 @@ export const Admin = () => {
       return error
     }
   }
-  // useEffect(() => {
-  //   handleSetup()
-  //   function onConnect () {
-  //     setIsConnected(true)
-  //   }
-
-  //   function onDisconnect () {
-  //     setIsConnected(false)
-  //   }
-
-  //   function onFooEvent (value) {
-  //     setFooEvents(previous => [...previous, value])
-  //   }
-
-  //   socket.on('connect', onConnect)
-  //   socket.on('disconnect', onDisconnect)
-  //   socket.on('foo', onFooEvent)
-
-  //   return () => {
-  //     socket.off('connect', onConnect)
-  //     socket.off('disconnect', onDisconnect)
-  //     socket.off('foo', onFooEvent)
-  //   }
-  // }, [])
 
   useEffect(() => {
     handleSetup()
     socket.connect()
     socket.emit('join', user.id)
+    socket.on('newNotification', (notification)=>{
+      addToNotifications(notification)
+      console.log("received notification at admin side: ", notification)
+    })
   }, [])
-  socket.on('newNotification', notification => {
-    console.log(notification)
-  })
+
   return (
     <>
       <Sidebar

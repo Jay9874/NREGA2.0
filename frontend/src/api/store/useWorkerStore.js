@@ -364,15 +364,6 @@ export const useWorkerStore = create((set, get) => ({
           by_worker: user.id,
           location_id: locationId
         }
-        // const options = {
-        //   method: 'POST',
-        //   body: JSON.stringify({ jobDetail: detail }),
-        //   credentials: 'include',
-        //   headers: { 'content-type': 'application/json' }
-        // }
-        // const res = await fetch(`${get().base}/api/worker/apply`, options)
-        // const { data, error } = await res.json()
-        // if (error) throw error
         socket.emit('sendApplication', detail)
         socket.on('receiveNotification', async notification => {
           await get().setNearbyJobs()

@@ -69,12 +69,12 @@ app.get('*', (req, res) => {
 })
 
 // Socket requests handling
+let users = {} // keeping record of users
 io.on('connection', socket => {
   try {
-    let users = {}
     socket.on('join', userId => {
       users[userId] = socket.id
-      console.log('joined: ', userId)
+      console.log("users are: ", users)
     })
     // Receiving application from worker, sending to db, generating notification to sachiv
     socket.on('sendApplication', async details => {
@@ -105,11 +105,12 @@ io.on('connection', socket => {
         if (errAtNotification) throw errAtNotification
         const { data: workerNotification, errAtWorkerNotification } =
           await supabase
-            .from('worker_notification')
+            .from('worker_notifications')
             .insert({
               category: 'job application',
               details: {
-                Job: details.job
+                Job: details.job,
+                Duration: details.time_period
               }
             })
             .select()
@@ -126,9 +127,6 @@ io.on('connection', socket => {
         console.log(err)
         socket.emit('error', err)
       }
-    })
-    socket.on('apply_to_job', async obj => {
-      console.log(obj)
     })
   } catch (err) {
     console.log(err)

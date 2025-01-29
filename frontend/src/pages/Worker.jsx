@@ -28,7 +28,8 @@ export const Worker = () => {
     setLastAttendance
   } = useWorkerStore()
 
-  const { user, notifications, setNotifications } = authStore()
+  const { user, notifications, setNotifications, addToNotifications } =
+    authStore()
 
   async function handleSetup () {
     try {
@@ -53,11 +54,6 @@ export const Worker = () => {
     socket.connect()
     socket.emit('join', user.id)
   }, [])
-
-  socket.on('error', error => {
-    console.log('error occurred: ', error)
-    toast.error(error.message)
-  })
 
   return (
     <>

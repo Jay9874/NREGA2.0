@@ -1,7 +1,8 @@
 import { Fragment, useState } from 'react'
 import { Transition } from '@headlessui/react'
+import { timestampToDate } from '../utils/dataFormating'
 
-export default function NotificationCard () {
+export default function NotificationCard ({ notification, type }) {
   const [show, setShow] = useState(true)
 
   return (
@@ -27,30 +28,48 @@ export default function NotificationCard () {
               <div className='flex w-0 flex-1 items-center p-4'>
                 <div className='w-full'>
                   <p className='text-sm font-medium text-gray-900'>
-                    Job Requirement
+                    {notification?.category == 'job application'
+                      ? `Job Requirement in job id: ${notification?.details.Job}`
+                      : ''}
                   </p>
+                  {type == 'admin' && (
+                    <div>
+                      <p className='mt-1 text-sm text-gray-500'>
+                        <span>Worker: </span>
+                        <span>{notification?.details.Worker}</span>
+                      </p>
+                      <p className='mt-1 text-sm text-gray-500'>
+                        <span>Joining date: </span>
+                        <span>{notification?.details.Joining}</span>
+                      </p>
+                    </div>
+                  )}
                   <p className='mt-1 text-sm text-gray-500'>
-                    Received from Jay9874, for 20 Days.
+                    <span>Time period: </span>
+                    <span>{notification?.details.Duration}</span>
                   </p>
                   <div className='mt-1 text-sm text-gray-500 flex items-center gap-1'>
                     <ion-icon name='calendar-outline'></ion-icon>
-                    {new Date().toLocaleDateString('de-DE')}
+                    {timestampToDate(notification?.created_at)}
                   </div>
                 </div>
               </div>
               <div className='flex'>
                 <div className='flex flex-col divide-y divide-gray-200'>
-                  <div className='flex h-0 flex-1'>
-                    <button
-                      type='button'
-                      className='flex w-full items-center justify-center rounded-none rounded-tr-lg border border-transparent px-4 py-3 text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-indigo-500'
-                      onClick={() => {
-                        setShow(false)
-                      }}
-                    >
-                      Action
-                    </button>
-                  </div>
+                  {type == 'admin' && (
+                    <div className='flex h-0 flex-1'>
+                      <button
+                        type='button'
+                        className='flex w-full items-center justify-center rounded-none rounded-tr-lg border border-transparent px-4 py-3 text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-indigo-500'
+                        onClick={() => {
+                          setShow(false)
+                        }}
+                      >
+                        Accept
+                      </button>
+                    </div>
+                  )}
+
                   <div className='flex h-0 flex-1'>
                     <button
                       type='button'
@@ -59,7 +78,7 @@ export default function NotificationCard () {
                         setShow(false)
                       }}
                     >
-                      Receive
+                      {type == 'admin' ? 'Reject' : 'Clear'}
                     </button>
                   </div>
                 </div>
