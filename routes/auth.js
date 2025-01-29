@@ -1,6 +1,14 @@
 import express from 'express'
 const router = express.Router()
-import { confirmSignup, login, logout, pageRefresh, signup, updateMeta } from '../controller/auth.js'
+import {
+  confirmSignup,
+  getNotification,
+  login,
+  logout,
+  pageRefresh,
+  signup,
+  updateMeta
+} from '../controller/auth.js'
 /**
  * @route GET api/auth/confirm
  * @description check user metadata
@@ -40,8 +48,6 @@ router.post('/validate', pageRefresh)
  **/
 router.post('/update-meta', updateMeta)
 
-
-
 // Logout a user from system
 /**
  * @route POST api/auth/logout
@@ -49,5 +55,13 @@ router.post('/update-meta', updateMeta)
  * @access public
  **/
 router.post('/logout', logout)
+
+// get notification for both users (admin and worker)
+/**
+ * @route POST api/auth/notification
+ * @description get all the notification for user id.
+ * @access public
+ **/
+router.post('/notification', getNotification)
 
 export { router as authRoutes }

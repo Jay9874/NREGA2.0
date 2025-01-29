@@ -11,8 +11,14 @@ function classNames (...classes) {
 export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const { logoutUser, user, loading, setNotificationPanel, notificationPanel } =
-    authStore()
+  const {
+    logoutUser,
+    user,
+    loading,
+    setNotificationPanel,
+    notificationPanel,
+    notifications
+  } = authStore()
 
   return (
     <div className='sticky z-30 top-0 flex h-16 flex-shrink-0 bg-white shadow'>
@@ -55,7 +61,9 @@ export const TopNavbar = ({ setSidebarOpen, userNavigation }) => {
           >
             <span className='sr-only'>View notifications</span>
             <BellIcon className='h-6 w-6' aria-hidden='true' />
-            <span className='absolute top-0 right-0 block h-2 w-2 rounded-full bg-green-400 ring-2 ring-white' />
+            {notifications.length != 0 && (
+              <span className='absolute top-0 right-0 block h-2 w-2 rounded-full bg-green-400 ring-2 ring-white' />
+            )}
           </button>
 
           {/* Profile dropdown */}

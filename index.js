@@ -13,6 +13,12 @@ const __dirname = path.resolve()
 import cookieParser from 'cookie-parser'
 const PORT = process.env.PORT || 8080
 
+// creating supabase orm for socket connection and db modification
+import { createClient } from '@supabase/supabase-js'
+const supabaseUrl = process.env.VITE_SUPABASE_URL
+const supabaseKey = process.env.VITE_SUPABASE_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
+
 // Importing routes and custom middlewares
 import { adminRoutes } from './routes/admin.js'
 import { workerRoutes } from './routes/worker.js'
@@ -63,14 +69,69 @@ app.get('*', (req, res) => {
 })
 
 // Socket requests handling
+let users = {} // keeping record of users
 io.on('connection', socket => {
-  console.log('a user connected')
-  socket.on('new_message', msg => {
-    console.log(msg)
-  })
-  socket.on('apply_to_job', async obj => {
-    console.log(obj)
-  })
+  try {
+    socket.on('join', userId => {
+      users[userId] = socket.id
+      console.log("users are: ", users)
+    })
+    // Receiving application from worker, sending to db, generating notification to sachiv
+    socket.on('sendApplication', async details => {
+      try {
+        var jobDetail = {
+          ...details,
+          application_id: `ap_${details.job}_${details.by_worker}`,
+          status: 'applied',
+          remark: 'The application is under processing.'
+        }
+        const { data, error } = await supabase
+          .from('job_enrollments')
+          .upsert(jobDetail)
+          .select()
+        if (error) throw error
+        const { data: notification, errAtNotification } = await supabase
+          .from('sachiv_notifications')
+          .insert({
+            category: 'job application',
+            details: {
+              Worker: details.by_worker,
+              Job: details.job,
+              Duration: details.time_period,
+              Joining: details.starting_date
+            }
+          })
+          .select()
+        if (errAtNotification) throw errAtNotification
+        const { data: workerNotification, errAtWorkerNotification } =
+          await supabase
+            .from('worker_notifications')
+            .insert({
+              category: 'job application',
+              details: {
+                Job: details.job,
+                Duration: details.time_period
+              }
+            })
+            .select()
+        if (errAtWorkerNotification) throw errAtWorkerNotification
+        const receiverSocket = users[details.to_sachiv]
+        const senderSocket = users[details.by_worker]
+        if (senderSocket) {
+          io.to(senderSocket).emit('receiveNotification', workerNotification)
+        }
+        if (receiverSocket) {
+          io.to(receiverSocket).emit('newNotification', notification)
+        }
+      } catch (err) {
+        console.log(err)
+        socket.emit('error', err)
+      }
+    })
+  } catch (err) {
+    console.log(err)
+    socket.emit('error', err)
+  }
 })
 
 // Error handler middleware

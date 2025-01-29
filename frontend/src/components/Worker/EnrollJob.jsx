@@ -8,13 +8,13 @@ import { timestampToDate } from '../../utils/dataFormating'
 export default function EnrollJob () {
   const [timeDuration, setTimeDuration] = useState(15)
   const [loadingJobDetail, setLoadingJobDetail] = useState(true)
-  const [entitlement, setEntitlement] = useState()
+  const [entitlement, setEntitlement] = useState(0)
   const [job, setJob] = useState({})
   const [startDate, setStartDate] = useState('')
   const { jobId } = useParams()
   const navigate = useNavigate()
   const { applyToJob, nearbyJobs, setNearbyJobs } = useWorkerStore()
-  const { user } = authStore()
+  const { user, addToNotifications } = authStore()
   const [disabled, setDisabled] = useState('minus')
 
   async function sendApplication (e) {
@@ -26,11 +26,12 @@ export default function EnrollJob () {
         jobId,
         job.sachiv_id,
         startDate,
-        timeDuration
+        timeDuration,
+        job.location_id.id
       )
       toast.dismiss()
       toast.success(`Successfully applied to "${job.job_name}".`)
-      setNearbyJobs()
+      addToNotifications(data)
       navigate('..')
     } catch (err) {
       console.log(err)
@@ -65,21 +66,28 @@ export default function EnrollJob () {
   }
 
   function handleDuration (e) {
-    const { name } = e.target
+    var { name } = e.target
     if (name == 'add-outline') {
       if (timeDuration < entitlement)
         setTimeDuration(prev => {
           if (prev == 15 && timeDuration < entitlement) setDisabled('none')
-          if (prev == entitlement - 1) setDisabled('plus')
+          if (prev + 1 == entitlement) setDisabled('plus')
           return (prev += 1)
         })
-    } else {
+    } else if (name == 'remove-outline') {
       if (timeDuration >= 16)
         setTimeDuration(prev => {
           if (prev > 16) setDisabled('none')
           else setDisabled('minus')
           return (prev -= 1)
         })
+    } else if ((name = 'manual-duration')) {
+      var value = parseInt(e.target.value)
+      if (value < 16) setDisabled('minus')
+      else if (value >= 16 && value < entitlement) setDisabled('none')
+      else if (value == entitlement) setDisabled('plus')
+
+      setTimeDuration(parseInt(e.target.value))
     }
   }
   useEffect(() => {
@@ -119,47 +127,19 @@ export default function EnrollJob () {
                   {timestampToDate(job.job_start_date)}
                 </span>
               </p>
+              {/* <p className='mt-1 truncate text-sm text-gray-500'>
+                Deadline:{' '}
+                <span className='text-gray-700'>
+                  {timestampToDate(job.job_deadline)}
+                </span>
+              </p> */}
               <p className='mt-1 truncate text-sm text-gray-500'>
-                Entitlement:{' '}
+                Family entitlement:{' '}
                 <span className='text-gray-700'>{entitlement} days left</span>
               </p>
             </div>
           </div>
-          <form className='p-6' onSubmit={sendApplication}>
-            <div>
-              <p className='block text-sm font-medium text-gray-700'>
-                Work duration
-              </p>
-              <div className='mt-1 flex w-full justify-center items-center gap-4'>
-                <button
-                  type='button'
-                  name='remove'
-                  onClick={handleDuration}
-                  disabled={disabled == 'minus' || disabled == 'all'}
-                  className={`p-2 flex justify-center items-center ${
-                    disabled == 'minus' || disabled == 'all'
-                      ? 'bg-transparent'
-                      : 'bg-gray-100'
-                  }  rounded-md`}
-                >
-                  <ion-icon name='remove-outline'></ion-icon>
-                </button>
-                <p className='text-sm text-gray-500'>{timeDuration} day</p>
-                <button
-                  type='button'
-                  name='add'
-                  disabled={disabled == 'plus' || disabled == 'all'}
-                  onClick={handleDuration}
-                  className={`p-2 flex justify-center items-center ${
-                    disabled == 'plus' || disabled == 'all'
-                      ? 'bg-transparent'
-                      : 'bg-gray-100'
-                  }  rounded-md`}
-                >
-                  <ion-icon name='add-outline'></ion-icon>
-                </button>
-              </div>
-            </div>
+          <form className='px-6 pb-6' onSubmit={sendApplication}>
             <div className='mt-2'>
               <label
                 htmlFor='start_date'
@@ -184,6 +164,51 @@ export default function EnrollJob () {
                 />
               </div>
             </div>
+            <div className='mt-2'>
+              <p className='block text-sm font-medium text-gray-700'>
+                Work duration
+              </p>
+              <div className='mt-1 flex w-full justify-center items-center gap-4'>
+                <button
+                  type='button'
+                  name='remove'
+                  onClick={handleDuration}
+                  disabled={disabled == 'minus' || disabled == 'all'}
+                  className={`p-2 flex justify-center items-center ${
+                    disabled == 'minus' || disabled == 'all'
+                      ? 'bg-transparent'
+                      : 'bg-gray-100'
+                  }  rounded-md`}
+                >
+                  <ion-icon name='remove-outline'></ion-icon>
+                </button>
+                <input
+                  value={timeDuration}
+                  type='number'
+                  min={15}
+                  name='manual-duration'
+                  max={entitlement}
+                  required
+                  onChange={handleDuration}
+                  className='block w-1/3 appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+                />
+                day
+                <button
+                  type='button'
+                  name='add'
+                  disabled={disabled == 'plus' || disabled == 'all'}
+                  onClick={handleDuration}
+                  className={`p-2 flex justify-center items-center ${
+                    disabled == 'plus' || disabled == 'all'
+                      ? 'bg-transparent'
+                      : 'bg-gray-100'
+                  }  rounded-md`}
+                >
+                  <ion-icon name='add-outline'></ion-icon>
+                </button>
+              </div>
+            </div>
+
             <div className='pt-4 rounded-b-lg w-full flex items-center gap-4 justify-center'>
               <button
                 disabled={loadingJobDetail}

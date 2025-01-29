@@ -16,7 +16,7 @@ const applyToJob = async (req, res) => {
     }
     const supabase = createClient({ req, res })
     const { data, error } = await supabase
-      .from('job_applications')
+      .from('job_enrollments')
       .upsert(jobDetail)
       .select()
     if (error) throw error

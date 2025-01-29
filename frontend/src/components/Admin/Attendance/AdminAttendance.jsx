@@ -228,6 +228,12 @@ export default function AdminAttendance () {
                               name='checkmark-done-outline'
                             ></ion-icon>
                           </p>
+                        ) : work.Workers == 0 ? (
+                          <p className='flex items-center w-[150px] justify-between gap-2 ring-1 ring-yellow-500 text-yellow-500 px-4 py-1 bg-gray-50 rounded-full'>
+                            No worker
+                            <span className='sr-only'>, {work.Name}</span>
+                            <ion-icon color='warning' name='people-outline'></ion-icon>
+                          </p>
                         ) : (
                           <button onClick={() => giveAttendance(work.job_id)}>
                             <p className='flex items-center w-[150px] justify-between gap-2 ring-1 ring-indigo-500 text-indigo-700 px-4 py-1 bg-indigo-50 rounded-full'>
@@ -247,7 +253,7 @@ export default function AdminAttendance () {
                 })}
               </tbody>
             </table>
-            <div className='sticky bottom-0 h-[25px] w-full bg-gradient-to-t  from-gray-50'/>
+            <div className='sticky bottom-0 h-[25px] w-full bg-gradient-to-t  from-gray-50' />
           </div>
         )}
       </div>

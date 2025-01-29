@@ -2,14 +2,18 @@ import { create } from 'zustand'
 import { supabase } from '..'
 import { toast } from 'sonner'
 const NODE_ENV = import.meta.env.MODE
+import { socket } from '../socket'
 
 export const authStore = create((set, get) => ({
   user: { email: '', type: '', id: '', photo: '' },
+  notifications: [],
   base: NODE_ENV === 'development' ? 'http://localhost:8080' : '',
   captchaToken: '',
   loading: false,
   notificationPanel: false,
   setNotificationPanel: status => set({ notificationPanel: status }),
+  addToNotifications: notification =>
+    set(state => ({ notifications: [...state.notifications, notification] })),
   setCaptchaToken: token => set({ captchaToken: token }),
   checkUser: async () => {
     return new Promise(async (resolve, reject) => {
@@ -165,5 +169,30 @@ export const authStore = create((set, get) => ({
       password = import.meta.env.VITE_ADMIN_PASSWORD
     }
     await loginUser(email, password, navigate)
+  },
+  setNotifications: async () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { id, type } = get().user
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify({ userId: id, type: type })
+        }
+        const res = await fetch(`${get().base}/api/auth/notification`, options)
+        const { data, error } = await res.json()
+        if (error) throw error
+        set({ notifications: data })
+        resolve(data)
+      } catch (err) {
+        console.log(err)
+        toast.error(err)
+        reject(null)
+      }
+    })
   }
 }))
