@@ -29,24 +29,24 @@ export default function NotificationCard ({ notification, type }) {
                 <div className='w-full'>
                   <p className='text-sm font-medium text-gray-900'>
                     {notification?.category == 'job application'
-                      ? `Job Requirement in job id: ${notification?.details.Job}`
+                      ? `Job Requirement in job id: ${notification?.details?.Job}`
                       : ''}
                   </p>
                   {type == 'admin' && (
                     <div>
                       <p className='mt-1 text-sm text-gray-500'>
                         <span>Worker: </span>
-                        <span>{notification?.details.Worker}</span>
+                        <span>{notification?.details?.Worker}</span>
                       </p>
                       <p className='mt-1 text-sm text-gray-500'>
                         <span>Joining date: </span>
-                        <span>{notification?.details.Joining}</span>
+                        <span>{notification?.details?.Joining}</span>
                       </p>
                     </div>
                   )}
                   <p className='mt-1 text-sm text-gray-500'>
                     <span>Time period: </span>
-                    <span>{notification?.details.Duration}</span>
+                    <span>{notification?.details?.Duration}</span>
                   </p>
                   <div className='mt-1 text-sm text-gray-500 flex items-center gap-1'>
                     <ion-icon name='calendar-outline'></ion-icon>

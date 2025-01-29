@@ -13,7 +13,7 @@ export default function EnrollJob () {
   const [startDate, setStartDate] = useState('')
   const { jobId } = useParams()
   const navigate = useNavigate()
-  const { applyToJob, nearbyJobs, setNearbyJobs } = useWorkerStore()
+  const { applyToJob, nearbyJobs } = useWorkerStore()
   const { user, addToNotifications } = authStore()
   const [disabled, setDisabled] = useState('minus')
 
@@ -31,7 +31,7 @@ export default function EnrollJob () {
       )
       toast.dismiss()
       toast.success(`Successfully applied to "${job.job_name}".`)
-      addToNotifications(data)
+      addToNotifications(data[0])
       navigate('..')
     } catch (err) {
       console.log(err)

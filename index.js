@@ -74,7 +74,6 @@ io.on('connection', socket => {
   try {
     socket.on('join', userId => {
       users[userId] = socket.id
-      console.log("users are: ", users)
     })
     // Receiving application from worker, sending to db, generating notification to sachiv
     socket.on('sendApplication', async details => {
