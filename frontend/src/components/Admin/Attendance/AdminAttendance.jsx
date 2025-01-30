@@ -178,6 +178,7 @@ export default function AdminAttendance () {
               <tbody className='divide-y divide-gray-200 bg-white'>
                 {updatedJobs.map((work, workIdx) => {
                   var deadline = new Date(work.timestamp)
+                  var start = new Date(work.job_start_date)
                   var now = new Date()
                   deadline.setHours(0, 0, 0, 0)
                   now.setHours(0, 0, 0, 0)
@@ -219,7 +220,8 @@ export default function AdminAttendance () {
                         {work.Workers}
                       </td>
                       <td className='py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6 w-[150px]'>
-                        {deadline.getTime() < now.getTime() ? (
+                        {/* Showing action button (for attendance) as completed if the deadline is met*/}
+                        {deadline < now ? (
                           <p className='flex items-center w-[150px] justify-between gap-2 ring-1 ring-green-500 text-green-500 px-4 py-1 bg-gray-50 rounded-full'>
                             Completed
                             <span className='sr-only'>, {work.Name}</span>
@@ -228,11 +230,23 @@ export default function AdminAttendance () {
                               name='checkmark-done-outline'
                             ></ion-icon>
                           </p>
+                        ) : start > now ? (
+                          <p className='flex items-center w-[150px] justify-between gap-2 ring-1 ring-yellow-500 text-yellow-500 px-4 py-1 bg-gray-50 rounded-full'>
+                            Not started
+                            <span className='sr-only'>Not started</span>
+                            <ion-icon
+                              color='warning'
+                              name='hourglass-outline'
+                            ></ion-icon>
+                          </p>
                         ) : work.Workers == 0 ? (
                           <p className='flex items-center w-[150px] justify-between gap-2 ring-1 ring-yellow-500 text-yellow-500 px-4 py-1 bg-gray-50 rounded-full'>
                             No worker
-                            <span className='sr-only'>, {work.Name}</span>
-                            <ion-icon color='warning' name='people-outline'></ion-icon>
+                            <span className='sr-only'>No worker</span>
+                            <ion-icon
+                              color='warning'
+                              name='people-outline'
+                            ></ion-icon>
                           </p>
                         ) : (
                           <button onClick={() => giveAttendance(work.job_id)}>

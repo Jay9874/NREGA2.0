@@ -150,7 +150,7 @@ export const useAdminStore = create((set, get) => ({
     try {
       const { data: employees, error } = await supabase
         .from('worker')
-        .select('*')
+        .select('*, address(*)')
         .eq('address', get().profile.location_id.id)
       if (error) {
         toast.error(error.message)

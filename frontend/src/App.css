@@ -17,6 +17,13 @@
   --ion-color-success-contrast-rgb: 255,255,255;
   --ion-color-success-shade: #15803d;
   --ion-color-success-tint: #22c55e;
+
+  --ion-color-warning: #f0b100;
+  --ion-color-warning-rgb: 255, 239, 59;
+  --ion-color-warning-contrast: #fff;
+  --ion-color-warning-contrast-rgb: 255,255,255;
+  --ion-color-warning-shade: #fdd835;
+  --ion-color-warning-tint: #ffee58;
 }
 
 .pulseBtn {
