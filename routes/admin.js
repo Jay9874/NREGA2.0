@@ -54,4 +54,5 @@ router.post('/add-attendance', addAttendance)
  * @access public
  **/
 router.post('/payout', payout)
+
 export { router as adminRoutes }

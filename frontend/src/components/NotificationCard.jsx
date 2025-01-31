@@ -1,9 +1,11 @@
 import { Fragment, useState } from 'react'
 import { Transition } from '@headlessui/react'
 import { timestampToDate } from '../utils/dataFormating'
+import { useAdminStore } from '../api/store'
 
 export default function NotificationCard ({ notification, type }) {
   const [show, setShow] = useState(true)
+  const { enrollWorker } = useAdminStore()
 
   return (
     <>
@@ -61,9 +63,9 @@ export default function NotificationCard ({ notification, type }) {
                       <button
                         type='button'
                         className='flex w-full items-center justify-center rounded-none rounded-tr-lg border border-transparent px-4 py-3 text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-indigo-500'
-                        onClick={() => {
-                          setShow(false)
-                        }}
+                        onClick={() =>
+                          enrollWorker(notification?.details?.application_Id)
+                        }
                       >
                         Accept
                       </button>

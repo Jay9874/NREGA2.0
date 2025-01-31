@@ -97,7 +97,8 @@ io.on('connection', socket => {
               Worker: details.by_worker,
               Job: details.job,
               Duration: details.time_period,
-              Joining: details.starting_date
+              Joining: details.starting_date,
+              application_id: jobDetail.application_id
             }
           })
           .select()
@@ -109,7 +110,8 @@ io.on('connection', socket => {
               category: 'job application',
               details: {
                 Job: details.job,
-                Duration: details.time_period
+                Duration: details.time_period,
+                application_id: jobDetail.application_id
               }
             })
             .select()
@@ -126,6 +128,18 @@ io.on('connection', socket => {
         console.log(err)
         socket.emit('error', err)
       }
+    })
+
+    // Enrolling worker
+    socket.on('enroll', async (applicationId, sender) => {
+      const { data, error } = await supabase
+        .from('job_enrollments')
+        .upsert({ status: 'enrolled', remark: 'Enrolled successfully.' })
+        .select()
+      if (error) throw error
+      const receiver = users[sender]
+      console.log(data)
+      io.to(receiver).emit('enrollmentNotification', data)
     })
   } catch (err) {
     console.log(err)

@@ -4,6 +4,7 @@ import { calculateAge, timestampToDate } from '../../utils/dataFormating'
 import { authStore } from './authStore'
 import { toast } from 'sonner'
 const NODE_ENV = import.meta.env.MODE
+import { socket } from '../socket'
 
 export const useAdminStore = create((set, get) => ({
   user: authStore.getState().user,
@@ -273,4 +274,17 @@ export const useAdminStore = create((set, get) => ({
       toast.error(err.message)
     }
   },
+  enrollWorker: async applicationId => {
+    try {
+      set({ loading: true })
+      const { id } = get().profile
+      socket.emit('enroll', { applicationId, id })
+      socket.on('completeEnrollment', enrollmentNotification => {
+        toast.success('Successfully enrolled.')
+      })
+    } catch (err) {
+      set({ loading: false })
+      console.log(err)
+    }
+  }
 }))
