@@ -194,5 +194,20 @@ export const authStore = create((set, get) => ({
         reject(null)
       }
     })
+  },
+  clearANotification: async notificationId => {
+    try {
+      const notifications = get().notifications
+      const { type } = get().user
+      socket.emit('clearANotification', [notificationId, type], ({ data, error }) => {
+        if (error) throw error
+        const updatedNotifications = notifications.filter(
+          (obj, index) => obj.id != notificationId
+        )
+        set({ notifications: updatedNotifications })
+      })
+    } catch (err) {
+      console.log(err)
+    }
   }
 }))

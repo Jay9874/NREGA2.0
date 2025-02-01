@@ -131,7 +131,7 @@ io.on('connection', socket => {
     })
 
     // Enrolling worker
-    socket.on('enroll', async (applicationId, sender) => {
+    socket.on('enroll', async ({ applicationId, sender }, callback) => {
       try {
         const { data, error } = await supabase
           .from('job_enrollments')
@@ -140,12 +140,55 @@ io.on('connection', socket => {
           .select()
         if (error) throw error
         const receiver = users[sender]
-        console.log(data)
-        io.to(receiver).emit('enrollmentNotification', data)
+        callback({
+          status: 200,
+          data: data,
+          error: null,
+          message: 'successfully enrolled'
+        })
+        return
       } catch (err) {
+        callback({
+          status: 501,
+          data: null,
+          error: 'something went wrong',
+          message: 'error in database.'
+        })
         console.log(err)
       }
     })
+
+    // Clearing a notification
+    socket.on(
+      'clearANotification',
+      async ([notificationId, type], callback) => {
+        try {
+          const searchTable = `${
+            type == 'admin' ? 'sachiv' : 'worker'
+          }_notifications`
+          const { data, error } = await supabase
+            .from(searchTable)
+            .delete()
+            .eq('id', notificationId)
+            .select()
+          if (error) throw error
+          callback({
+            data: data,
+            status: 200,
+            error: null,
+            message: 'Notification cleared.'
+          })
+        } catch (err) {
+          console.log(err)
+          callback({
+            status: 501,
+            data: null,
+            error: 'something went wrong, try again.',
+            message: 'something broke in database.'
+          })
+        }
+      }
+    )
   } catch (err) {
     console.log(err)
     socket.emit('error', err)
