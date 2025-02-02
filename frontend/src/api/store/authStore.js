@@ -12,8 +12,9 @@ export const authStore = create((set, get) => ({
   loading: false,
   notificationPanel: false,
   setNotificationPanel: status => set({ notificationPanel: status }),
-  addToNotifications: notification =>
-    set(state => ({ notifications: [...state.notifications, notification] })),
+  addToNotifications: notification => {
+    set(state => ({ notifications: [...state.notifications, notification[0]] }))
+  },
   setCaptchaToken: token => set({ captchaToken: token }),
   checkUser: async () => {
     return new Promise(async (resolve, reject) => {

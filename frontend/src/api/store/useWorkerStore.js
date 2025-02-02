@@ -367,7 +367,6 @@ export const useWorkerStore = create((set, get) => ({
         socket.emit('sendApplication', detail)
         socket.on('receiveNotification', async notification => {
           await get().setNearbyJobs()
-          console.log('received notification: ', notification)
           resolve(notification)
         })
       } catch (err) {

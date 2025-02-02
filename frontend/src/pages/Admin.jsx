@@ -43,7 +43,6 @@ export const Admin = () => {
     socket.emit('join', user.id)
     socket.on('newNotification', (notification)=>{
       addToNotifications(notification)
-      console.log("received notification at admin side: ", notification)
     })
   }, [])
 
