@@ -278,12 +278,18 @@ export const useAdminStore = create((set, get) => ({
     try {
       set({ loading: true })
       const { id } = get().profile
-      socket.emit('enroll', { applicationId, id })
-      socket.on('completeEnrollment', enrollmentNotification => {
-        toast.success('Successfully enrolled.')
-      })
+      socket.emit(
+        'enroll',
+        { applicationId: applicationId, sender: id },
+        ({ error, data }) => {
+          if (error) throw error
+          toast.success('Successfully enrolled.')
+          set({ loading: false })
+        }
+      )
     } catch (err) {
       set({ loading: false })
+      toast.error('Something went wrong.')
       console.log(err)
     }
   },

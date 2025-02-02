@@ -374,5 +374,6 @@ export const useWorkerStore = create((set, get) => ({
       }
     })
   },
+  
   loadNotifications: async () => {}
 }))

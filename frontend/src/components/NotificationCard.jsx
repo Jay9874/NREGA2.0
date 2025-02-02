@@ -1,11 +1,12 @@
 import { Fragment, useState } from 'react'
 import { Transition } from '@headlessui/react'
 import { timestampToDate } from '../utils/dataFormating'
-import { useAdminStore } from '../api/store'
+import { authStore, useAdminStore } from '../api/store'
 
 export default function NotificationCard ({ notification, type }) {
   const [show, setShow] = useState(true)
   const { enrollWorker, rejectApplication } = useAdminStore()
+  const {clearANotification} = authStore()
   const [rejectionRemark, setRejectionRemark] = useState('')
 
   async function rejectApplication (e) {
@@ -39,24 +40,24 @@ export default function NotificationCard ({ notification, type }) {
                   <div className='w-full'>
                     <p className='text-sm font-medium text-gray-900'>
                       {notification?.category == 'job application'
-                        ? `Job Requirement in job id: ${notification?.details?.Job}`
+                        ? `Job Requirement in job id: ${notification?.details??.Job}`
                         : ''}
                     </p>
                     {type == 'admin' && (
                       <div>
                         <p className='mt-1 text-sm text-gray-500'>
                           <span>Worker: </span>
-                          <span>{notification?.details?.Worker}</span>
+                          <span>{notification?.details??.Worker}</span>
                         </p>
                         <p className='mt-1 text-sm text-gray-500'>
                           <span>Joining date: </span>
-                          <span>{notification?.details?.Joining}</span>
+                          <span>{notification?.details??.Joining}</span>
                         </p>
                       </div>
                     )}
                     <p className='mt-1 text-sm text-gray-500'>
                       <span>Time period: </span>
-                      <span>{notification?.details?.Duration}</span>
+                      <span>{notification?.details??.Duration}</span>
                     </p>
                     <div className='mt-1 text-sm text-gray-500 flex items-center gap-1'>
                       <ion-icon name='calendar-outline'></ion-icon>
@@ -71,9 +72,11 @@ export default function NotificationCard ({ notification, type }) {
                         <button
                           type='button'
                           className='flex w-full items-center justify-center rounded-none rounded-tr-lg border border-transparent px-4 py-3 text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-indigo-500'
-                          onClick={() =>
-                            enrollWorker(notification?.details?.application_Id)
-                          }
+                          onClick={() =>{
+                            enrollWorker(notification?.details?.application_id)
+                          clearANotification(notification.id)
+                            setShow(false)
+                        }}
                         >
                           Accept
                         </button>
@@ -85,6 +88,7 @@ export default function NotificationCard ({ notification, type }) {
                           type='button'
                           className='flex w-full items-center justify-center rounded-none rounded-br-lg border border-transparent px-4 py-3 text-sm font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500'
                           onClick={() => {
+                        clearANotification(notification.id)
                             setShow(false)
                           }}
                         >
