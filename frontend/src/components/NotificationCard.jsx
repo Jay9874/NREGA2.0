@@ -5,7 +5,14 @@ import { useAdminStore } from '../api/store'
 
 export default function NotificationCard ({ notification, type }) {
   const [show, setShow] = useState(true)
-  const { enrollWorker } = useAdminStore()
+  const { enrollWorker, rejectApplication } = useAdminStore()
+  const [rejectionRemark, setRejectionRemark] = useState('')
+
+  async function rejectApplication (e) {
+    e.preventDefault()
+    rejectApplication(notification?.details?.application_Id)
+    console.log('clicked submit')
+  }
 
   return (
     <>
@@ -26,65 +33,104 @@ export default function NotificationCard ({ notification, type }) {
             leaveFrom='opacity-100'
             leaveTo='opacity-0'
           >
-            <div className='pointer-events-auto flex w-full max-w-md divide-x divide-gray-200 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5'>
-              <div className='flex w-0 flex-1 items-center p-4'>
-                <div className='w-full'>
-                  <p className='text-sm font-medium text-gray-900'>
-                    {notification?.category == 'job application'
-                      ? `Job Requirement in job id: ${notification?.details?.Job}`
-                      : ''}
-                  </p>
-                  {type == 'admin' && (
-                    <div>
-                      <p className='mt-1 text-sm text-gray-500'>
-                        <span>Worker: </span>
-                        <span>{notification?.details?.Worker}</span>
-                      </p>
-                      <p className='mt-1 text-sm text-gray-500'>
-                        <span>Joining date: </span>
-                        <span>{notification?.details?.Joining}</span>
-                      </p>
+            <div className='pointer-events-auto flex flex-col w-full max-w-md divide-y divide-gray-200 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5'>
+              <div className='flex divide-x divide-gray-200'>
+                <div className='flex w-0 flex-1 items-center p-4'>
+                  <div className='w-full'>
+                    <p className='text-sm font-medium text-gray-900'>
+                      {notification?.category == 'job application'
+                        ? `Job Requirement in job id: ${notification?.details?.Job}`
+                        : ''}
+                    </p>
+                    {type == 'admin' && (
+                      <div>
+                        <p className='mt-1 text-sm text-gray-500'>
+                          <span>Worker: </span>
+                          <span>{notification?.details?.Worker}</span>
+                        </p>
+                        <p className='mt-1 text-sm text-gray-500'>
+                          <span>Joining date: </span>
+                          <span>{notification?.details?.Joining}</span>
+                        </p>
+                      </div>
+                    )}
+                    <p className='mt-1 text-sm text-gray-500'>
+                      <span>Time period: </span>
+                      <span>{notification?.details?.Duration}</span>
+                    </p>
+                    <div className='mt-1 text-sm text-gray-500 flex items-center gap-1'>
+                      <ion-icon name='calendar-outline'></ion-icon>
+                      {timestampToDate(notification?.created_at)}
                     </div>
-                  )}
-                  <p className='mt-1 text-sm text-gray-500'>
-                    <span>Time period: </span>
-                    <span>{notification?.details?.Duration}</span>
-                  </p>
-                  <div className='mt-1 text-sm text-gray-500 flex items-center gap-1'>
-                    <ion-icon name='calendar-outline'></ion-icon>
-                    {timestampToDate(notification?.created_at)}
+                  </div>
+                </div>
+                <div className='flex'>
+                  <div className='flex flex-col divide-y divide-gray-200'>
+                    {type == 'admin' && (
+                      <div className='flex h-0 flex-1'>
+                        <button
+                          type='button'
+                          className='flex w-full items-center justify-center rounded-none rounded-tr-lg border border-transparent px-4 py-3 text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-indigo-500'
+                          onClick={() =>
+                            enrollWorker(notification?.details?.application_Id)
+                          }
+                        >
+                          Accept
+                        </button>
+                      </div>
+                    )}
+                    {type == 'worker' && (
+                      <div className='flex h-0 flex-1'>
+                        <button
+                          type='button'
+                          className='flex w-full items-center justify-center rounded-none rounded-br-lg border border-transparent px-4 py-3 text-sm font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500'
+                          onClick={() => {
+                            setShow(false)
+                          }}
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
-              <div className='flex'>
-                <div className='flex flex-col divide-y divide-gray-200'>
-                  {type == 'admin' && (
-                    <div className='flex h-0 flex-1'>
-                      <button
-                        type='button'
-                        className='flex w-full items-center justify-center rounded-none rounded-tr-lg border border-transparent px-4 py-3 text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-indigo-500'
-                        onClick={() =>
-                          enrollWorker(notification?.details?.application_Id)
-                        }
-                      >
-                        Accept
-                      </button>
+              {type == 'admin' && (
+                <div>
+                  {/* Rejection form */}
+                  <form
+                    className='flex justify-between items-center h-fit'
+                    onSubmit={rejectApplication}
+                  >
+                    <div className='md:w-1/2 h-full flex-grow'>
+                      <label
+                        htmlFor='remark'
+                        className='block text-sm font-medium text-gray-700'
+                      ></label>
+                      <div className='relative'>
+                        <input
+                          type='text'
+                          required
+                          name='remark'
+                          id='remark'
+                          value={rejectionRemark}
+                          onChange={e => setRejectionRemark(e.target.value)}
+                          className='w-full ml-1 rounded-md bg-transparent focus:outline-none outline-none border-none sm:text-sm'
+                          placeholder='write remark to reject...'
+                          aria-invalid='true'
+                          aria-describedby='remark-error'
+                        />
+                      </div>
                     </div>
-                  )}
-
-                  <div className='flex h-0 flex-1'>
                     <button
-                      type='button'
-                      className='flex w-full items-center justify-center rounded-none rounded-br-lg border border-transparent px-4 py-3 text-sm font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500'
-                      onClick={() => {
-                        setShow(false)
-                      }}
+                      type='submit'
+                      className='flex w-[78.58px] items-center justify-center rounded-none rounded-br-lg border border-transparent px-4 py-3 text-sm font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500'
                     >
-                      {type == 'admin' ? 'Reject' : 'Clear'}
+                      Reject
                     </button>
-                  </div>
+                  </form>
                 </div>
-              </div>
+              )}
             </div>
           </Transition>
         </div>

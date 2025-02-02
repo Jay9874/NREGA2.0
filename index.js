@@ -132,14 +132,35 @@ io.on('connection', socket => {
 
     // Enrolling worker
     socket.on('enroll', async (applicationId, sender) => {
-      const { data, error } = await supabase
-        .from('job_enrollments')
-        .upsert({ status: 'enrolled', remark: 'Enrolled successfully.' })
-        .select()
-      if (error) throw error
-      const receiver = users[sender]
-      console.log(data)
-      io.to(receiver).emit('enrollmentNotification', data)
+      try {
+        const { data, error } = await supabase
+          .from('job_enrollments')
+          .upsert({ status: 'enrolled', remark: 'Enrolled successfully.' })
+          .select()
+        if (error) throw error
+        const receiver = users[sender]
+        console.log(data)
+        io.to(receiver).emit('enrollmentNotification', data)
+      } catch (err) {
+        console.log(err)
+      }
+    })
+
+    // Socket request to reject an application
+    socket.on('rejectApplication', async ({ applicationId, sender }) => {
+      try {
+        const { data, error } = await supabase
+          .from('job_enrollments')
+          .upsert({ status: 'enrolled', remark: 'Enrolled successfully.' })
+          .eq('application_id', applicationId)
+          .select()
+        if (error) throw error
+        const receiver = users[sender]
+        console.log(data)
+        io.to(receiver).emit('enrollmentNotification', data)
+      } catch (err) {
+        console.log(err)
+      }
     })
   } catch (err) {
     console.log(err)

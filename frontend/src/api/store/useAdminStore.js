@@ -286,5 +286,25 @@ export const useAdminStore = create((set, get) => ({
       set({ loading: false })
       console.log(err)
     }
+  },
+  rejectApplication: async applicationId => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        set({ loading: true })
+        const { id } = get().profile
+        socket.emit('rejectApplication', {
+          applicationId: applicationId,
+          sender: id
+        }, ({data, error})=>{
+          if(error) throw error
+          console.log(error)
+          toast.success('Rejected the application.')
+        })
+      } catch (err) {
+        console.log(err)
+        set({ loading: false })
+        toast.error('Something went wrong.')
+      }
+    })
   }
 }))
