@@ -75,7 +75,7 @@ io.on('connection', socket => {
     socket.on('join', userId => {
       users[userId] = socket.id
     })
-    // Receiving application from worker, sending to db, generating notification to sachiv
+    // Receiving application from worker, sending to db, generating notification to sachiv and worker
     socket.on('sendApplication', async details => {
       try {
         var jobDetail = {
@@ -89,30 +89,32 @@ io.on('connection', socket => {
           .upsert(jobDetail)
           .select()
         if (error) throw error
-        const { data: notification, errAtNotification } = await supabase
+        const { data: notification, error: errAtNotification } = await supabase
           .from('sachiv_notifications')
           .insert({
             category: 'job application',
+            tagline: `Required job in job id: ${details.job}`,
             details: {
               Worker: details.by_worker,
-              Job: details.job,
-              Duration: details.time_period,
+              Duration: `${details.time_period} days`,
               Joining: details.starting_date,
-              application_id: jobDetail.application_id
-            }
+              Application_id: jobDetail.application_id
+            },
+            application_id: jobDetail.application_id
           })
           .select()
         if (errAtNotification) throw errAtNotification
-        const { data: workerNotification, errAtWorkerNotification } =
+        const { data: workerNotification, error: errAtWorkerNotification } =
           await supabase
             .from('worker_notifications')
             .insert({
               category: 'job application',
+              tagline: `Applied for job in job id: ${details.job}`,
               details: {
-                Job: details.job,
-                Duration: details.time_period,
-                application_id: jobDetail.application_id
-              }
+                Duration: `${details.time_period} days`,
+                Application_id: jobDetail.application_id
+              },
+              application_id: jobDetail.application_id
             })
             .select()
         if (errAtWorkerNotification) throw errAtWorkerNotification
@@ -185,6 +187,58 @@ io.on('connection', socket => {
             data: null,
             error: 'something went wrong, try again.',
             message: 'something broke in database.'
+          })
+        }
+      }
+    )
+
+    // Rejection of an application from admin side.
+    socket.on(
+      'rejectApplication',
+      async ({ notification, remark }, callback) => {
+        try {
+          const { Worker, Application_id } = notification.details
+          const [JobId] = notification.tagline.match(/(\d+)/)
+          const receiver = users[Worker]
+          const { data, error } = await supabase
+            .from('job_enrollments')
+            .update({ status: 'rejected', remark: remark })
+            .eq('application_id', notification.application_id)
+            .select()
+          if (error) throw error
+
+          // update the last notification about this application for worker
+          const { data: notificationUpdate, error: errAtUpdate } =
+            await supabase
+              .from('worker_notifications')
+              .insert({
+                category: 'job application',
+                tagline: `Job application rejected for job id: ${JobId}`,
+                details: {
+                  Application_id: Application_id,
+                  Remark: remark
+                },
+                application_id: Application_id
+              })
+              .select()
+          if (errAtUpdate) throw errAtUpdate
+          // sending update to worker socket
+          if (receiver) {
+            io.to(receiver).emit('rejection', notificationUpdate)
+          }
+          callback({
+            data: data,
+            status: 200,
+            error: null,
+            message: 'rejected the application.'
+          })
+        } catch (err) {
+          console.log(err)
+          callback({
+            data: null,
+            status: 501,
+            error: err,
+            message: 'an error occurred at database.'
           })
         }
       }

@@ -26,7 +26,8 @@ const tableHeading = [
 
 const statusStyles = {
   enrolled: 'bg-green-100 text-green-800',
-  applied: 'bg-yellow-100 text-yellow-800'
+  applied: 'bg-yellow-100 text-yellow-800',
+  rejected: 'bg-red-100 text-red-800',
 }
 
 const Jobs = () => {
@@ -65,6 +66,8 @@ const Jobs = () => {
         'enrolled'
       ) : job.Status == 'applied' ? (
         'applied'
+      ) : job.Status == 'rejected' ? (
+        'rejected'
       ) : (
         <button onClick={() => jobProfile(job.job_id, job.sachiv_id, job)}>
           <p className='-ml-2 flex items-center w-[80px] justify-between gap-1 ring-1 ring-indigo-500 text-indigo-700 px-2.5 py-0.5 bg-indigo-50 rounded-full'>

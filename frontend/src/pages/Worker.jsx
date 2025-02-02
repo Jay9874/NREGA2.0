@@ -10,7 +10,6 @@ import { workerNavigation } from '../utils/sidelinks'
 import { workerTopNavigation } from '../utils/dashboard_toplink'
 import HomeLoading from '../components/Skeleton/HomeLoading'
 import NotificationPanel from '../components/NotificationPanel'
-import { toast } from 'sonner'
 
 export const Worker = () => {
   const navigate = useNavigate()
@@ -53,6 +52,9 @@ export const Worker = () => {
     handleSetup()
     socket.connect()
     socket.emit('join', user.id)
+    socket.on('rejection', notification => {
+      addToNotifications(notification)
+    })
   }, [])
 
   return (

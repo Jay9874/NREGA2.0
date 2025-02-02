@@ -6,13 +6,13 @@ import { authStore, useAdminStore } from '../api/store'
 export default function NotificationCard ({ notification, type }) {
   const [show, setShow] = useState(true)
   const { enrollWorker, rejectApplication } = useAdminStore()
-  const {clearANotification} = authStore()
+  const { clearANotification } = authStore()
   const [rejectionRemark, setRejectionRemark] = useState('')
 
-  async function rejectApplication (e) {
+  async function reject (e) {
     e.preventDefault()
-    rejectApplication(notification?.details?.application_Id)
-    console.log('clicked submit')
+    const data = await rejectApplication(notification, rejectionRemark)
+    clearANotification(notification.id)
   }
 
   return (
@@ -39,26 +39,33 @@ export default function NotificationCard ({ notification, type }) {
                 <div className='flex w-0 flex-1 items-center p-4'>
                   <div className='w-full'>
                     <p className='text-sm font-medium text-gray-900'>
-                      {notification?.category == 'job application'
-                        ? `Job Requirement in job id: ${notification?.details??.Job}`
-                        : ''}
+                      {notification.tagline}
+                      {/* {notification?.category == 'job application'
+                        ? `Job Requirement in job id: ${notification?.details?.Job}`
+                        : ''} */}
                     </p>
-                    {type == 'admin' && (
+                    {Object.keys(notification.details).map((header, index) => (
+                      <p key={index} className='mt-1 text-sm text-gray-500'>
+                        <span>{`${header}: `}</span>
+                        <span>{notification?.details[header]}</span>
+                      </p>
+                    ))}
+                    {/* {type == 'admin' && (
                       <div>
                         <p className='mt-1 text-sm text-gray-500'>
                           <span>Worker: </span>
-                          <span>{notification?.details??.Worker}</span>
+                          <span>{notification?.details?.Worker}</span>
                         </p>
                         <p className='mt-1 text-sm text-gray-500'>
                           <span>Joining date: </span>
-                          <span>{notification?.details??.Joining}</span>
+                          <span>{notification?.details?.Joining}</span>
                         </p>
                       </div>
                     )}
                     <p className='mt-1 text-sm text-gray-500'>
                       <span>Time period: </span>
-                      <span>{notification?.details??.Duration}</span>
-                    </p>
+                      <span>{notification?.details?.Duration}</span>
+                    </p> */}
                     <div className='mt-1 text-sm text-gray-500 flex items-center gap-1'>
                       <ion-icon name='calendar-outline'></ion-icon>
                       {timestampToDate(notification?.created_at)}
@@ -72,11 +79,11 @@ export default function NotificationCard ({ notification, type }) {
                         <button
                           type='button'
                           className='flex w-full items-center justify-center rounded-none rounded-tr-lg border border-transparent px-4 py-3 text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-indigo-500'
-                          onClick={() =>{
-                            enrollWorker(notification?.details?.application_id)
-                          clearANotification(notification.id)
+                          onClick={() => {
+                            enrollWorker(notification?.application_id)
+                            clearANotification(notification.id)
                             setShow(false)
-                        }}
+                          }}
                         >
                           Accept
                         </button>
@@ -88,7 +95,7 @@ export default function NotificationCard ({ notification, type }) {
                           type='button'
                           className='flex w-full items-center justify-center rounded-none rounded-br-lg border border-transparent px-4 py-3 text-sm font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500'
                           onClick={() => {
-                        clearANotification(notification.id)
+                            clearANotification(notification.id)
                             setShow(false)
                           }}
                         >
@@ -104,7 +111,7 @@ export default function NotificationCard ({ notification, type }) {
                   {/* Rejection form */}
                   <form
                     className='flex justify-between items-center h-fit'
-                    onSubmit={rejectApplication}
+                    onSubmit={reject}
                   >
                     <div className='md:w-1/2 h-full flex-grow'>
                       <label

@@ -41,11 +41,11 @@ export const Admin = () => {
     handleSetup()
     socket.connect()
     socket.emit('join', user.id)
-    socket.on('newNotification', notification => {
-      addToNotifications(notification[0])
-    })
+    socket.on('newNotification', notification =>
+      addToNotifications(notification)
+    )
   }, [])
-  
+
   return (
     <>
       <Sidebar
