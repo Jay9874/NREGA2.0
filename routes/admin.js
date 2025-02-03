@@ -8,7 +8,9 @@ import {
   createEmployee,
   dashboardData,
   addAttendance,
-  payout, 
+  payout,
+  rejectApplication,
+  enrollWorker
 } from '../controller/admin.js'
 
 // Defining the routes
@@ -40,7 +42,6 @@ router.post('/aadhaar', fetchAadhaar)
  **/
 router.post('/dashboard', dashboardData)
 
-
 /**
  * @route POST api/admin/dashboard
  * @description send all dashboard data
@@ -54,5 +55,21 @@ router.post('/add-attendance', addAttendance)
  * @access public
  **/
 router.post('/payout', payout)
+
+// Route for api to enroll worker (accept job application) by admin.
+/**
+ * @route POST api/admin/enroll-worker
+ * @description accept the application with application id.
+ * @access public
+ **/
+router.post('/enroll-worker', enrollWorker)
+
+// Route for api to reject an application by admin
+/**
+ * @route POST api/admin/reject-application
+ * @description reject the application with application id.
+ * @access public
+ **/
+router.post('/reject-application', rejectApplication)
 
 export { router as adminRoutes }

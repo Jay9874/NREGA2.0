@@ -126,7 +126,7 @@ const dashboardData = async (req, res) => {
       .select('*')
       .eq('location_id', locationId)
     if (errAtJobs) throw errAtJobs
-    
+
     // Worker counts for each jobs
     const { data: enrollmentData, error: errAtEnrollment } = await supabase
       .from('job_enrollments')
@@ -218,6 +218,93 @@ const jobEnrollment = async (req, res) => {
     })
   }
 }
+
+const enrollWorker = async (req, res) => {
+  try {
+    const { applicationId } = req.body
+    const supabase = createClient({ req, res })
+    const { data, error } = await supabase
+      .from('job_enrollments')
+      .update({ status: 'enrolled', remark: 'Enrolled successfully.' })
+      .eq('application_id', applicationId)
+      .select()
+    if (error) throw error
+
+    // Delete the last notification about this application from admin panel.
+    const { data: deletionData, error: errAtDeletion } = await supabase
+      .from('sachiv_notifications')
+      .delete()
+      .eq('application_id', applicationId)
+      .select()
+    if (errAtDeletion) throw errAtDeletion
+
+    // add a new acceptation notification to worker panel.
+    const { data: acceptedNotification, error: errAtAccept } = await supabase
+      .from('worker_notifications')
+      .insert({
+        category: 'job application',
+        tagline: `Accepted job application for job id: ${data[0].job}`,
+        details: {
+          Application_id: applicationId,
+          Remark: 'Successfully enrolled.'
+        },
+        application_id: applicationId
+      })
+      .select()
+    if (errAtAccept) throw errAtAccept
+    return res.status(200).send({
+      data: data,
+      error: null
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(501).send({
+      data: null,
+      error: err
+    })
+  }
+}
+
+const rejectApplication = async (req, res) => {
+  try {
+    const { notification, remark } = req.body
+    const supabase = createClient({ req, res })
+    const { Application_id } = notification.details
+    const [JobId] = notification.tagline.match(/(\d+)/)
+
+    const { data, error } = await supabase
+      .from('job_enrollments')
+      .update({ status: 'rejected', remark: remark })
+      .eq('application_id', notification.application_id)
+      .select()
+    if (error) throw error
+
+    // update the last notification about this application for worker
+    const { data: notificationUpdate, error: errAtUpdate } = await supabase
+      .from('worker_notifications')
+      .insert({
+        category: 'job application',
+        tagline: `Rejected job application for job id: ${JobId}`,
+        details: {
+          Application_id: Application_id,
+          Remark: remark
+        },
+        application_id: Application_id
+      })
+      .select()
+    if (errAtUpdate) throw errAtUpdate
+    return res.status(200).send({
+      data: data,
+      error: null
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(501).send({
+      data: null,
+      error: err
+    })
+  }
+}
 export {
   createUser,
   fetchAadhaar,
@@ -225,5 +312,7 @@ export {
   dashboardData,
   addAttendance,
   payout,
-  jobEnrollment
+  jobEnrollment,
+  enrollWorker,
+  rejectApplication
 }

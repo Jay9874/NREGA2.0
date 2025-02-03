@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Sidebar, TopNavbar, Banner } from '../components'
 import { authStore, useAdminStore } from '../api/store'
-import { socket } from '../api/socket'
+import { supabase } from '../api'
 // Constants imports
 import { adminTopNavigation } from '../utils/dashboard_toplink'
 import { adminNavigation } from '../utils/sidelinks'
@@ -39,11 +39,19 @@ export const Admin = () => {
 
   useEffect(() => {
     handleSetup()
-    socket.connect()
-    socket.emit('join', user.id)
-    socket.on('newNotification', notification =>
-      addToNotifications(notification)
-    )
+
+     // Supabase Realtime
+    const handleInserts = payload => {
+      addToNotifications(payload.new)
+    }
+    supabase
+      .channel('job_application')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'sachiv_notifications' },
+        handleInserts
+      )
+      .subscribe()
   }, [])
 
   return (

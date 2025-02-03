@@ -154,6 +154,30 @@ const getNotification = async (req, res) => {
   }
 }
 
+const clearANotification = async (req, res) => {
+  try {
+    const { notificationId, type } = req.body
+    const searchTable = `${type == 'admin' ? 'sachiv' : 'worker'}_notifications`
+    const supabase = createClient({req, res})
+    const { data, error } = await supabase
+      .from(searchTable)
+      .delete()
+      .eq('id', notificationId)
+      .select()
+    if (error) throw error
+    return res.status(200).send({
+      data: data,
+      error: null
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(501).send({
+      data: null,
+      error: err
+    })
+  }
+}
+
 export {
   confirmSignup,
   login,
@@ -161,5 +185,6 @@ export {
   signup,
   pageRefresh,
   updateMeta,
-  getNotification
+  getNotification,
+  clearANotification
 }

@@ -1,9 +1,9 @@
 import { Outlet, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { authStore, useWorkerStore } from '../api/store'
-import { socket } from '../api/socket'
 // Importing all the components
 import { Sidebar, TopNavbar } from '../components'
+import { supabase } from '../api'
 
 // Constants imports
 import { workerNavigation } from '../utils/sidelinks'
@@ -50,11 +50,18 @@ export const Worker = () => {
 
   useEffect(() => {
     handleSetup()
-    socket.connect()
-    socket.emit('join', user.id)
-    socket.on('rejection', notification => {
-      addToNotifications(notification)
-    })
+        // Supabase Realtime
+    const handleInserts = payload => {
+      addToNotifications(payload.new)
+    }
+    supabase
+      .channel('job_application')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'worker_notifications' },
+        handleInserts
+      )
+      .subscribe()
   }, [])
 
   return (

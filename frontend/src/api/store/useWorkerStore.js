@@ -5,14 +5,12 @@ const NODE_ENV = import.meta.env.MODE
 import {
   timestampToDate,
   jobDuration,
-  formatLocation,
   formatLocationShort,
   timeToString,
   formatLocationToGP
 } from '../../utils/dataFormating'
 import { genDates } from '../../utils/generate_date'
 import { distance } from '../../utils/getLocation'
-import { socket } from '../socket'
 
 export const useWorkerStore = create((set, get) => ({
   user: { email: '', type: '', id: '', photo: '' },
@@ -351,10 +349,6 @@ export const useWorkerStore = create((set, get) => ({
   applyToJob: (jobId, sachivId, startDate, timeDuration, locationId) => {
     return new Promise(async (resolve, reject) => {
       try {
-        socket.addEventListener('error', event => {
-          console.log('websocket error: ', event)
-          throw event
-        })
         const user = get().user
         const detail = {
           starting_date: startDate,
@@ -364,14 +358,23 @@ export const useWorkerStore = create((set, get) => ({
           by_worker: user.id,
           location_id: locationId
         }
-        socket.emit('sendApplication', detail)
-        socket.on('receiveNotification', async notification => {
-          await get().setNearbyJobs()
-          resolve(notification)
-        })
+
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify(detail)
+        }
+        const res = await fetch(`${get().base}/api/worker/apply`, options)
+        const { data, error } = await res.json()
+        if (error) throw error
+        resolve(data)
       } catch (err) {
         reject(err)
       }
     })
-  },
+  }
 }))

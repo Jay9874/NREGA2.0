@@ -7,27 +7,55 @@ import { createClient } from '../lib/supabase.js'
 
 const applyToJob = async (req, res) => {
   try {
-    var { jobDetail } = req.body
-    jobDetail = {
-      ...jobDetail,
-      application_id: `ap_${jobDetail.job}_${jobDetail.by_worker}`,
+    var detail = req.body
+    detail = {
+      ...detail,
+      application_id: `ap_${detail.job}_${detail.by_worker}`,
       status: 'applied',
       remark: 'The application is under processing.'
     }
     const supabase = createClient({ req, res })
     const { data, error } = await supabase
       .from('job_enrollments')
-      .upsert(jobDetail)
+      .upsert(detail)
       .select()
     if (error) throw error
-    console.log(data)
+    const { data: notification, error: errAtNotification } = await supabase
+      .from('sachiv_notifications')
+      .insert({
+        category: 'job application',
+        tagline: `Required job in job id: ${detail.job}`,
+        details: {
+          Worker: detail.by_worker,
+          Duration: `${detail.time_period} days`,
+          Joining: detail.starting_date,
+          Application_id: detail.application_id
+        },
+        application_id: detail.application_id
+      })
+      .select()
+    if (errAtNotification) throw errAtNotification
+    const { data: workerNotification, error: errAtWorkerNotification } =
+      await supabase
+        .from('worker_notifications')
+        .insert({
+          category: 'job application',
+          tagline: `Applied for job in job id: ${detail.job}`,
+          details: {
+            Duration: `${detail.time_period} days`,
+            Application_id: detail.application_id
+          },
+          application_id: detail.application_id
+        })
+        .select()
+    if (errAtWorkerNotification) throw errAtWorkerNotification
     return res.status(200).json({
       data: data,
       error: null
     })
   } catch (err) {
     console.log('error: ', err)
-    return res.status(501).json({
+    return res.status(500).json({
       data: null,
       error: err
     })

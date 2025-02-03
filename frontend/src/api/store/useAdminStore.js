@@ -4,7 +4,6 @@ import { calculateAge, timestampToDate } from '../../utils/dataFormating'
 import { authStore } from './authStore'
 import { toast } from 'sonner'
 const NODE_ENV = import.meta.env.MODE
-import { socket } from '../socket'
 
 export const useAdminStore = create((set, get) => ({
   user: authStore.getState().user,
@@ -275,42 +274,61 @@ export const useAdminStore = create((set, get) => ({
     }
   },
   enrollWorker: async applicationId => {
-    try {
-      set({ loading: true })
-      const { id } = get().profile
-      socket.emit(
-        'enroll',
-        { applicationId: applicationId, sender: id },
-        ({ error, data }) => {
-          if (error) throw error
-          toast.success('Successfully enrolled.')
-          set({ loading: false })
+    return new Promise(async (resolve, reject) => {
+      try {
+        set({ loading: true })
+        const { id } = get().profile
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify({ applicationId: applicationId, sender: id })
         }
-      )
-    } catch (err) {
-      set({ loading: false })
-      toast.error('Something went wrong.')
-      console.log(err)
-    }
+        const res = await fetch(
+          `${get().base}/api/admin/enroll-worker`,
+          options
+        )
+        const { data, error } = await res.json()
+        if (error) throw error
+        toast.success('Successfully enrolled.')
+        set({ loading: false })
+        resolve(data)
+      } catch (err) {
+        set({ loading: false })
+        toast.error('Something went wrong.')
+        console.log(err)
+        reject(err)
+      }
+    })
   },
   rejectApplication: async (notification, remark) => {
     return new Promise(async (resolve, reject) => {
       try {
         set({ loading: true })
-        const { id } = get().profile
-        socket.emit(
-          'rejectApplication',
-          {
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify({
             notification: notification,
             remark: remark
-          },
-          ({ data, error }) => {
-            if (error) throw error
-            set({ loading: false })
-            toast.success('Rejected the application.')
-            resolve(data)
-          }
+          })
+        }
+        const res = await fetch(
+          `${get().base}/api/admin/reject-application`,
+          options
         )
+        const { data, error } = await res.json()
+        if (error) throw error
+        set({ loading: false })
+        toast.success('Rejected the application.')
+        resolve(data)
       } catch (err) {
         console.log(err)
         set({ loading: false })

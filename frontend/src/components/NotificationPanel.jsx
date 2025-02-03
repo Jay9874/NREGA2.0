@@ -6,7 +6,6 @@ import NotificationCard from './NotificationCard'
 
 export default function NotificationPanel ({ notifications, type }) {
   const { notificationPanel, setNotificationPanel } = authStore()
-  // console.log("notifications are: ", notifications)
   return (
     <Transition.Root show={notificationPanel} as={Fragment}>
       <Dialog as='div' className='relative z-40' onClose={setNotificationPanel}>

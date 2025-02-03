@@ -1,6 +1,7 @@
 import express from 'express'
 const router = express.Router()
 import {
+  clearANotification,
   confirmSignup,
   getNotification,
   login,
@@ -63,5 +64,14 @@ router.post('/logout', logout)
  * @access public
  **/
 router.post('/notification', getNotification)
+
+
+// clear a notification for both users (admin and worker)
+/**
+ * @route POST api/auth/clear-notification
+ * @description clear a notification for user id.
+ * @access public
+ **/
+router.post('/clear-notification', clearANotification)
 
 export { router as authRoutes }

@@ -2,7 +2,6 @@ import { create } from 'zustand'
 import { supabase } from '..'
 import { toast } from 'sonner'
 const NODE_ENV = import.meta.env.MODE
-import { socket } from '../socket'
 
 export const authStore = create((set, get) => ({
   user: { email: '', type: '', id: '', photo: '' },
@@ -13,7 +12,7 @@ export const authStore = create((set, get) => ({
   notificationPanel: false,
   setNotificationPanel: status => set({ notificationPanel: status }),
   addToNotifications: notification => {
-    set(state => ({ notifications: [...state.notifications, notification[0]] }))
+    set(state => ({ notifications: [...state.notifications, notification] }))
   },
   setCaptchaToken: token => set({ captchaToken: token }),
   checkUser: async () => {
@@ -197,18 +196,34 @@ export const authStore = create((set, get) => ({
     })
   },
   clearANotification: async notificationId => {
-    try {
-      const notifications = get().notifications
-      const { type } = get().user
-      socket.emit('clearANotification', [notificationId, type], ({ data, error }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const notifications = get().notifications
+        const { type } = get().user
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify({ notificationId: notificationId, type: type })
+        }
+        const res = await fetch(
+          `${get().base}/api/auth/clear-notification`,
+          options
+        )
+        const { data, error } = await res.json()
         if (error) throw error
         const updatedNotifications = notifications.filter(
-          (obj, index) => obj.id != notificationId
+          obj => obj.id != notificationId
         )
         set({ notifications: updatedNotifications })
-      })
-    } catch (err) {
-      console.log(err)
-    }
+        resolve(data)
+      } catch (err) {
+        console.log(err)
+        reject(err)
+      }
+    })
   }
 }))
