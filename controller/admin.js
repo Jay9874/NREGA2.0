@@ -31,6 +31,7 @@ const createUser = async (req, res) => {
 }
 const createEmployee = async (req, res) => {
   try {
+    const supabase = createClient({ req, res })
     const base64String = req.body.queryImage
     const base64 = base64String.split('base64,')[1]
     const user = req.body
@@ -58,7 +59,7 @@ const createEmployee = async (req, res) => {
         upsert: true
       })
     if (errAtFile) throw errAtFile
-    const { data: url, error: errAtUrl } = supabase.storage
+    const { data: url, error: errAtUrl } = await supabase.storage
       .from('worker_profile')
       .getPublicUrl(`avatars/${filename}`)
     if (errAtUrl) throw errAtUrl
@@ -81,6 +82,51 @@ const createEmployee = async (req, res) => {
     })
   }
 }
+
+// API method to update worker details
+const updateWorker = async (req, res) => {
+  try {
+    const supabase = createClient({ req, res })
+    const updatedDetails = req.body
+
+    // Change the image only if updated image field is there received data.
+    if ('updatedImage' in updatedDetails) {
+      const { updatedImage } = updatedDetails
+      const base64String = updatedImage
+      const base64 = base64String.split('base64,')[1]
+      const filename = `${updatedDetails.id}`
+      const fileType = base64String.match(/^data:(.+);base64/)?.[1]
+
+      const { data, error: errAtFile } = await supabase.storage
+        .from('worker_profile')
+        .upload(`avatars/${filename}`, decode(base64), {
+          contentType: fileType,
+          cacheControl: '3600',
+          upsert: true
+        })
+      if (errAtFile) throw errAtFile
+      // Delete the image field from the update details.
+      delete updatedDetails.updatedImage
+    }
+    const { data: newProfile, error: errAtUpdate } = await supabase
+      .from('worker')
+      .update(updatedDetails)
+      .eq('id', updatedDetails.id)
+      .select()
+    if (errAtUpdate) throw errAtUpdate
+    return res.status(200).send({
+      data: newProfile,
+      error: null
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send({
+      data: null,
+      error: err
+    })
+  }
+}
+
 const fetchAadhaar = async (req, res) => {
   try {
     const { aadhaar: aadhaarNo } = req.body
@@ -309,6 +355,7 @@ export {
   createUser,
   fetchAadhaar,
   createEmployee,
+  updateWorker,
   dashboardData,
   addAttendance,
   payout,

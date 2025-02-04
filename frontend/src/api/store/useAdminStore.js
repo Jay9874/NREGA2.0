@@ -147,20 +147,56 @@ export const useAdminStore = create((set, get) => ({
     }
   },
   setEmployees: async () => {
-    try {
-      const { data: employees, error } = await supabase
-        .from('worker')
-        .select('*, address(*)')
-        .eq('address', get().profile.location_id.id)
-      if (error) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { data: employees, error } = await supabase
+          .from('worker')
+          .select('*, address(*)')
+          .eq('address', get().profile.location_id.id)
+        if (error) {
+          toast.error(error.message)
+          throw error
+        }
+        set({ employees: employees })
+        resolve(employees)
+      } catch (error) {
         toast.error(error.message)
-        throw error
+        reject(error)
       }
-      set({ employees: employees })
-    } catch (error) {
-      toast.error(error.message)
-      throw error
-    }
+    })
+  },
+
+  // Update the worker profile
+  updateWorker: async updatedDetails => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        set({ loading: true })
+        toast.loading('Updating details...')
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify(updatedDetails)
+        }
+        const url = `${get().base}/api/admin/update-worker`
+        const res = await fetch(url, options)
+        const { data, error } = await res.json()
+        if (error) throw error
+        const updatedEmployees = await get().setEmployees()
+        set({ loading: false })
+        toast.dismiss()
+        toast.success('Successfully changed details.')
+        resolve(data)
+      } catch (err) {
+        console.log(err)
+        set({ loading: false })
+        toast.error('Something went wrong.')
+        reject(err)
+      }
+    })
   },
 
   // Dashboard Data fetching functions

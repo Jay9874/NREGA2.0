@@ -1,19 +1,21 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import { ArrowLongLeftIcon, PhotoIcon } from '@heroicons/react/24/solid'
 import { useAdminStore } from '../../../api/store'
+import { toast } from 'sonner'
 
 export default function EditEmployee () {
   const { id } = useParams()
-  const { employees } = useAdminStore()
+  const { employees, updateWorker } = useAdminStore()
   const [selectedFile, setSelectedFile] = useState()
   const [loading, setLoading] = useState()
   const [employee, setEmployee] = useState()
   const [preview, setPreview] = useState()
+  const navigate = useNavigate()
   const [profile, setProfile] = useState({
+    id: '',
     email: '',
-    mobile: '',
-    image: ''
+    mobile_no: ''
   })
 
   // function for file preview
@@ -23,33 +25,64 @@ export default function EditEmployee () {
       return
     }
     // I've kept this example simple by using the first image instead of multiple
-    setSelectedFile(e.target.files[0])
+    const image = e.target.files[0]
+    const imageSize = image.size / 1048576
+    if (imageSize > 1) {
+      toast.warning('Image size is large, keep it within 1 MB.')
+      setSelectedFile(null)
+    } else {
+      setSelectedFile(image)
+    }
   }
 
+  // handle changes in input fields.
   function handleChange (e) {
     const { name, value } = e.target
     setProfile(prev => ({ ...prev, [name]: value }))
   }
+
+  // send update worker form to backend
+  async function handleSubmit (e) {
+    try {
+      e.preventDefault()
+      if (selectedFile != null) {
+        await updateWorker({ ...profile, updatedImage: preview })
+      } else await updateWorker(profile)
+      navigate('..')
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   useEffect(() => {
     const [currEmployee] = employees.filter((emp, index) => emp.id == id)
     setEmployee(currEmployee)
+    setPreview(currEmployee?.photo)
     setProfile({
-      email: currEmployee.email,
-      mobile: currEmployee.mobile_no,
-      image: currEmployee.photo
+      id: currEmployee?.id,
+      email: currEmployee?.email,
+      mobile_no: currEmployee?.mobile_no
     })
   }, [])
 
   useEffect(() => {
-    if (!selectedFile) {
-      setPreview(undefined)
-      return
+    if (selectedFile) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreview(reader.result)
+      }
+      reader.readAsDataURL(selectedFile) //represented as a base64string
+      reader.onload = () => {
+        setPreview(reader.result)
+      }
+    } else {
+      setPreview(employee?.photo)
     }
-    const objectUrl = URL.createObjectURL(selectedFile)
-    setPreview(objectUrl)
-    // free memory when ever this component is unmounted
-    return () => URL.revokeObjectURL(objectUrl)
   }, [selectedFile])
+
+  useEffect(() => {
+    setPreview(employee?.photo)
+  }, [employee])
 
   return (
     <>
@@ -68,7 +101,7 @@ export default function EditEmployee () {
             <b> {employee?.first_name + ' ' + employee?.last_name}.</b>
           </p>
         </div>
-        <form>
+        <form onSubmit={handleSubmit}>
           {/* Input fields */}
           <div className='mt-2 md:w-1/2'>
             <label
@@ -104,9 +137,9 @@ export default function EditEmployee () {
               <input
                 type='text'
                 required
-                name='mobile'
+                name='mobile_no'
                 id='mobile'
-                value={profile.mobile}
+                value={profile.mobile_no}
                 onChange={handleChange}
                 className='w-full focus:outline-none border-gray-300 rounded-md focus:outline:none valid:text-green-600 sm:text-sm'
                 placeholder={employee?.mobile_no}
@@ -117,91 +150,51 @@ export default function EditEmployee () {
           </div>
           <div className='sm:col-span-6 mt-2'>
             <label
-              htmlFor='mobile'
+              htmlFor='photo'
               className='block text-sm font-medium text-gray-700'
             >
               New photo
             </label>
-            <div
-              className={`mt-1 w-fit rounded-md border-2 border-dashed border-gray-300 ${
-                selectedFile ? 'p-1' : 'px-6 pt-5 pb-6'
-              } `}
-            >
-              {!selectedFile && (
-                <div className='space-y-1 text-center'>
-                  <svg
-                    className='mx-auto h-12 w-12 text-gray-400'
-                    stroke='currentColor'
-                    fill='none'
-                    viewBox='0 0 48 48'
-                    aria-hidden='true'
-                  >
-                    <path
-                      d='M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02'
-                      strokeWidth={2}
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                    />
-                  </svg>
-                  <div className='flex text-sm text-gray-600'>
-                    <label
-                      htmlFor='file-upload'
-                      className='relative cursor-pointer rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500'
-                    >
-                      <span>New photo</span>
-                      <input
-                        id='file-upload'
-                        name='file-upload'
-                        type='file'
-                        required
-                        accept='image/png, image/jpeg, image/jpg'
-                        className='sr-only'
-                        onChange={onSelectFile}
-                      />
-                    </label>
-                  </div>
-                  <p className='text-xs text-gray-500'>
-                    PNG, or JPG up to 10MB
-                  </p>
-                </div>
-              )}
-
+            <div className='mt-1 w-fit rounded-md border-2 border-dashed border-gray-300 p-1'>
               {/* Preview Image if uploaded */}
-              {selectedFile && (
-                <div className='preview-cont relative h-[150px] w-[150px]'>
-                  <img
-                    className='h-[100%] w-[100%]'
-                    src={preview}
-                    alt='Progress photo'
-                  />
-                  <div className='absolute flex flex-col items-center gap-2 top-0 right-0 z-10 p-1'>
-                    <label
-                      title='Change Image'
-                      className='edit-btn cursor-pointer flex items-center justify-center rounded-full h-[24px] w-[24px] bg-gray-200 '
-                    >
-                      <ion-icon
-                        color='primary'
-                        name='pencil-outline'
-                      ></ion-icon>
-                      <input
-                        id='file-upload'
-                        name='file-upload'
-                        type='file'
-                        accept='image/png, image/jpeg, image/jpg'
-                        className='sr-only'
-                        onChange={onSelectFile}
-                      />
-                    </label>
+              <div className='preview-cont relative h-[150px] w-[150px]'>
+                <img
+                  className='h-[100%] w-[100%]'
+                  src={preview}
+                  alt='worker image'
+                />
+                <div className='absolute flex flex-col items-center gap-2 top-0 right-0 z-10 p-1'>
+                  <label
+                    title='Change Image'
+                    htmlFor='worker_photo'
+                    className='edit-btn cursor-pointer flex items-center justify-center rounded-full h-[24px] w-[24px] bg-gray-200 '
+                  >
+                    <ion-icon color='primary' name='pencil-outline'></ion-icon>
+                    <input
+                      id='worker_photo'
+                      name='worker_photo'
+                      type='file'
+                      multiple={false}
+                      accept='image/png, image/jpeg, image/jpg'
+                      className='sr-only'
+                      onChange={onSelectFile}
+                    />
+                  </label>
+                  {selectedFile && (
                     <button
-                      onClick={() => setSelectedFile(null)}
+                      onClick={() => {
+                        setSelectedFile(null)
+                        setPreview(employee.photo)
+                      }}
                       title='Cancel'
+                      type='button'
                       className='close-btn flex items-center justify-center rounded-full h-[24px] w-[24px] bg-gray-200 '
                     >
                       <ion-icon color='danger' name='close-outline'></ion-icon>
                     </button>
-                  </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           </div>
 

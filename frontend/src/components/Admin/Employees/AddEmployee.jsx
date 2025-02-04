@@ -62,7 +62,7 @@ export default function AddEmployee() {
     setFormData((prev) => ({ ...prev, ...data }))
   }
 
-  // control the file change
+  // control the image file change
   function handleFileChange(event) {
     const file = event.target.files[0]
     if (file && file.type.substring(0, 5) === 'image') {

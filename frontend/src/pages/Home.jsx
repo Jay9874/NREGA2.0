@@ -169,34 +169,50 @@ export default function Home () {
                   >
                     <button
                       onClick={() => setExpandedActionBtn(!expandedActionBtn)}
-                      className={` flex items-center justify-between z-20 px-2 py-1.5 h-[40px] w-full`}
+                      className={`flex items-center z-20 px-2 py-1.5 h-[40px] w-full`}
                     >
-                      <span className='px-1.5'>Click for live Action</span>
-                      <div className='h-[75%] w-[1px] bg-black rounded-full'></div>
-                      <span
-                        className={`flex items-center transition-all duration-200 ease-in-out ${
-                          expandedActionBtn ? 'rotate-180' : ''
-                        }`}
-                      >
-                        <ion-icon
-                          color='dark'
-                          name='caret-down-outline'
-                        ></ion-icon>
-                      </span>
+                      <span className='px-1.5 flex-grow w-full'>Try a Demo</span>
+                      <div className='h-[40px] flex items-center justify-end gap-2'>
+                        <div className='h-[75%] w-[1px] bg-black rounded-full'></div>
+                        <span
+                          className={`flex items-center transition-all duration-200 ease-in-out ${
+                            expandedActionBtn ? 'rotate-180' : ''
+                          }`}
+                        >
+                          <ion-icon
+                            color='dark'
+                            name='caret-down-outline'
+                          ></ion-icon>
+                        </span>
+                      </div>
                     </button>
                     <div
                       className={`${
                         expandedActionBtn ? '' : 'hidden'
                       } absolute z-10 -bottom-50 w-full py-1.5`}
                     >
-                      <button onClick={()=>demoLogin('jayprakashsharma225@gmail.com', 'admin', navigate)} className='bg-green-500 py-1.5 w-full flex justify-between items-center pl-3.5 pr-2'>
+                      <button
+                        onClick={() =>
+                          demoLogin(
+                            'jayprakashsharma225@gmail.com',
+                            'admin',
+                            navigate
+                          )
+                        }
+                        className='bg-green-500 py-1.5 w-full flex justify-between items-center pl-3.5 pr-2'
+                      >
                         <span>Demo as Admin</span>
                         <ion-icon
                           color='light'
                           name='arrow-forward-outline'
                         ></ion-icon>
                       </button>
-                      <button onClick={()=>demoLogin('jay.gdsc@gmail.com', 'worker', navigate)} className='bg-green-500 w-full mt-[1px] py-1.5 flex justify-between items-center pl-3.5 pr-2'>
+                      <button
+                        onClick={() =>
+                          demoLogin('jay.gdsc@gmail.com', 'worker', navigate)
+                        }
+                        className='bg-green-500 w-full mt-[1px] py-1.5 flex justify-between items-center pl-3.5 pr-2'
+                      >
                         <span>Demo as Worker</span>
                         <ion-icon
                           color='light'

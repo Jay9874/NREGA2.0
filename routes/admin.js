@@ -10,7 +10,8 @@ import {
   addAttendance,
   payout,
   rejectApplication,
-  enrollWorker
+  enrollWorker,
+  updateWorker
 } from '../controller/admin.js'
 
 // Defining the routes
@@ -27,6 +28,13 @@ router.post('/createuser', createUser)
  * @access public
  **/
 router.post('/createemp', createEmployee)
+
+/**
+ * @route POST api/admin/update-worker
+ * @description Update the profile details of a worker.
+ * @access public
+ **/
+router.post('/update-worker', updateWorker)
 
 /**
  * @route POST api/admin/aadhaar
