@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import { ArrowLongLeftIcon, PhotoIcon } from '@heroicons/react/24/solid'
+import { ArrowLongLeftIcon } from '@heroicons/react/24/solid'
 import { useAdminStore } from '../../../api/store'
 import { toast } from 'sonner'
 
@@ -14,7 +14,6 @@ export default function EditEmployee () {
   const navigate = useNavigate()
   const [profile, setProfile] = useState({
     id: '',
-    email: '',
     mobile_no: ''
   })
 
@@ -60,7 +59,6 @@ export default function EditEmployee () {
     setPreview(currEmployee?.photo)
     setProfile({
       id: currEmployee?.id,
-      email: currEmployee?.email,
       mobile_no: currEmployee?.mobile_no
     })
   }, [])
@@ -102,29 +100,6 @@ export default function EditEmployee () {
           </p>
         </div>
         <form onSubmit={handleSubmit}>
-          {/* Input fields */}
-          <div className='mt-2 md:w-1/2'>
-            <label
-              htmlFor='email'
-              className='block text-sm font-medium text-gray-700'
-            >
-              New email
-            </label>
-            <div className='relative mt-1 rounded-md shadow-sm'>
-              <input
-                type='email'
-                required
-                name='email'
-                id='email'
-                value={profile.email}
-                onChange={handleChange}
-                className='w-full focus:outline-none border-gray-300 rounded-md focus:outline:none valid:text-green-600 sm:text-sm'
-                placeholder={employee?.email}
-                aria-invalid='true'
-                aria-describedby='email-error'
-              />
-            </div>
-          </div>
           {/* New mobile number */}
           <div className='mt-2 md:w-1/2'>
             <label
