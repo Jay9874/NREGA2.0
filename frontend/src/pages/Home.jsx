@@ -169,22 +169,19 @@ export default function Home () {
                   >
                     <button
                       onClick={() => setExpandedActionBtn(!expandedActionBtn)}
-                      className={`flex items-center z-20 px-2 py-1.5 h-[40px] w-full`}
+                      className={`flex items-center justify-center z-20 px-2 py-1.5 h-[40px] w-full`}
                     >
-                      <span className='px-1.5 flex-grow w-full'>Try a Demo</span>
-                      <div className='h-[40px] flex items-center justify-end gap-2'>
-                        <div className='h-[75%] w-[1px] bg-black rounded-full'></div>
-                        <span
-                          className={`flex items-center transition-all duration-200 ease-in-out ${
-                            expandedActionBtn ? 'rotate-180' : ''
-                          }`}
-                        >
-                          <ion-icon
-                            color='dark'
-                            name='caret-down-outline'
-                          ></ion-icon>
-                        </span>
-                      </div>
+                      <span className='px-1.5'>Try a Demo</span>
+                      <span
+                        className={`flex items-center transition-all duration-200 ease-in-out ${
+                          expandedActionBtn ? 'rotate-180' : ''
+                        }`}
+                      >
+                        <ion-icon
+                          color='dark'
+                          name='caret-down-outline'
+                        ></ion-icon>
+                      </span>
                     </button>
                     <div
                       className={`${
