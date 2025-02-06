@@ -2,15 +2,18 @@ import React, { useEffect, useState } from 'react'
 import { ArrowLongLeftIcon } from '@heroicons/react/20/solid'
 import { Link } from 'react-router-dom'
 import { authStore, useAdminStore } from '../../../api/store'
-import Map from '../../Mapbox'
 import Mapbox from '../../Mapbox'
+import { formatLocationToGP } from '../../../utils/dataFormating'
 
 export default function AddJob () {
   const { jobs, profile, addJob } = useAdminStore()
   const { loading } = authStore()
+  const [minEnd, setMinEnd] = useState('')
   const [jobDetails, setJobDetails] = useState({
     geotag: [],
-    job_deadline: '',
+    job_deadline: new Date(new Date().getTime() + 15 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .slice(0, 10),
     job_description: '',
     job_name: '',
     job_start_date: new Date().toISOString().slice(0, 10),
@@ -21,26 +24,13 @@ export default function AddJob () {
 
   function handleChange (e) {
     const { name, value } = e.target
-    var minEnd
-    // setting atleast 15 days from start date
-    if (name == 'job_start_date') {
-      const dateStr = jobDetails.job_start_date
-      const dateObj = new Date(dateStr)
-      // Add 15 days
-      dateObj.setDate(dateObj.getDate() + 15)
-      console.log('date object: ', dateObj)
-      minEnd = dateObj.toISOString().slice(0, 10)
-      setJobDetails(prev => ({ ...prev, job_deadline: minEnd }))
-    } else {
-      setJobDetails(prev => ({ ...prev, [name]: value }))
-    }
+    setJobDetails(prev => ({ ...prev, [name]: value }))
   }
 
   // handle the form submission
   async function handleSubmit (e) {
     try {
       e.preventDefault()
-      console.log('clicked submission.')
       const data = await addJob(jobDetails)
     } catch (err) {
       console.log(err)
@@ -51,16 +41,20 @@ export default function AddJob () {
   function setCords (cords) {
     setJobDetails(prev => ({ ...prev, geotag: cords }))
   }
+
+  // to dynamically change job deadline w.r.t start date
   useEffect(() => {
-    setJobDetails(prev => ({
-      ...prev,
-      sachiv_id: profile.id,
-      location_id: profile.location_id.id
-    }))
-  }, [profile])
-  console.log(jobDetails)
+    const start_date = jobDetails.job_start_date
+    var dateObj = new Date(start_date)
+    // Add 15 days
+    dateObj.setDate(dateObj.getDate() + 15)
+    dateObj = dateObj.toISOString().slice(0, 10)
+    setMinEnd(dateObj)
+    setJobDetails(prev => ({ ...prev, job_deadline: dateObj }))
+  }, [jobDetails.job_start_date])
+
   return (
-    <main className='w-[calc(100vw-256px)] relative'>
+    <main className=' relative'>
       {/* Bread crumbing to last url */}
       <Link to='..' className='w-fit'>
         <ArrowLongLeftIcon
@@ -80,7 +74,7 @@ export default function AddJob () {
           </p>
         </div>
 
-        <form className='px-6 min-h-screen' onSubmit={handleSubmit}>
+        <form className='px-6' onSubmit={handleSubmit}>
           {/* Input fields for jobs details */}
           <div className='mt-2 md:w-1/2'>
             <label
@@ -98,7 +92,9 @@ export default function AddJob () {
                 value={jobDetails.job_name}
                 onChange={handleChange}
                 className='w-full focus:outline-none border-gray-300 rounded-md focus:outline:none sm:text-sm'
-                placeholder='Vrikshaaropan in Kasba'
+                placeholder={`Vrikshaaropan in ${formatLocationToGP(
+                  profile?.location_id
+                )}`}
                 aria-invalid='true'
                 aria-describedby='mobile-error'
               />
@@ -160,7 +156,7 @@ export default function AddJob () {
               htmlFor='end_date'
               className='block text-sm font-medium text-gray-700'
             >
-              Expected end date
+              Expected end date (min 15 days)
             </label>
             <div className='mt-1'>
               <input
@@ -169,7 +165,7 @@ export default function AddJob () {
                 name='job_deadline'
                 type='date'
                 value={jobDetails.job_deadline}
-                min={jobDetails.job_deadline}
+                min={minEnd}
                 max={new Date(new Date().getFullYear() + 1, 2, 32)
                   .toISOString()
                   .slice(0, 10)}
@@ -192,13 +188,13 @@ export default function AddJob () {
             >
               Drap the pin to set job location.
             </label>
-            <div className='h-96 w-full mt-2'>
+            <div className='h-96 w-full mt-2 relative'>
               <Mapbox setCords={setCords} />
             </div>
           </div>
 
           {/* action buttons */}
-          <div className='mt-6 flex items-center justify-end gap-x-6 pb-12'>
+          <div className='mt-12 flex items-center justify-end gap-x-6 pb-12'>
             <Link
               to='..'
               className='rounded-md text-sm font-semibold leading-6 px-3 py-2 text-gray-900 hover:bg-gray-200'
@@ -215,7 +211,7 @@ export default function AddJob () {
                              : 'cursor-not-allowed'
                          } `}
             >
-              Continue
+              Add job
             </button>
           </div>
         </form>

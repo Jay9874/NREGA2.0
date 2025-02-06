@@ -22,6 +22,7 @@
   "homepage": "https://github.com/Jay9874/NREGA2.0#readme",
   "dependencies": {
     "@hcaptcha/react-hcaptcha": "^1.11.0",
+    "@mapbox/search-js-react": "^1.0.0-beta.25",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.48.1",
     "@vis.gl/react-google-maps": "^1.5.1",

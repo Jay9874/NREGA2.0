@@ -88,6 +88,11 @@ body {
 
 }
 
+/************ CSS for Map */
+#map{
+  box-shadow: inset red;
+}
+
 .month-str-container {
   -ms-overflow-style: none;
   /* Internet Explorer 10+ */

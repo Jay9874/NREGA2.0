@@ -79,7 +79,7 @@ function formatLocationShort (locationObj) {
 }
 
 function formatLocationToGP (locationObj) {
-  return `${locationObj.panchayat}`
+  return `${locationObj?.panchayat}`
 }
 
 function getToday () {

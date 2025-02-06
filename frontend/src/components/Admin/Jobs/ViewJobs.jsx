@@ -142,10 +142,10 @@ export default function ViewJobs () {
                           <span className='text-gray-700'>Description: </span>
                           <span className='text-gray-500 whitespace-wrap'>{work.Description}</span>
                         </dd>
-                        <dt className='sr-only md:hidden'>Created</dt>
+                        <dt className='sr-only md:hidden'>Started</dt>
                         <dd className='mt-1 truncate text-gray-500 lg:hidden'>
-                          <span className='text-gray-700'>Created: </span>
-                          <span className='text-gray-500'>{work.Created}</span>
+                          <span className='text-gray-700'>Inauguration: </span>
+                          <span className='text-gray-500'>{work.Started}</span>
                         </dd>
                         <dt className='sr-only md:hidden'>Workers</dt>
                         <dd className='mt-1 truncate text-gray-500 sm:hidden'>

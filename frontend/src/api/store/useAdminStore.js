@@ -393,7 +393,7 @@ export const useAdminStore = create((set, get) => ({
         if (error) throw error
         set({ loading: false })
         toast.dismiss()
-        toast.success("Successfully added the job.")
+        toast.success('Successfully added the job.')
         resolve(data)
       } catch (err) {
         console.error(err)

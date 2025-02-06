@@ -354,7 +354,8 @@ const rejectApplication = async (req, res) => {
 
 const addJob = async (req, res) => {
   try {
-    const jobDetails = res.body
+    const jobDetails = req.body
+    console.log('job details: ', jobDetails)
     const supabase = createClient({ req, res })
     const { data, error } = await supabase
       .from('jobs')
