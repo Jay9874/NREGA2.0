@@ -1,7 +1,6 @@
 // Requiring all the packages
 import express from 'express'
 const router = express.Router()
-import { checkSession } from '../middleware/checkSession.js'
 import {
   createUser,
   fetchAadhaar,
@@ -11,7 +10,8 @@ import {
   payout,
   rejectApplication,
   enrollWorker,
-  updateWorker
+  updateWorker,
+  addJob
 } from '../controller/admin.js'
 
 // Defining the routes
@@ -79,5 +79,13 @@ router.post('/enroll-worker', enrollWorker)
  * @access public
  **/
 router.post('/reject-application', rejectApplication)
+
+// Route for api to add a new job
+/**
+ * @route POST api/admin/add-job
+ * @description add the job to database
+ * @access public
+ **/
+router.post('/add-job', addJob)
 
 export { router as adminRoutes }

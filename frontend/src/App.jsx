@@ -1,7 +1,6 @@
 import { Worker, Auth, Home, Admin } from './pages'
 import { Protected, NotFound, ValidLink } from './components'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { useEffect } from 'react'
 
 // Admin Components
 import {
@@ -33,7 +32,6 @@ import { SignInForm, ForgotPass, ResetPass } from './components/Auth'
 import EnrollJob from './components/Worker/EnrollJob'
 
 export default function App () {
-
   return (
     <BrowserRouter>
       <Routes>

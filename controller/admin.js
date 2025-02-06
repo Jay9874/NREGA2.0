@@ -351,6 +351,28 @@ const rejectApplication = async (req, res) => {
     })
   }
 }
+
+const addJob = async (req, res) => {
+  try {
+    const jobDetails = res.body
+    const supabase = createClient({ req, res })
+    const { data, error } = await supabase
+      .from('jobs')
+      .insert(jobDetails)
+      .select()
+    if (error) throw error
+    return res.status(200).send({
+      data: data,
+      error: null
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send({
+      data: null,
+      error: err
+    })
+  }
+}
 export {
   createUser,
   fetchAadhaar,
@@ -361,5 +383,6 @@ export {
   payout,
   jobEnrollment,
   enrollWorker,
-  rejectApplication
+  rejectApplication,
+  addJob
 }

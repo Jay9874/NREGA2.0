@@ -372,5 +372,35 @@ export const useAdminStore = create((set, get) => ({
         toast.error('Something went wrong.')
       }
     })
+  },
+  addJob: async jobDetails => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        set({ loading: true })
+        toast.loading('Adding new job...')
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify(jobDetails)
+        }
+        const url = `${get().base}/api/admin/add-job`
+        const res = await fetch(url, options)
+        const { data, error } = await res.json()
+        if (error) throw error
+        set({ loading: false })
+        toast.dismiss()
+        toast.success("Successfully added the job.")
+        resolve(data)
+      } catch (err) {
+        console.error(err)
+        set({ loading: false })
+        toast.error('Something went wrong.')
+        reject(err)
+      }
+    })
   }
 }))

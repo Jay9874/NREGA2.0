@@ -127,12 +127,6 @@ export default function EnrollJob () {
                   {timestampToDate(job.job_start_date)}
                 </span>
               </p>
-              {/* <p className='mt-1 truncate text-sm text-gray-500'>
-                Deadline:{' '}
-                <span className='text-gray-700'>
-                  {timestampToDate(job.job_deadline)}
-                </span>
-              </p> */}
               <p className='mt-1 truncate text-sm text-gray-500'>
                 Family entitlement:{' '}
                 <span className='text-gray-700'>{entitlement} days left</span>
