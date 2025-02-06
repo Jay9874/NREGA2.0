@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { ArrowLongLeftIcon } from '@heroicons/react/20/solid'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { authStore, useAdminStore } from '../../../api/store'
 import Mapbox from '../../Mapbox'
 import { formatLocationToGP } from '../../../utils/dataFormating'
 
 export default function AddJob () {
-  const { jobs, profile, addJob } = useAdminStore()
+  const { jobs, profile, addJob, setDashboard } = useAdminStore()
   const { loading } = authStore()
   const [minEnd, setMinEnd] = useState('')
+  const navigate = useNavigate()
   const [jobDetails, setJobDetails] = useState({
     geotag: [],
     job_deadline: new Date(new Date().getTime() + 15 * 24 * 60 * 60 * 1000)
@@ -32,6 +33,8 @@ export default function AddJob () {
     try {
       e.preventDefault()
       const data = await addJob(jobDetails)
+      await setDashboard()
+      navigate('..')
     } catch (err) {
       console.log(err)
     }
