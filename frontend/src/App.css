@@ -5,23 +5,23 @@
   --popup-offset-lg: 512px;
   --popup-offset-sm: 160px;
   --ion-color-tertiary: #4f46e5;
-  --ion-color-secondary-rgb: 96,48,255;
+  --ion-color-secondary-rgb: 96, 48, 255;
   --ion-color-secondary-contrast: #fff;
-  --ion-color-secondary-contrast-rgb: 255,255,255;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
   --ion-color-secondary-shade: #542ae0;
   --ion-color-secondary-tint: #7045ff;
 
   --ion-color-success: #16a34a;
   --ion-color-success-rgb: 37, 194, 94;
   --ion-color-success-contrast: #fff;
-  --ion-color-success-contrast-rgb: 255,255,255;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
   --ion-color-success-shade: #15803d;
   --ion-color-success-tint: #22c55e;
 
   --ion-color-warning: #f0b100;
   --ion-color-warning-rgb: 255, 239, 59;
   --ion-color-warning-contrast: #fff;
-  --ion-color-warning-contrast-rgb: 255,255,255;
+  --ion-color-warning-contrast-rgb: 255, 255, 255;
   --ion-color-warning-shade: #fdd835;
   --ion-color-warning-tint: #ffee58;
 }
@@ -32,19 +32,21 @@
   -moz-animation: pulsebtn 2s infinite;
   -webkit-animation: pulsebtn 2s infinite;
   animation: pulsebtn 2s infinite;
+}
+
+@keyframes pulsebtn {
+  0% {
+    box-shadow: 0 0 0 0 rgb(0, 195, 22, 1);
   }
-  
-  @keyframes pulsebtn {
-      0% {
-          box-shadow: 0 0 0 0 rgb(0, 195, 22, 1);
-      }
-      70% {
-          box-shadow: 0 0 0 4px rgba(0, 195, 22, 0);
-      }
-      100% {
-          box-shadow: 0 0 0 10px rgba(0, 195, 22, 0);
-      }
+
+  70% {
+    box-shadow: 0 0 0 4px rgba(0, 195, 22, 0);
   }
+
+  100% {
+    box-shadow: 0 0 0 10px rgba(0, 195, 22, 0);
+  }
+}
 
 * {
   font-family: Open Sans, sans-serif;
@@ -67,12 +69,36 @@ body {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 #root {
   min-height: 100vh;
+}
+
+/********  CSS for Home Features */
+
+@media screen and (min-width:40rem) {
+  .feature-1-active {
+    transform: translateX(-98rem);
+  }
+
+  .feature-2-active {
+    transform: translateX(-98rem);
+  }
+}
+
+@media screen and (max-width:64rem){
+  .feature-1-active {
+    transform: translateX(-63rem);
+  }
+
+  .feature-2-active {
+    transform: translateX(-63rem);
+  }
 }
 
 
@@ -89,7 +115,7 @@ body {
 }
 
 /************ CSS for Map */
-#map{
+#map {
   box-shadow: inset red;
 }
 
@@ -133,7 +159,7 @@ body {
   transform-origin: left center;
 }
 
-ion-icon{
+ion-icon {
   color: gray;
 }
 
@@ -175,7 +201,7 @@ ion-icon{
     width: calc(100vw - var(--popup-offset-sm));
   }
 
-  .month-str-item{
+  .month-str-item {
     width: calc(100vw - 152px);
   }
 

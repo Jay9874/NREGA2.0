@@ -198,7 +198,7 @@ export default function Home () {
                         }
                         className='bg-green-500 py-1.5 w-full flex justify-between items-center pl-3.5 pr-2'
                       >
-                        <span>Demo as Admin</span>
+                        <span>Demo as Sachiv</span>
                         <ion-icon
                           color='light'
                           name='arrow-forward-outline'

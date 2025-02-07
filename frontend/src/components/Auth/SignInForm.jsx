@@ -120,7 +120,7 @@ export default function SignInForm () {
             onClick={() => handleDemo('jayprakashsharma225@gmail.com', 'admin')}
           >
             <div className='text-center relative rounded-full py-1 px-3 text-sm leading-6 text-gray-600 ring-1 ring-black/10 hover:ring-black/20'>
-              as a Admin
+              as a Sachiv
             </div>
           </Link>
         </div>
