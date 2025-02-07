@@ -134,7 +134,7 @@ export default function Home () {
               </Dialog.Panel>
             </Dialog>
             {/* The intro section */}
-            <div className='mx-auto max-w-2xl py-52 overflow-auto'>
+            <div className='mx-auto max-w-2xl pb-52 pt-40 sm:py-52 overflow-auto'>
               {/* <div className='hidden sm:mb-8 sm:flex sm:justify-center'> */}
               <div className='mb-8 flex justify-center'>
                 {/* <div className='relative rounded-full py-1 px-3 text-sm leading-6 text-gray-400 ring-1 ring-white/10 hover:ring-white/20'> */}
