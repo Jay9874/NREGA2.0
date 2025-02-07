@@ -56,7 +56,7 @@ export default function Feature () {
         <div className='mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2'>
           <div className='lg:pr-8 lg:pt-4'>
             {/* <div className='lg:max-w-lg'> */}
-            <div className='lg:max-w-lg w-[75vw]'>
+            <div className='lg:max-w-lg w-[90vw]'>
               <h2 className='text-base w-fit px-3 rounded-full outline font-semibold leading-7 text-indigo-600'>
                 Worker Panel
               </h2>
@@ -107,7 +107,7 @@ export default function Feature () {
         <div className='mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2'>
           <div className='lg:pr-8 lg:pt-4'>
             {/* <div className='lg:max-w-lg'> */}
-            <div className='lg:max-w-lg w-[75vw]'>
+            <div className='lg:max-w-lg w-[90vw]'>
               <h2 className='text-base w-fit px-3 rounded-full outline font-semibold leading-7 text-indigo-600'>
                 Sachiv Panel
               </h2>
