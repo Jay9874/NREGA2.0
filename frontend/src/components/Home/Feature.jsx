@@ -46,104 +46,130 @@ const adminFeatures = [
 export default function Feature () {
   const [activeIndex, setActiveIndex] = useState(0)
   return (
-    <div className='relative flex overflow-hidden bg-white py-24 sm:py-32'>
-      {/* First feature */}
-      <div
-        className={`mx-auto max-w-7xl px-6 lg:px-8 flex-shrink-0 transition-all duration-700 ease-in-out ${
-          activeIndex == 1 ? 'feature-1-active' : ''
-        }`}
-      >
-        <div className='mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2'>
-          <div className='lg:pr-8 lg:pt-4'>
-            {/* <div className='lg:max-w-lg'> */}
-            <div className='lg:max-w-lg w-[90vw]'>
-              <h2 className='text-base w-fit font-semibold leading-7 text-indigo-600'>
-                Worker Panel
-              </h2>
-              <p className='mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
-                A transparency in whole
-              </p>
-              <p className='mt-6 text-lg leading-8 text-gray-600'>
-                It was never before available for a normal worker to access
-                their records by the Gram Panchayat Officer, "Sachiv". Thus
-                bringing credibility and connect amongst Government and People.
-              </p>
-              <dl className='mt-10 max-w-xl space-y-8 text-base leading-7 text-gray-600 lg:max-w-none'>
-                {features.map(feature => (
-                  <div key={feature.name} className='relative pl-9'>
-                    <dt className='inline font-semibold text-gray-900'>
-                      <feature.icon
-                        className='absolute left-1 top-1 h-5 w-5 text-indigo-600'
-                        aria-hidden='true'
-                      />
-                      {feature.name}
-                    </dt>{' '}
-                    <dd className='inline'>{feature.description}</dd>
-                  </div>
-                ))}
-              </dl>
+    <div className='relative bg-white py-24 sm:py-32'>
+      <div className='px-6 lg:px-8 flex justify-between text-base w-full'>
+        <h2 className='text-base whitespace-nowrap w-fit font-semibold leading-7 text-indigo-600'>
+          {/* <span>Worker Panel</span> */}
+          <img src='./worker_panel.svg' alt='button' />
+          <ion-icon
+            style={{ color: '#4f39f6' }}
+            name='arrow-forward-outline'
+          ></ion-icon>
+        </h2>
+        <h2 className='text-base whitespace-nowrap w-fit font-semibold leading-7 text-indigo-600'>
+          <span>Sachiv Panel</span>
+          <ion-icon name='arrow-forward-outline'></ion-icon>
+        </h2>
+      </div>
+      <div className='feature-container relative flex'>
+        {/* First feature */}
+        <div
+          className={`mx-auto max-w-7xl px-6 lg:px-8 flex-shrink-0 transition-all duration-700 ease-in-out ${
+            activeIndex == 1 ? 'feature-1-active' : ''
+          }`}
+        >
+          <div className='mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2'>
+            <div className='lg:pr-8 lg:pt-4'>
+              {/* <div className='lg:max-w-lg'> */}
+              <div className='lg:max-w-lg w-[90vw]'>
+                <h2
+                  className={`${
+                    activeIndex == 1 ? 'sticky top-48 left-0' : ''
+                  } text-base w-fit font-semibold leading-7 text-indigo-600`}
+                >
+                  Worker Panel
+                </h2>
+                <p className='mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
+                  A transparency in whole
+                </p>
+                <p className='mt-6 text-lg leading-8 text-gray-600'>
+                  It was never before available for a normal worker to access
+                  their records by the Gram Panchayat Officer, "Sachiv". Thus
+                  bringing credibility and connect amongst Government and
+                  People.
+                </p>
+                <dl className='mt-10 max-w-xl space-y-8 text-base leading-7 text-gray-600 lg:max-w-none'>
+                  {features.map(feature => (
+                    <div key={feature.name} className='relative pl-9'>
+                      <dt className='inline font-semibold text-gray-900'>
+                        <feature.icon
+                          className='absolute left-1 top-1 h-5 w-5 text-indigo-600'
+                          aria-hidden='true'
+                        />
+                        {feature.name}
+                      </dt>{' '}
+                      <dd className='inline'>{feature.description}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </div>
+            <div className='pt-12'>
+              <img
+                src='./feature.png'
+                alt='Product screenshot'
+                className='w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0'
+                width={2432}
+                height={1442}
+              />
             </div>
           </div>
-          <img
-            src='./feature.png'
-            alt='Product screenshot'
-            className='w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0'
-            width={2432}
-            height={1442}
-          />
         </div>
-      </div>
-      {/* Second Feature */}
-      {/* <div
+        {/* Second Feature */}
+        {/* <div
         className={`mx-auto max-w-7xl px-6 lg:px-8 flex-shrink-0 transition-all duration-200 ease-linear ${
           activeIndex == 1 ? '-translate-x-full' : ''
         }`}
       > */}
-      <div
-        className={`ml-72 max-w-7xl px-6 lg:px-8 flex-shrink-0 transition-all duration-700 ease-in-out ${
-          activeIndex == 1 ? 'feature-2-active' : ''
-        }`}
-      >
-        <div className='mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2'>
-          <div className='lg:pr-8 lg:pt-4'>
-            {/* <div className='lg:max-w-lg'> */}
-            <div className='lg:max-w-lg w-[90vw]'>
-              <h2 className='text-base w-fit font-semibold leading-7 text-indigo-600'>
-                Sachiv Panel
-              </h2>
-              <p className='mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
-                Managing like ease
-              </p>
-              <p className='mt-6 text-lg leading-8 text-gray-600'>
-                No more cluttering user interface to track the progress.
-                Simplifying constraints and automating procedures, the backend
-                you can rely upon.
-              </p>
-              <dl className='mt-10 max-w-xl space-y-8 text-base leading-7 text-gray-600 lg:max-w-none'>
-                {adminFeatures.map(feature => (
-                  <div key={feature.name} className='relative pl-9'>
-                    <dt className='inline font-semibold text-gray-900'>
-                      <feature.icon
-                        className='absolute left-1 top-1 h-5 w-5 text-indigo-600'
-                        aria-hidden='true'
-                      />
-                      {feature.name}
-                    </dt>{' '}
-                    <dd className='inline'>{feature.description}</dd>
-                  </div>
-                ))}
-              </dl>
+        <div
+          className={`ml-72 max-w-7xl px-6 lg:px-8 flex-shrink-0 transition-all duration-700 ease-in-out ${
+            activeIndex == 1 ? 'feature-2-active' : ''
+          }`}
+        >
+          <div className='mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2'>
+            <div className='lg:pr-8 lg:pt-4'>
+              {/* <div className='lg:max-w-lg'> */}
+              <div className='lg:max-w-lg w-[90vw]'>
+                <h2 className='text-base w-fit font-semibold leading-7 text-indigo-600'>
+                  Sachiv Panel
+                </h2>
+                <p className='mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
+                  Managing like ease
+                </p>
+                <p className='mt-6 text-lg leading-8 text-gray-600'>
+                  No more cluttering user interface to track the progress.
+                  Simplifying constraints and automating procedures, the backend
+                  you can rely upon.
+                </p>
+                <dl className='mt-10 max-w-xl space-y-8 text-base leading-7 text-gray-600 lg:max-w-none'>
+                  {adminFeatures.map(feature => (
+                    <div key={feature.name} className='relative pl-9'>
+                      <dt className='inline font-semibold text-gray-900'>
+                        <feature.icon
+                          className='absolute left-1 top-1 h-5 w-5 text-indigo-600'
+                          aria-hidden='true'
+                        />
+                        {feature.name}
+                      </dt>{' '}
+                      <dd className='inline'>{feature.description}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </div>
+            <div className='pt-12'>
+              <img
+                src='./admin_feat.png'
+                alt='Product screenshot'
+                className='w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0'
+                width={2432}
+                height={1442}
+              />
             </div>
           </div>
-          <img
-            src='./admin_feat.png'
-            alt='Product screenshot'
-            className='w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0'
-            width={2432}
-            height={1442}
-          />
         </div>
       </div>
+
       {/* Indicators */}
       <div className='absolute z-30 flex -translate-x-1/2 space-x-6 rtl:space-x-reverse bottom-5 left-1/2'>
         <button

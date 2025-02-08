@@ -85,10 +85,16 @@ body {
   .feature-1-active {
     transform: translateX(-98rem);
   }
+  /* .feature-1-active {
+    transform: translateX(-12rem);
+  } */
 
   .feature-2-active {
     transform: translateX(-98rem);
   }
+  /* .feature-2-active {
+    transform: translateX(-12rem);
+  } */
 }
 
 @media screen and (max-width:64rem){
