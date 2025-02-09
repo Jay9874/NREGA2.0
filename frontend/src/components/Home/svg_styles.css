@@ -4,12 +4,14 @@
     width: 140px;
     top: 0;
     left: 0;
-    transition: all 2s ease-in;
+    transition: all 2s ease-in-out;
 }
-.svg-cont.move-down{
+
+.svg-cont.move-down {
     top: 30px;
     left: 4px;
 }
+
 .creative_btn {
     position: absolute;
     top: 0;
@@ -17,43 +19,66 @@
     z-index: 1;
 }
 
-.border.link {
-    animation: draw 2s ease-in-out forwards;
+.undraw {
+    animation: draw 700ms ease-in-out forwards;
 }
 
-/* .border{
-    animation: draw 2s ease-in-out backwards;
-} */
+.draw {
+    animation: undraw 700ms ease-in-out backwards;
+}
 
+.arrow-create{
+    stroke-dasharray: 11.3137085;
+    animation: create 700ms ease-in-out forwards;
+  }
 
+.arrow-dissolve{
+    stroke-dasharray: 11.3137085;
+    animation: dissolve 700ms ease-in-out forwards;
+}
+
+  @keyframes create {
+    0%{
+      stroke-dashoffset: 11.3137085;
+    }
+    75%{
+      stroke-dashoffset: 11.3137085;
+    }
+    100%{
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes dissolve {
+    0%{
+        stroke-dashoffset: 0;
+    }
+    75%{
+        stroke-dashoffset: 11.3137085;
+    }
+    100%{
+        stroke-dashoffset: 11.3137085;
+    }
+  }
+
+/*  */
+@keyframes undraw {
+    0% {
+        stroke-dashoffset: -202.24777961; 
+    }
+    25%{
+        stroke-dashoffset: -202.24777961;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
 
 @keyframes draw {
-    to {
-        /* stroke-dashoffset: 310.2611083984375; */
-        stroke-dashoffset: -205;
+    0%{
+        stroke-dashoffset: 0;
     }
-}
-
-@keyframes swirl {
-    to {
-        stroke-dashoffset: 400;
-    }
-}
-
-#greet {
-    animation: move 2s ease-in-out alternate infinite;
-}
-
-@keyframes move {
-    0% {
-        transform: translate(0, 0);
-    }
-
-    50% {
-        transform: translate(0, 0);
-    }
-
     100% {
-        transform: translate(10%, 0);
+        stroke-dashoffset: -202.24777961;
     }
 }

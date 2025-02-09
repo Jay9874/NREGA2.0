@@ -47,32 +47,39 @@ const adminFeatures = [
 export default function Feature () {
   const [activeIndex, setActiveIndex] = useState(0)
   const [pathLength, setPathLength] = useState(null)
-  const pathRef = useRef()
+  const workerPathRef = useRef()
+  const sachivPathRef = useRef()
 
   useEffect(() => {
-    if (pathRef.current) {
-      const len = pathRef.current.getTotalLength()
+    if (workerPathRef.current) {
+      const len = workerPathRef.current.getTotalLength()
       console.log(len)
       setPathLength(len)
-      pathRef.current.style.strokeDasharray = len
-      pathRef.current.style.strokeDashoffset = 2 * len
+      workerPathRef.current.style.strokeDasharray = len
+    }
+    if (sachivPathRef.current) {
+      const len = sachivPathRef.current.getTotalLength()
+      console.log(len)
+      setPathLength(len)
+      sachivPathRef.current.style.strokeDasharray = len
     }
   }, [])
 
   return (
     <div className='relative bg-white py-24 sm:py-32'>
       <div className='px-4 lg:px-6 flex justify-between text-base w-full'>
+        {/* Worker features navigation button, custom dynamic svg */}
         <button
-        onClick={()=>setActiveIndex(0)}
+          onClick={() => setActiveIndex(0)}
+          disabled={activeIndex == 0}
           className={`${
-            activeIndex == 0 ? 'move-down' : ''
+            activeIndex == 0 ? 'move-down cursor-default' : ''
           } svg-cont transition-all duration-700 ease-in-out relative text-base whitespace-nowrap font-semibold leading-7 text-indigo-600`}
         >
-          <svg className='creative_btn' width={140} height={32}>
+          <svg className='creative_btn' width={140} height={40}>
             <path
-              className={`border ${activeIndex == 1 ? 'link' : ''}`}
-              // id='border'
-              ref={pathRef}
+              className={activeIndex == 1 ? 'undraw' : 'draw'}
+              ref={workerPathRef}
               d='m 16 31  
                   a 15 15 0 0 1 -15 -15  
                   a 15 15 0 0 1 15 -15  
@@ -87,30 +94,51 @@ export default function Feature () {
               strokeWidth='1'
               strokeLinecap='round'
             />
+            <path
+              className={activeIndex == 1 ? 'arrow-create' : 'arrow-dissolve'}
+              d='m 16 31 l 8 8'
+              stroke-linecap='round'
+              stroke-linejoin='round'
+              stroke='#4f46e5'
+              stroke-width='1'
+            />
+            <path
+              className={activeIndex == 1 ? 'arrow-create' : 'arrow-dissolve'}
+              d='m 16 31 l 8 -8'
+              stroke-linecap='round'
+              stroke-linejoin='round'
+              stroke='#4f46e5'
+              stroke-width='1'
+            />
           </svg>
-          <p className=''>Worker Panel</p>
+          <p
+            className={`relative left-0 top-0 transition-all duration-700 ease-in-out ${
+              activeIndex == 1 ? 'left-2 top-1' : ''
+            }`}
+          >
+            Worker Panel
+          </p>
         </button>
-        {/* <h2 className='text-base whitespace-nowrap w-fit font-semibold leading-7 text-indigo-600'>
-          <span>Sachiv Panel</span>
-        </h2> */}
+
+        {/* Sachiv feature navigation button, of course custom dynamic svg */}
         <button
-        onClick={()=>setActiveIndex(1)}
+          disabled={activeIndex == 1}
+          onClick={() => setActiveIndex(1)}
           className={`${
-            activeIndex == 1 ? 'move-down' : ''
+            activeIndex == 1 ? 'move-down cursor-default' : ''
           } svg-cont transition-all duration-700 ease-in-out relative text-base whitespace-nowrap font-semibold leading-7 text-indigo-600`}
         >
-          <svg className='creative_btn' width={140} height={32}>
+          <svg className='creative_btn' width={140} height={40}>
             <path
-              className={`border ${activeIndex == 0 ? 'link' : ''}`}
-              // id='border'
-              ref={pathRef}
-              d='m 16 31  
-                  a 15 15 0 0 1 -15 -15  
-                  a 15 15 0 0 1 15 -15  
-                  h 108  
-                  a 15 15 0 0 1 15 15  
-                  a 15 15 0 0 1 -15 15 
-                  h -108 
+              className={activeIndex == 0 ? 'undraw' : 'draw'}
+              ref={sachivPathRef}
+              d='m 124 31  
+                  a 15 15 0 0 0 15 -15  
+                  a 15 15 0 0 0 -15 -15  
+                  h -108  
+                  a 15 15 0 0 0 -15 15  
+                  a 15 15 0 0 0 15 15 
+                  h 108 
                   '
               strokeLinejoin='round'
               fill='transparent'
@@ -118,10 +146,30 @@ export default function Feature () {
               strokeWidth='1'
               strokeLinecap='round'
             />
+            <path
+              className={activeIndex == 0 ? 'arrow-create' : 'arrow-dissolve'}
+              d='m 124 31 l -8 8'
+              stroke-linecap='round'
+              stroke-linejoin='round'
+              stroke='#4f46e5'
+              stroke-width='1'
+            />
+            <path
+              className={activeIndex == 0 ? 'arrow-create' : 'arrow-dissolve'}
+              d='m 124 31 l -8 -8'
+              stroke-linecap='round'
+              stroke-linejoin='round'
+              stroke='#4f46e5'
+              stroke-width='1'
+            />
           </svg>
-          <p className=''>Sachiv Panel</p>
+          <p className={`relative left-0 top-0 transition-all duration-700 ease-in-out ${
+              activeIndex == 0 ? '-left-2 top-1' : ''
+            }`}>Sachiv Panel</p>
         </button>
       </div>
+
+      {/* The features slide container */}
       <div className='feature-container relative flex'>
         {/* First feature */}
         <div
@@ -133,13 +181,6 @@ export default function Feature () {
             <div className='lg:pr-8 lg:pt-4'>
               {/* <div className='lg:max-w-lg'> */}
               <div className='lg:max-w-lg w-[90vw]'>
-                {/* <h2
-                  className={`${
-                    activeIndex == 1 ? 'sticky top-48 left-0' : ''
-                  } text-base px-4 ring-indigo-600 rounded-full ring-1 w-fit font-semibold leading-7 text-indigo-600`}
-                >
-                  Worker Panel
-                </h2> */}
                 <p className='mt-8 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
                   A transparency in whole
                 </p>
@@ -177,11 +218,7 @@ export default function Feature () {
           </div>
         </div>
         {/* Second Feature */}
-        {/* <div
-        className={`mx-auto max-w-7xl px-6 lg:px-8 flex-shrink-0 transition-all duration-200 ease-linear ${
-          activeIndex == 1 ? '-translate-x-full' : ''
-        }`}
-      > */}
+
         <div
           className={`ml-72 max-w-7xl px-6 lg:px-8 flex-shrink-0 transition-all duration-700 ease-in-out ${
             activeIndex == 1 ? 'feature-2-active' : ''
@@ -189,11 +226,7 @@ export default function Feature () {
         >
           <div className='mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2'>
             <div className='lg:pr-8 lg:pt-4'>
-              {/* <div className='lg:max-w-lg'> */}
               <div className='lg:max-w-lg w-[90vw]'>
-                {/* <h2 className='text-base w-fit font-semibold leading-7 text-indigo-600'>
-                  Sachiv Panel
-                </h2> */}
                 <p className='mt-8 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
                   Managing like ease
                 </p>
@@ -256,18 +289,4 @@ export default function Feature () {
       </div>
     </div>
   )
-}
-
-{
-  /* <text
-                id='greet'
-                dominant-baseline='middle'
-                x='20'
-                y='50%'
-                font-size='1rem'
-                text-anchor='start'
-                fill='#4f46e5'
-              >
-                Worker Panel
-              </text> */
 }
