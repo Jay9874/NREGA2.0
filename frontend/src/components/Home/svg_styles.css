@@ -1,0 +1,59 @@
+.svg-cont {
+    text-align: center;
+    height: 32px;
+    width: 140px;
+    top: 0;
+    left: 0;
+    transition: all 2s ease-in;
+}
+.svg-cont.move-down{
+    top: 30px;
+    left: 4px;
+}
+.creative_btn {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.border.link {
+    animation: draw 2s ease-in-out forwards;
+}
+
+/* .border{
+    animation: draw 2s ease-in-out backwards;
+} */
+
+
+
+@keyframes draw {
+    to {
+        /* stroke-dashoffset: 310.2611083984375; */
+        stroke-dashoffset: -205;
+    }
+}
+
+@keyframes swirl {
+    to {
+        stroke-dashoffset: 400;
+    }
+}
+
+#greet {
+    animation: move 2s ease-in-out alternate infinite;
+}
+
+@keyframes move {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(10%, 0);
+    }
+}

@@ -1,5 +1,6 @@
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import './svg_styles.css'
 const features = [
   {
     name: 'Job Application: ',
@@ -45,20 +46,51 @@ const adminFeatures = [
 
 export default function Feature () {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [pathLength, setPathLength] = useState(null)
+  const pathRef = useRef()
+
+  useEffect(() => {
+    if (pathRef.current) {
+      const len = pathRef.current.getTotalLength()
+      console.log(len)
+      setPathLength(len)
+      pathRef.current.style.strokeDasharray = len
+      pathRef.current.style.strokeDashoffset = 2 * len
+    }
+  }, [])
+
   return (
     <div className='relative bg-white py-24 sm:py-32'>
-      <div className='px-6 lg:px-8 flex justify-between text-base w-full'>
-        <h2 className='text-base whitespace-nowrap w-fit font-semibold leading-7 text-indigo-600'>
-          {/* <span>Worker Panel</span> */}
-          <img src='./worker_panel.svg' alt='button' />
-          <ion-icon
-            style={{ color: '#4f39f6' }}
-            name='arrow-forward-outline'
-          ></ion-icon>
-        </h2>
+      <div className='px-4 lg:px-6 flex justify-between text-base w-full'>
+        <button
+          className={`${
+            activeIndex == 0 ? 'move-down' : ''
+          } svg-cont transition-all duration-700 ease-in-out relative text-base whitespace-nowrap font-semibold leading-7 text-indigo-600`}
+        >
+          <svg className='creative_btn' width={140} height={32}>
+            <path
+              className={`border ${activeIndex == 1 ? 'link' : ''}`}
+              // id='border'
+              ref={pathRef}
+              d='m 16 31  
+                  a 15 15 0 0 1 -15 -15  
+                  a 15 15 0 0 1 15 -15  
+                  h 108  
+                  a 15 15 0 0 1 15 15  
+                  a 15 15 0 0 1 -15 15 
+                  h -108 
+                  '
+              strokeLinejoin='round'
+              fill='transparent'
+              stroke='#4f46e5'
+              strokeWidth='1'
+              strokeLinecap='round'
+            />
+          </svg>
+          <p className=''>Worker Panel</p>
+        </button>
         <h2 className='text-base whitespace-nowrap w-fit font-semibold leading-7 text-indigo-600'>
           <span>Sachiv Panel</span>
-          <ion-icon name='arrow-forward-outline'></ion-icon>
         </h2>
       </div>
       <div className='feature-container relative flex'>
@@ -72,14 +104,14 @@ export default function Feature () {
             <div className='lg:pr-8 lg:pt-4'>
               {/* <div className='lg:max-w-lg'> */}
               <div className='lg:max-w-lg w-[90vw]'>
-                <h2
+                {/* <h2
                   className={`${
                     activeIndex == 1 ? 'sticky top-48 left-0' : ''
-                  } text-base w-fit font-semibold leading-7 text-indigo-600`}
+                  } text-base px-4 ring-indigo-600 rounded-full ring-1 w-fit font-semibold leading-7 text-indigo-600`}
                 >
                   Worker Panel
-                </h2>
-                <p className='mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
+                </h2> */}
+                <p className='mt-8 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
                   A transparency in whole
                 </p>
                 <p className='mt-6 text-lg leading-8 text-gray-600'>
@@ -130,10 +162,10 @@ export default function Feature () {
             <div className='lg:pr-8 lg:pt-4'>
               {/* <div className='lg:max-w-lg'> */}
               <div className='lg:max-w-lg w-[90vw]'>
-                <h2 className='text-base w-fit font-semibold leading-7 text-indigo-600'>
+                {/* <h2 className='text-base w-fit font-semibold leading-7 text-indigo-600'>
                   Sachiv Panel
-                </h2>
-                <p className='mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
+                </h2> */}
+                <p className='mt-8 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
                   Managing like ease
                 </p>
                 <p className='mt-6 text-lg leading-8 text-gray-600'>
@@ -195,4 +227,18 @@ export default function Feature () {
       </div>
     </div>
   )
+}
+
+{
+  /* <text
+                id='greet'
+                dominant-baseline='middle'
+                x='20'
+                y='50%'
+                font-size='1rem'
+                text-anchor='start'
+                fill='#4f46e5'
+              >
+                Worker Panel
+              </text> */
 }
