@@ -63,6 +63,7 @@ export default function Feature () {
     <div className='relative bg-white py-24 sm:py-32'>
       <div className='px-4 lg:px-6 flex justify-between text-base w-full'>
         <button
+        onClick={()=>setActiveIndex(0)}
           className={`${
             activeIndex == 0 ? 'move-down' : ''
           } svg-cont transition-all duration-700 ease-in-out relative text-base whitespace-nowrap font-semibold leading-7 text-indigo-600`}
@@ -89,9 +90,37 @@ export default function Feature () {
           </svg>
           <p className=''>Worker Panel</p>
         </button>
-        <h2 className='text-base whitespace-nowrap w-fit font-semibold leading-7 text-indigo-600'>
+        {/* <h2 className='text-base whitespace-nowrap w-fit font-semibold leading-7 text-indigo-600'>
           <span>Sachiv Panel</span>
-        </h2>
+        </h2> */}
+        <button
+        onClick={()=>setActiveIndex(1)}
+          className={`${
+            activeIndex == 1 ? 'move-down' : ''
+          } svg-cont transition-all duration-700 ease-in-out relative text-base whitespace-nowrap font-semibold leading-7 text-indigo-600`}
+        >
+          <svg className='creative_btn' width={140} height={32}>
+            <path
+              className={`border ${activeIndex == 0 ? 'link' : ''}`}
+              // id='border'
+              ref={pathRef}
+              d='m 16 31  
+                  a 15 15 0 0 1 -15 -15  
+                  a 15 15 0 0 1 15 -15  
+                  h 108  
+                  a 15 15 0 0 1 15 15  
+                  a 15 15 0 0 1 -15 15 
+                  h -108 
+                  '
+              strokeLinejoin='round'
+              fill='transparent'
+              stroke='#4f46e5'
+              strokeWidth='1'
+              strokeLinecap='round'
+            />
+          </svg>
+          <p className=''>Sachiv Panel</p>
+        </button>
       </div>
       <div className='feature-container relative flex'>
         {/* First feature */}
