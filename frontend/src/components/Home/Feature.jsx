@@ -163,8 +163,8 @@ export default function Feature () {
               stroke-width='1'
             />
           </svg>
-          <p className={`relative left-0 top-0 transition-all duration-700 ease-in-out ${
-              activeIndex == 0 ? '-left-2 top-1' : ''
+          <p className={`relative right-0 top-0 transition-all duration-700 ease-in-out ${
+              activeIndex == 0 ? 'right-2 top-1' : ''
             }`}>Sachiv Panel</p>
         </button>
       </div>
