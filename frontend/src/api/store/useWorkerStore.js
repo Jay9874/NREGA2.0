@@ -88,13 +88,9 @@ export const useWorkerStore = create((set, get) => ({
           .eq('location_id', locationId)
           .then(async ({ data }) => {
             const sortedJobs = data.filter((job, index) => {
-              const [lat1, lon1] = job.geotag
-              const [lat2, lon2] = job.location_id.geotag
               const distanceBtwCords = distance(
-                lat1,
-                lon1,
-                lat2,
-                lon2,
+                job.geotag,
+                job.location_id.geotag,
                 'K'
               ).toFixed(2)
               return distanceBtwCords <= 15

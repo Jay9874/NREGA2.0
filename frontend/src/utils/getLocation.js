@@ -54,9 +54,11 @@ function handleLocationError (browserHasGeolocation, infoWindow, pos) {
 
 window.initMap = initMap
 
-// Get the hversine distance between two cordinates. (long1, lat1, long2, lat2)
+// Get the hversine distance between two cordinates. (cords1, cords2, unit)
 
-function distance (lat1, lon1, lat2, lon2, unit) {
+function distance (firstCords, secondCords, unit) {
+  const [lon1, lat1] = firstCords
+  const [lon2, lat2] = secondCords
   if (lat1 == lat2 && lon1 == lon2) {
     return 0
   } else {

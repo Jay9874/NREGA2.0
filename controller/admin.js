@@ -362,6 +362,26 @@ const addJob = async (req, res) => {
       .insert(jobDetails)
       .select()
     if (error) throw error
+
+    if ('photo' in jobDetails) {
+      const { updatedImage } = jobDetails
+      const base64String = updatedImage
+      const base64 = base64String.split('base64,')[1]
+      const filename = `${data[0].job_id}`
+      const fileType = base64String.match(/^data:(.+);base64/)?.[1]
+
+      const { data, error: errAtFile } = await supabase.storage
+        .from('worker_profile')
+        .upload(`avatars/${filename}`, decode(base64), {
+          contentType: fileType,
+          cacheControl: '3600',
+          upsert: true
+        })
+      if (errAtFile) throw errAtFile
+      // Delete the image field from the update details.
+      delete updatedDetails.updatedImage
+    }
+    
     return res.status(200).send({
       data: data,
       error: null
