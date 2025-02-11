@@ -5,6 +5,18 @@ import { authStore, useAdminStore } from '../../../api/store'
 import Mapbox from '../../Mapbox'
 import { formatLocationToGP } from '../../../utils/dataFormating'
 import { toast } from 'sonner'
+import Dropdown from '../../Dropdown'
+
+const jobCategories = [
+  'Amritsarovar',
+  'Well Construction',
+  'Home Construction',
+  'Nahar Widening',
+  'Dam Construction',
+  'Tree Plantation',
+  'Brick Stone Road',
+  'Animal Shelter'
+]
 
 export default function AddJob () {
   const { profile, addJob, setDashboard } = useAdminStore()
@@ -15,22 +27,26 @@ export default function AddJob () {
   const navigate = useNavigate()
 
   const [jobDetails, setJobDetails] = useState({
-    person_days: 0,
+    person_days: 10,
     geotag: [],
     job_deadline: new Date(new Date().getTime() + 15 * 24 * 60 * 60 * 1000)
       .toISOString()
       .slice(0, 10),
     job_description: '',
     job_name: '',
-    job_start_date: new Date().toISOString().slice(0, 10),
+    job_start_date: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
     location_id: profile?.location_id?.id,
     sachiv_id: profile?.id,
-    work_photo: '28f9377e-9ac1-4a77-be4c-774f47cf36ee'
+    job_category: null
   })
 
   function handleChange (e) {
     const { name, value } = e.target
     setJobDetails(prev => ({ ...prev, [name]: value }))
+  }
+  // handle job category change
+  function handleCategoryChange (id, label, value) {
+    setJobDetails(prev => ({ ...prev, job_category: value }))
   }
 
   // function for file preview
@@ -53,6 +69,10 @@ export default function AddJob () {
   async function handleSubmit (e) {
     try {
       e.preventDefault()
+      if (!jobDetails.job_category) {
+        toast.warning('Select a job category.')
+        return null
+      }
       const data = await addJob({ ...jobDetails, photo: preview })
       await setDashboard()
       navigate('..')
@@ -115,150 +135,153 @@ export default function AddJob () {
         </div>
 
         <form className='px-6' onSubmit={handleSubmit}>
-          {/* Input fields for jobs details */}
-          <div className='mt-4 md:w-1/2'>
-            <label
-              htmlFor='job_name'
-              className='block text-sm font-medium leading-6 text-gray-900'
-            >
-              Job name
-            </label>
-            <div className='relative mt-1 rounded-md shadow-sm'>
-              <input
-                type='text'
-                required
-                name='job_name'
-                id='job_name'
-                value={jobDetails.job_name}
-                onChange={handleChange}
-                className='w-full focus:outline-none border-gray-300 rounded-md focus:outline:none sm:text-sm'
-                placeholder={`Vrikshaaropan in ${formatLocationToGP(
-                  profile?.location_id
-                )}`}
-                aria-invalid='true'
-                aria-describedby='mobile-error'
-              />
-            </div>
-          </div>
-
-          {/* field for job description */}
-          <div className='mt-2 md:w-1/2'>
-            <label
-              htmlFor='job_description'
-              className='block text-sm font-medium leading-6 text-gray-900'
-            >
-              Job description
-            </label>
-            <div className='relative mt-1 rounded-md shadow-sm'>
-              <textarea
-                type='text'
-                required
-                name='job_description'
-                id='job_description'
-                value={jobDetails.job_description}
-                onChange={handleChange}
-                className='w-full focus:outline-none border-gray-300 rounded-md focus:outline:none sm:text-sm'
-                placeholder='Give a brief about job in one or two sentence.'
-                aria-invalid='true'
-                aria-describedby='mobile-error'
-              />
-            </div>
-          </div>
-
-          {/* Starting job image */}
-          <div className='sm:col-span-6 mt-2'>
-            <label
-              htmlFor='photo'
-              className='block text-sm font-medium leading-6 text-gray-900'
-            >
-              Initial work site photo
-            </label>
-            <div className='mt-1 w-fit rounded-md border-2 border-dashed border-gray-300 p-1'>
-              {/* Preview Image if uploaded */}
-              {!selectedFile && (
-                <div className='space-y-1 text-center'>
-                  <svg
-                    className='mx-auto h-12 w-12 text-gray-400'
-                    stroke='currentColor'
-                    fill='none'
-                    viewBox='0 0 48 48'
-                    aria-hidden='true'
-                  >
-                    <path
-                      d='M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02'
-                      strokeWidth={2}
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                    />
-                  </svg>
-                  <div className='flex text-sm text-gray-600'>
-                    <label
-                      htmlFor='file-upload'
-                      className='relative cursor-pointer rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500'
-                    >
-                      <span>Initial Photo</span>
-                      <input
-                        id='file-upload'
-                        name='file-upload'
-                        type='file'
-                        required
-                        accept='image/png, image/jpeg, image/jpg'
-                        className='sr-only'
-                        onChange={onSelectFile}
-                      />
-                    </label>
-                  </div>
-                  <p className='text-xs text-gray-500'>
-                    PNG, or JPG up to 10MB
-                  </p>
-                </div>
-              )}
-              {selectedFile && (
-                <div className='preview-cont relative h-[150px] w-[150px]'>
-                  <img
-                    className='h-[100%] w-[100%]'
-                    src={preview}
-                    alt='worker image'
+          <div className='w-full grid grid-cols-1 gap-x-6 gap-y-2 lg:grid-cols-3 sm:grid-cols-2'>
+            <div className=''>
+              {/* Input fields for jobs details */}
+              <div className='mt-4'>
+                <label
+                  htmlFor='job_name'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  Job name
+                </label>
+                <div className='relative mt-1 rounded-md shadow-sm'>
+                  <input
+                    type='text'
+                    required
+                    name='job_name'
+                    id='job_name'
+                    value={jobDetails.job_name}
+                    onChange={handleChange}
+                    className='w-full focus:outline-none border-gray-300 rounded-md focus:outline:none sm:text-sm'
+                    placeholder={`Vrikshaaropan in ${formatLocationToGP(
+                      profile?.location_id
+                    )}`}
+                    aria-invalid='true'
+                    aria-describedby='mobile-error'
                   />
-                  <div className='absolute flex flex-col items-center gap-2 top-0 right-0 z-10 p-1'>
-                    <label
-                      title='Change Image'
-                      htmlFor='worker_photo'
-                      className='edit-btn cursor-pointer flex items-center justify-center rounded-full h-[24px] w-[24px] bg-gray-200 '
+                </div>
+              </div>
+
+              {/* field for job description */}
+              <div className='mt-2'>
+                <label
+                  htmlFor='job_description'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  Job description
+                </label>
+                <div className='relative mt-1 rounded-md shadow-sm'>
+                  <textarea
+                    autoComplete='on'
+                    required
+                    name='job_description'
+                    id='job_description'
+                    value={jobDetails.job_description}
+                    onChange={handleChange}
+                    className='w-full focus:outline-none border-gray-300 rounded-md focus:outline:none sm:text-sm'
+                    placeholder='Give a brief about job in one or two sentence.'
+                    aria-invalid='true'
+                    aria-describedby='mobile-error'
+                  />
+                </div>
+              </div>
+            </div>
+            {/* Starting job image */}
+            <div className='sm:mt-4'>
+              <label
+                htmlFor='photo'
+                className='block whitespace-nowrap text-sm font-medium leading-6 text-gray-900'
+              >
+                Initial work site photo
+              </label>
+              <div className='mt-1 w-60 h-32 rounded-md border-2 border-dashed border-gray-300 p-1'>
+                {/* Preview Image if uploaded */}
+                {!selectedFile && (
+                  <div className=' w-full h-full space-y-1 text-center flex flex-col justify-center items-center'>
+                    <svg
+                      className='mx-auto h-12 w-12 text-gray-400'
+                      stroke='currentColor'
+                      fill='none'
+                      viewBox='0 0 48 48'
+                      aria-hidden='true'
                     >
-                      <ion-icon
-                        color='primary'
-                        name='pencil-outline'
-                      ></ion-icon>
-                      <input
-                        id='worker_photo'
-                        name='worker_photo'
-                        type='file'
-                        multiple={false}
-                        accept='image/png, image/jpeg, image/jpg'
-                        className='sr-only'
-                        onChange={onSelectFile}
+                      <path
+                        d='M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02'
+                        strokeWidth={2}
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
                       />
-                    </label>
-                    {selectedFile && (
-                      <button
-                        onClick={() => {
-                          setSelectedFile(null)
-                          setPreview(null)
-                        }}
-                        title='Cancel'
-                        type='button'
-                        className='close-btn flex items-center justify-center rounded-full h-[24px] w-[24px] bg-gray-200'
+                    </svg>
+                    <div className='flex text-sm text-gray-600'>
+                      <label
+                        htmlFor='file-upload'
+                        className='relative cursor-pointer rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500'
+                      >
+                        <span>Initial Photo</span>
+                        <input
+                          id='file-upload'
+                          name='file-upload'
+                          type='file'
+                          required
+                          accept='image/png, image/jpeg, image/jpg'
+                          className='sr-only'
+                          onChange={onSelectFile}
+                        />
+                      </label>
+                    </div>
+                    <p className='text-xs text-gray-500'>
+                      PNG, or JPG up to 10MB
+                    </p>
+                  </div>
+                )}
+                {selectedFile && (
+                  <div className='preview-cont relative h-full w-full'>
+                    <img
+                      className='h-[100%] w-[100%]'
+                      src={preview}
+                      alt='worker image'
+                    />
+                    <div className='absolute flex flex-col items-center gap-2 top-0 right-0 z-10 p-1'>
+                      <label
+                        title='Change Image'
+                        htmlFor='worker_photo'
+                        className='edit-btn cursor-pointer flex items-center justify-center rounded-full h-[24px] w-[24px] bg-gray-200 '
                       >
                         <ion-icon
-                          color='danger'
-                          name='close-outline'
+                          color='primary'
+                          name='pencil-outline'
                         ></ion-icon>
-                      </button>
-                    )}
+                        <input
+                          id='worker_photo'
+                          name='worker_photo'
+                          type='file'
+                          multiple={false}
+                          accept='image/png, image/jpeg, image/jpg'
+                          className='sr-only'
+                          onChange={onSelectFile}
+                        />
+                      </label>
+                      {selectedFile && (
+                        <button
+                          onClick={() => {
+                            setSelectedFile(null)
+                            setPreview(null)
+                          }}
+                          title='Cancel'
+                          type='button'
+                          className='close-btn flex items-center justify-center rounded-full h-[24px] w-[24px] bg-gray-200'
+                        >
+                          <ion-icon
+                            color='danger'
+                            name='close-outline'
+                          ></ion-icon>
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
 
@@ -277,7 +300,7 @@ export default function AddJob () {
                   name='job_start_date'
                   type='date'
                   value={jobDetails.job_start_date}
-                  min={new Date().toISOString().slice(0, 10)}
+                  min={new Date(Date.now() + 86400000).toISOString().slice(0, 10)}
                   max={new Date(new Date().getFullYear() + 1, 2, 32)
                     .toISOString()
                     .slice(0, 10)}
@@ -319,7 +342,7 @@ export default function AddJob () {
             </div>
           </div>
           {/* field for person days generated */}
-          <div className='mt-4 grid grid-cols-1 gap-x-6 gap-y-4 lg:grid-cols-3 sm:grid-cols-2'>
+          <div className='mt-2 grid grid-cols-1 gap-x-6 gap-y-4 lg:grid-cols-3 sm:grid-cols-2'>
             <div>
               <label
                 htmlFor='job_name'
@@ -334,7 +357,6 @@ export default function AddJob () {
                   name='person_days'
                   id='person_days'
                   min={10}
-                  max={15}
                   value={jobDetails.person_days}
                   onChange={handleChange}
                   className='w-full focus:outline-none border-gray-300 rounded-md focus:outline:none sm:text-sm'
@@ -345,9 +367,23 @@ export default function AddJob () {
                 />
               </div>
             </div>
+            {/* Job category selection */}
+            <div className='relative z-20'>
+              <Dropdown
+                options={jobCategories}
+                label='Job category'
+                selected={
+                  jobDetails.job_category
+                    ? jobDetails.job_category
+                    : 'select a category'
+                }
+                onChange={handleCategoryChange}
+                id={1}
+              />
+            </div>
           </div>
           {/* Drop pin on google map to set geo-tag of work. */}
-          <div className='mt-4 w-full'>
+          <div className='mt-2 w-full'>
             <label
               htmlFor='end_date'
               className='block text-sm font-medium leading-6 text-gray-900'

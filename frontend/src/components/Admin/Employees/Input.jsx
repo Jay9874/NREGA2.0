@@ -9,6 +9,7 @@ export default function Input({
   placeholder,
   onChange,
   disabled,
+  pattern,
   tooltip
 }) {
   return (
@@ -31,6 +32,7 @@ export default function Input({
           className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
           required
           tooltip={tooltip}
+          pattern={pattern}
         />
         {disabled && (
           <p className='mt-2 invisible peer-disabled:visible text-gray-400 text-sm'>

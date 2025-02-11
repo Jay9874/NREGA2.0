@@ -355,40 +355,49 @@ const rejectApplication = async (req, res) => {
 const addJob = async (req, res) => {
   try {
     const jobDetails = req.body
-    console.log('job details: ', jobDetails)
+    const photo = jobDetails.photo
+    delete jobDetails.photo
     const supabase = createClient({ req, res })
     const { data, error } = await supabase
       .from('jobs')
       .insert(jobDetails)
       .select()
     if (error) throw error
+    // Upload the initial photo to job progress bucket for ML process
+    const base64String = photo
+    const base64 = base64String.split('base64,')[1]
+    const filename = `${Date.now()}`
+    const fileType = base64String.match(/^data:(.+);base64/)?.[1]
 
-    if ('photo' in jobDetails) {
-      const { updatedImage } = jobDetails
-      const base64String = updatedImage
-      const base64 = base64String.split('base64,')[1]
-      const filename = `${data[0].job_id}`
-      const fileType = base64String.match(/^data:(.+);base64/)?.[1]
-
-      const { data, error: errAtFile } = await supabase.storage
-        .from('worker_profile')
-        .upload(`avatars/${filename}`, decode(base64), {
-          contentType: fileType,
-          cacheControl: '3600',
-          upsert: true
-        })
-      if (errAtFile) throw errAtFile
-      // Delete the image field from the update details.
-      delete updatedDetails.updatedImage
-    }
-    
+    const { data: publicUrl, error: errAtFile } = await supabase.storage
+      .from('job_progress')
+      .upload(`${data[0].job_id}/${filename}`, decode(base64), {
+        contentType: fileType,
+        cacheControl: '3600',
+        upsert: true
+      })
+    if (errAtFile) throw errAtFile
     return res.status(200).send({
       data: data,
       error: null
     })
   } catch (err) {
-    console.log(err)
+    console.error(err)
     return res.status(500).send({
+      data: null,
+      error: err
+    })
+  }
+}
+
+const fetchRandomAadhaar=async(req, res)=>{
+  try{
+    const supabase = createClient({req, res})
+    const {data, error} = await supabase
+    .from('aadhaar_db')
+  }catch(err){
+    console.log(err)
+    return res.status(501).send({
       data: null,
       error: err
     })
@@ -405,5 +414,6 @@ export {
   jobEnrollment,
   enrollWorker,
   rejectApplication,
-  addJob
+  addJob,
+  fetchRandomAadhaar
 }

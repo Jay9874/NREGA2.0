@@ -325,9 +325,7 @@ export const useWorkerStore = create((set, get) => ({
       return error
     }
     const hasInput = data.length == 0 ? false : true
-    const [lat1, lon1] = item.geotag
-    const [lat2, lon2] = item.location_id.geotag
-    const distanceBtwCords = distance(lat1, lon1, lat2, lon2, 'K')
+    const distanceBtwCords = distance(item.geotag, item.location_id.geotag, 'K')
     return {
       ...item,
       Work: item.job_name,

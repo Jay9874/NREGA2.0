@@ -4,8 +4,13 @@ import { useAdminStore } from '../../../api/store'
 import { FormLoading } from '../../Errors'
 import { toast } from 'sonner'
 import { Input } from '.'
+import { Switch } from '@headlessui/react'
 
-export default function AddEmployee() {
+function classNames (...classes) {
+  return classes.filter(Boolean).join(' ')
+}
+
+export default function AddEmployee () {
   const navigate = useNavigate()
   const fileInputRef = useRef(null)
   const {
@@ -14,16 +19,18 @@ export default function AddEmployee() {
     setAadhaarData,
     profile,
     loading,
-    createEmployee,
+    createEmployee
   } = useAdminStore()
 
   const [aadhaarNo, setAadhaarNo] = useState(
     lastAddedAadhaar ? lastAddedAadhaar.aadhaar_no : ''
   )
+  const [demo, setDemo] = useState(false)
   const [preview, setPreview] = useState(null)
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
+    sex: '',
     id: lastAddedUser.id,
     mgnrega_id: '',
     address: profile.location_id.id,
@@ -33,9 +40,9 @@ export default function AddEmployee() {
     age: lastAddedAadhaar ? lastAddedAadhaar.age : '',
     dob: lastAddedAadhaar ? lastAddedAadhaar.dob : '',
     father_name: lastAddedAadhaar ? lastAddedAadhaar.father_name : '',
-    bank_account_no: lastAddedAadhaar ? lastAddedAadhaar.bank_account_no : '',
+    bank_account_no: lastAddedAadhaar ? lastAddedAadhaar.bank_account_no : ''
   })
-  async function handleSubmit(e) {
+  async function handleSubmit (e) {
     try {
       e.preventDefault()
       const updatedFormData = { ...formData, aadhar_no: aadhaarNo }
@@ -44,14 +51,22 @@ export default function AddEmployee() {
       return toast.error(err)
     }
   }
-  function handleChange(e) {
+  function handleChange (e) {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    setFormData(prev => ({ ...prev, [name]: value }))
   }
-  function cantChange(e) {
+  function cantChange (e) {
     e.preventDefault()
   }
-  async function handleAadhaarClick(e) {
+
+  async function fetchRandomAadhaar (e) {
+    try {
+      setDemo(!demo)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  async function handleAadhaarClick (e) {
     e.preventDefault()
     const isNum = /^\d+$/.test(aadhaarNo)
     if (aadhaarNo.length != 12 || !isNum) {
@@ -59,21 +74,21 @@ export default function AddEmployee() {
       return null
     }
     const data = await setAadhaarData(aadhaarNo)
-    setFormData((prev) => ({ ...prev, ...data }))
+    setFormData(prev => ({ ...prev, ...data }))
   }
 
   // control the image file change
-  function handleFileChange(event) {
+  function handleFileChange (event) {
     const file = event.target.files[0]
     if (file && file.type.substring(0, 5) === 'image') {
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
-        photo: file,
+        photo: file
       }))
     } else {
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
-        photo: null,
+        photo: null
       }))
     }
   }
@@ -85,7 +100,7 @@ export default function AddEmployee() {
       }
       reader.readAsDataURL(formData.photo) //represented as a base64string
       reader.onload = () => {
-        setFormData((prev) => ({ ...prev, queryImage: reader.result }))
+        setFormData(prev => ({ ...prev, queryImage: reader.result }))
       }
     } else {
       setPreview(null)
@@ -95,7 +110,7 @@ export default function AddEmployee() {
   return loading ? (
     <div className='w-full text-center'>loading...</div>
   ) : (
-    <main>
+    <main className='mt-4'>
       {/* The Form with all the fields. */}
       <div className='px-6'>
         <h2 className='text-base font-semibold leading-7 text-gray-900'>
@@ -107,9 +122,9 @@ export default function AddEmployee() {
         </p>
       </div>
       <form onSubmit={handleSubmit}>
-        <div className='space-y-6 px-12'>
+        <div className='space-y-6 px-6'>
           <div className='border-b border-gray-900/10 pb-6'>
-            <div className='mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6'>
+            <div className='mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-3'>
               <div className='sm:col-span-3 sm:col-start-1'>
                 <label
                   htmlFor='uuid'
@@ -136,20 +151,51 @@ export default function AddEmployee() {
                 </div>
               </div>
               {/* Aadhaar Number */}
-              <div className='sm:col-span-3'>
-                <label
-                  htmlFor='aadhaar'
-                  className='block text-sm font-medium leading-6 text-gray-900 whitespace-nowrap'
-                >
-                  Aadhaar Number
-                </label>
-                <div className='mt-2 flex items-center rounded-md shadow-sm ring-1 ring-inset ring-gray-300 sm:max-w-md'>
+              <div className='sm:col-span-3 '>
+                <div className='mt-2 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 sm:max-w-md'>
+                  <div className='flex justify-between items-center'>
+                    <label
+                      htmlFor='aadhaar'
+                      className='block text-sm font-medium leading-6 text-gray-900 whitespace-nowrap'
+                    >
+                      Aadhaar Number
+                    </label>
+
+                    {/* Demo toggler */}
+                    <Switch
+                      checked={demo}
+                      onChange={fetchRandomAadhaar}
+                      className='group relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+                    >
+                      <span className='sr-only'>
+                        fetch random aadhaar number for demo
+                      </span>
+                      <span
+                        aria-hidden='true'
+                        className='pointer-events-none absolute h-full w-full rounded-md bg-white'
+                      />
+                      <span
+                        aria-hidden='true'
+                        className={classNames(
+                          demo ? 'bg-indigo-600' : 'bg-gray-200',
+                          'pointer-events-none absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out'
+                        )}
+                      />
+                      <span
+                        aria-hidden='true'
+                        className={classNames(
+                          demo ? 'translate-x-5' : 'translate-x-0',
+                          'pointer-events-none absolute left-0 inline-block h-5 w-5 transform rounded-full border border-gray-200 bg-white shadow ring-0 transition-transform duration-200 ease-in-out'
+                        )}
+                      />
+                    </Switch>
+                  </div>
                   <input
                     type='text'
                     name='aadhar_no'
                     id='aadhaar'
                     value={aadhaarNo}
-                    onChange={(e) => setAadhaarNo(e.target.value)}
+                    onChange={e => setAadhaarNo(e.target.value)}
                     className='block w-full border-gray-300 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                     placeholder='0000-0000-0000'
                     required
@@ -185,7 +231,7 @@ export default function AddEmployee() {
               </div>
             ) : (
               <div>
-                <div className='border-b border-gray-900/10 pb-12 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6'>
+                <div className='pb-12 mt-10 w-full grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2'>
                   {/* MGNREGA ID */}
                   <Input
                     type='text'
@@ -194,11 +240,11 @@ export default function AddEmployee() {
                     label='MGNREGA ID'
                     value={formData.mgnrega_id}
                     onChange={handleChange}
-                    colValue='sm:col-start-1 sm:col-span-3'
+                    className='col-span-1'
                     placeholder='MG-00-00'
                   />
                   {/* Profile Picture */}
-                  <div className='sm:col-span-4'>
+                  <div className='col-span-1'>
                     <label
                       htmlFor='cover-photo'
                       className='block text-sm font-medium leading-6 text-gray-900'
@@ -254,19 +300,32 @@ export default function AddEmployee() {
                     value={formData.first_name}
                     onChange={handleChange}
                     label='First Name'
-                    colValue='col-start-1 col-span-full sm:col-span-2'
+                    className='col-span-1'
                     disabled={false}
                   />
                   {/* Last Name */}
                   <Input
                     id='last_name'
                     label='Last Name'
-                    colValue='sm:col-span-2'
+                    className='col-span-1'
                     type='text'
                     name='last_name'
                     value={formData.last_name}
                     onChange={handleChange}
                     disabled={false}
+                  />
+                  {/* Sex of worker */}
+                  <Input
+                    id='sex'
+                    label='Sex'
+                    className='col-span-1'
+                    type='text'
+                    name='sex'
+                    value={formData.sex}
+                    onChange={handleChange}
+                    disabled={false}
+                    placeholder={'M/F'}
+                    pattern='[MF]'
                   />
                   {/* Father's Name */}
                   <Input
@@ -278,14 +337,14 @@ export default function AddEmployee() {
                     onChange={cantChange}
                     disabled={true}
                     hint='Prefilled with Aadhaar Data'
-                    colValue='sm:col-span-2 sm:col-start-1'
+                    colValue='col-span-1'
                   />
                   {/* Email address */}
                   <Input
                     id='email'
                     name='email'
                     type='email'
-                    colValue='sm:col-span-3'
+                    colValue='col-span-1'
                     label='Email address'
                     value={formData.email}
                     onChange={cantChange}
@@ -298,7 +357,7 @@ export default function AddEmployee() {
                     name='age'
                     id='age'
                     label='Age / DOB'
-                    colValue='sm:col-span-2'
+                    colValue='col-span-1'
                     value={`${formData.age} / ${formData.dob}`}
                     onChange={cantChange}
                     placeholder='00 / DD-MM-YYYY'
@@ -313,7 +372,7 @@ export default function AddEmployee() {
                     value={formData.bank_account_no}
                     onChange={cantChange}
                     hint='Prefilled with Aadhaar Data'
-                    colValue='sm:col-span-3'
+                    colValue='col-span-1'
                     label='Bank Account Number'
                     disabled={true}
                   />
@@ -325,12 +384,13 @@ export default function AddEmployee() {
                     value={formData.mobile_no}
                     onChange={handleChange}
                     label=' Mobile Number'
-                    colValue='sm:col-span-2'
+                    colValue='col-span-1'
                     placeholder='10 Digits'
+                    pattern='[0-9]{10}'
                   />
                   {/* Location ID */}
                   <Input
-                    colValue='col-start-1 col-span-full'
+                    colValue='col-span-1'
                     label='Location ID'
                     id='location_id'
                     onChange={cantChange}

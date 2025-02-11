@@ -16,7 +16,7 @@ export default function Dropdown({ options, label, selected, onChange, id }) {
     >
       {({ open }) => (
         <>
-          <Listbox.Label className='capitalize block text-sm font-medium text-gray-700'>
+          <Listbox.Label className='capitalize block text-sm font-medium leading-6 text-gray-900'>
             {label}
           </Listbox.Label>
           <div className='relative z-10 mt-1'>

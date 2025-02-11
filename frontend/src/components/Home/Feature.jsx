@@ -53,13 +53,11 @@ export default function Feature () {
   useEffect(() => {
     if (workerPathRef.current) {
       const len = workerPathRef.current.getTotalLength()
-      console.log(len)
       setPathLength(len)
       workerPathRef.current.style.strokeDasharray = len
     }
     if (sachivPathRef.current) {
       const len = sachivPathRef.current.getTotalLength()
-      console.log(len)
       setPathLength(len)
       sachivPathRef.current.style.strokeDasharray = len
     }
@@ -97,18 +95,18 @@ export default function Feature () {
             <path
               className={activeIndex == 1 ? 'arrow-create' : 'arrow-dissolve'}
               d='m 16 31 l 8 8'
-              stroke-linecap='round'
-              stroke-linejoin='round'
+              strokeLinecap='round'
+              strokeLinejoin='round'
               stroke='#4f46e5'
-              stroke-width='1'
+              strokeWidth='1'
             />
             <path
               className={activeIndex == 1 ? 'arrow-create' : 'arrow-dissolve'}
               d='m 16 31 l 8 -8'
-              stroke-linecap='round'
-              stroke-linejoin='round'
+              strokeLinecap='round'
+              strokeLinejoin='round'
               stroke='#4f46e5'
-              stroke-width='1'
+              strokeWidth='1'
             />
           </svg>
           <p
@@ -149,23 +147,27 @@ export default function Feature () {
             <path
               className={activeIndex == 0 ? 'arrow-create' : 'arrow-dissolve'}
               d='m 124 31 l -8 8'
-              stroke-linecap='round'
-              stroke-linejoin='round'
+              strokeLinecap='round'
+              strokeLinejoin='round'
               stroke='#4f46e5'
-              stroke-width='1'
+              strokeWidth='1'
             />
             <path
               className={activeIndex == 0 ? 'arrow-create' : 'arrow-dissolve'}
               d='m 124 31 l -8 -8'
-              stroke-linecap='round'
-              stroke-linejoin='round'
+              strokeLinecap='round'
+              strokeLinejoin='round'
               stroke='#4f46e5'
-              stroke-width='1'
+              strokeWidth='1'
             />
           </svg>
-          <p className={`relative right-0 top-0 transition-all duration-700 ease-in-out ${
+          <p
+            className={`relative right-0 top-0 transition-all duration-700 ease-in-out ${
               activeIndex == 0 ? 'right-2 top-1' : ''
-            }`}>Sachiv Panel</p>
+            }`}
+          >
+            Sachiv Panel
+          </p>
         </button>
       </div>
 

@@ -72,7 +72,10 @@ const Mapbox = ({ setCords }) => {
       setCoordinates([`Longitude: ${lngLat.lng}`, `Latitude: ${lngLat.lat}`])
       setCords([lngLat.lng, lngLat.lat])
     }
-
+    mapRef.current.flyTo({
+      center: marker.getLngLat(),
+      zoom: 15 // Adjust zoom level as needed
+    });
     marker.on('dragend', onDragEnd)
     mapRef.current.on('load', () => {
       setMapLoaded(true)

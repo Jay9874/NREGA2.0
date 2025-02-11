@@ -295,7 +295,7 @@ export const useAdminStore = create((set, get) => ({
       } = await res.json()
       if (error) throw error
       set({ gpo: gpo[0] })
-      const updatedPayments = payments.map((payment, index) => ({
+      const updatedPayments = payments?.map((payment, index) => ({
         ...payment,
         Transaction: `To ${payment.payment_to.first_name} ${payment.payment_to.last_name}, ID: ${payment.payment_to.mgnrega_id}`,
         Amount: `₹${payment.amount.toFixed(2)}`,
