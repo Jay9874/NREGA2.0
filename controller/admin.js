@@ -390,14 +390,19 @@ const addJob = async (req, res) => {
   }
 }
 
-const fetchRandomAadhaar=async(req, res)=>{
-  try{
-    const supabase = createClient({req, res})
-    const {data, error} = await supabase
-    .from('aadhaar_db')
-  }catch(err){
+const fetchRandomAadhaar = async (req, res) => {
+  try {
+    const supabase = createClient({ req, res })
+    const { data, error } = await supabase.rpc('get_unreferenced_aadhaar')
+    if (error) throw error
+    const randInt = Math.floor(Math.random() * (data.length - 1 - 0 + 1) + 0)
+    return res.status(200).send({
+      data: data[randInt],
+      error: null
+    })
+  } catch (err) {
     console.log(err)
-    return res.status(501).send({
+    return res.status(500).send({
       data: null,
       error: err
     })

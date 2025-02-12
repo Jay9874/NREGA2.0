@@ -58,6 +58,7 @@ export const useAdminStore = create((set, get) => ({
         resolve(profile[0])
       } catch (error) {
         console.log(error)
+        toast.dismiss()
         toast.error(error.message)
         throw error
       }
@@ -95,7 +96,6 @@ export const useAdminStore = create((set, get) => ({
   },
   setAadhaarData: async aadhaarNo => {
     try {
-      set({ loading: true })
       const toastId = toast.loading('Getting aadhaar data...')
       localStorage.removeItem('lastAddedAadhaar')
       const userData = { aadhaar: aadhaarNo }
@@ -108,7 +108,6 @@ export const useAdminStore = create((set, get) => ({
       const url = `${get().base}/api/admin/aadhaar`
       const res = await fetch(url, options)
       const { data, error } = await res.json()
-      set({ loading: false })
       if (error) throw error
       const updatedData = { ...data, age: calculateAge(data.dob) }
       localStorage.setItem('lastAddedAadhaar', JSON.stringify(updatedData))
@@ -116,7 +115,7 @@ export const useAdminStore = create((set, get) => ({
       toast.success('Fields filled with aadhaar data.')
       return updatedData
     } catch (error) {
-      set({ loading: false })
+      toast.dismiss()
       return toast.error(`${error}, Please try again.`)
     }
   },
@@ -143,6 +142,7 @@ export const useAdminStore = create((set, get) => ({
       localStorage.removeItem('lastAddedAadhaar')
       return data
     } catch (error) {
+      toast.dismiss()
       return toast.error(error.message)
     }
   },
@@ -160,6 +160,7 @@ export const useAdminStore = create((set, get) => ({
         set({ employees: employees })
         resolve(employees)
       } catch (error) {
+        toast.dismiss()
         toast.error(error.message)
         reject(error)
       }
@@ -193,6 +194,7 @@ export const useAdminStore = create((set, get) => ({
       } catch (err) {
         console.log(err)
         set({ loading: false })
+        toast.dismiss()
         toast.error('Something went wrong.')
         reject(err)
       }
@@ -306,6 +308,7 @@ export const useAdminStore = create((set, get) => ({
       return gpo
     } catch (err) {
       console.log(err)
+      toast.dismiss()
       toast.error(err.message)
     }
   },
@@ -334,6 +337,7 @@ export const useAdminStore = create((set, get) => ({
         resolve(data)
       } catch (err) {
         set({ loading: false })
+        toast.dismiss()
         toast.error('Something went wrong.')
         console.log(err)
         reject(err)
@@ -369,6 +373,7 @@ export const useAdminStore = create((set, get) => ({
         console.log(err)
         set({ loading: false })
         reject(err)
+        toast.dismiss()
         toast.error('Something went wrong.')
       }
     })
@@ -377,7 +382,7 @@ export const useAdminStore = create((set, get) => ({
     return new Promise(async (resolve, reject) => {
       try {
         set({ loading: true })
-        toast.loading('Adding new job...')
+        toast.loading('Adding new job...', { duration: Infinity })
         const options = {
           method: 'POST',
           credentials: 'include',
@@ -398,6 +403,35 @@ export const useAdminStore = create((set, get) => ({
       } catch (err) {
         console.error(err)
         set({ loading: false })
+        toast.dismiss()
+        toast.error('Something went wrong.')
+        reject(err)
+      }
+    })
+  },
+  fetchARandomAadhaar: async () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        toast.loading('Fetching a random unused aadhaar number from db...', {
+          duration: Infinity
+        })
+        const options = {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          }
+        }
+        const url = `${get().base}/api/admin/random-aadhaar`
+        const res = await fetch(url, options)
+        const { data, error } = await res.json()
+        toast.dismiss()
+        if (error) throw error
+        toast.success('Fetched an aadhaar number, proceed with form.')
+        resolve(data)
+      } catch (err) {
+        console.log(err)
         toast.error('Something went wrong.')
         reject(err)
       }

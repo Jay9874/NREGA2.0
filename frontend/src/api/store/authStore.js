@@ -76,7 +76,7 @@ export const authStore = create((set, get) => ({
       set({ user: activeUser })
       localStorage.setItem('suid', JSON.stringify({ user: activeUser }))
       set({ loading: false })
-      toast.dismiss(toastId)
+      toast.dismiss()
       toast.success('Login successful!')
       navigate(`/${activeUser.type}/dashboard`)
     } catch (err) {
@@ -99,7 +99,7 @@ export const authStore = create((set, get) => ({
   logoutUser: async navigate => {
     try {
       set({ loading: true })
-      const toastId = toast.loading('Logging you out...')
+      toast.loading('Logging you out...')
       const options = {
         method: 'POST',
         credentials: 'include',
@@ -112,7 +112,7 @@ export const authStore = create((set, get) => ({
       const res = await fetch(url, options)
       const { data, error } = await res.json()
       if (error) throw error
-      toast.dismiss(toastId)
+      toast.dismiss()
       toast.success('Logged out successfully!')
       set({
         user: { email: '', type: '', id: '', photo: null },

@@ -19,7 +19,8 @@ export default function AddEmployee () {
     setAadhaarData,
     profile,
     loading,
-    createEmployee
+    createEmployee,
+    fetchARandomAadhaar
   } = useAdminStore()
 
   const [aadhaarNo, setAadhaarNo] = useState(
@@ -59,9 +60,16 @@ export default function AddEmployee () {
     e.preventDefault()
   }
 
-  async function fetchRandomAadhaar (e) {
+  async function handleDemoToggle (e) {
     try {
-      setDemo(!demo)
+      if (!demo) {
+        const data = await fetchARandomAadhaar()
+        setAadhaarNo(data.aadhaar_no)
+        setDemo(true)
+      } else {
+        setAadhaarNo('')
+        setDemo(false)
+      }
     } catch (err) {
       console.log(err)
     }
@@ -74,6 +82,7 @@ export default function AddEmployee () {
       return null
     }
     const data = await setAadhaarData(aadhaarNo)
+    delete data.id
     setFormData(prev => ({ ...prev, ...data }))
   }
 
@@ -152,7 +161,7 @@ export default function AddEmployee () {
               </div>
               {/* Aadhaar Number */}
               <div className='sm:col-span-3 '>
-                <div className='mt-2 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 sm:max-w-md'>
+                <div className='mt-2 sm:max-w-md'>
                   <div className='flex justify-between items-center'>
                     <label
                       htmlFor='aadhaar'
@@ -162,58 +171,66 @@ export default function AddEmployee () {
                     </label>
 
                     {/* Demo toggler */}
-                    <Switch
-                      checked={demo}
-                      onChange={fetchRandomAadhaar}
-                      className='group relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
-                    >
-                      <span className='sr-only'>
-                        fetch random aadhaar number for demo
+                    <div className='flex items-center gap-2'>
+                      <span className='text-sm font-normal text-gray-600'>
+                        Random
                       </span>
-                      <span
-                        aria-hidden='true'
-                        className='pointer-events-none absolute h-full w-full rounded-md bg-white'
-                      />
-                      <span
-                        aria-hidden='true'
-                        className={classNames(
-                          demo ? 'bg-indigo-600' : 'bg-gray-200',
-                          'pointer-events-none absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out'
-                        )}
-                      />
-                      <span
-                        aria-hidden='true'
-                        className={classNames(
-                          demo ? 'translate-x-5' : 'translate-x-0',
-                          'pointer-events-none absolute left-0 inline-block h-5 w-5 transform rounded-full border border-gray-200 bg-white shadow ring-0 transition-transform duration-200 ease-in-out'
-                        )}
-                      />
-                    </Switch>
+                      <Switch
+                        checked={demo}
+                        onChange={handleDemoToggle}
+                        className='group relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2'
+                      >
+                        <span className='sr-only'>
+                          fetch random aadhaar number for demo
+                        </span>
+
+                        <span
+                          aria-hidden='true'
+                          className='pointer-events-none absolute h-full w-full rounded-md bg-white'
+                        />
+                        <span
+                          aria-hidden='true'
+                          className={classNames(
+                            demo ? 'bg-green-600' : 'bg-gray-200',
+                            'pointer-events-none absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out'
+                          )}
+                        />
+                        <span
+                          aria-hidden='true'
+                          className={classNames(
+                            demo ? 'translate-x-5' : 'translate-x-0',
+                            'pointer-events-none absolute left-0 inline-block h-5 w-5 transform rounded-full border border-gray-200 bg-white shadow ring-0 transition-transform duration-200 ease-in-out'
+                          )}
+                        />
+                      </Switch>
+                    </div>
                   </div>
-                  <input
-                    type='text'
-                    name='aadhar_no'
-                    id='aadhaar'
-                    value={aadhaarNo}
-                    onChange={e => setAadhaarNo(e.target.value)}
-                    className='block w-full border-gray-300 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                    placeholder='0000-0000-0000'
-                    required
-                    title='Fetch details'
-                  />
-                  <button
-                    disabled={loading ? true : false}
-                    onClick={handleAadhaarClick}
-                    className={loading ? 'cursor-not-allowed' : ''}
-                  >
-                    <p className='flex px-6'>
-                      <ion-icon
-                        style={{ color: '#00D100' }}
-                        size='large'
-                        name='cloud-download-outline'
-                      ></ion-icon>
-                    </p>
-                  </button>
+                  <div className='flex mt-2 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md'>
+                    <input
+                      type='text'
+                      name='aadhar_no'
+                      id='aadhaar'
+                      value={aadhaarNo}
+                      onChange={e => setAadhaarNo(e.target.value)}
+                      className='block w-full border-gray-300 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                      placeholder='0000-0000-0000'
+                      required
+                      title='Fetch details'
+                    />
+                    <button
+                      disabled={loading ? true : false}
+                      onClick={handleAadhaarClick}
+                      className={loading ? 'cursor-not-allowed' : ''}
+                    >
+                      <span className='flex items-center px-6'>
+                        <ion-icon
+                          style={{ color: '#00D100' }}
+                          size='large'
+                          name='cloud-download-outline'
+                        ></ion-icon>
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

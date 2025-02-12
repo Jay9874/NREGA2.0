@@ -32,10 +32,11 @@ const login = async (req, res) => {
       error: null
     })
   } catch (err) {
+    const error = { ...err, message: 'Failed to fetch.' }
     console.log(err)
     return res.status(403).send({
       data: null,
-      error: err
+      error: error
     })
   }
 }
@@ -158,7 +159,7 @@ const clearANotification = async (req, res) => {
   try {
     const { notificationId, type } = req.body
     const searchTable = `${type == 'admin' ? 'sachiv' : 'worker'}_notifications`
-    const supabase = createClient({req, res})
+    const supabase = createClient({ req, res })
     const { data, error } = await supabase
       .from(searchTable)
       .delete()

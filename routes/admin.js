@@ -11,7 +11,8 @@ import {
   rejectApplication,
   enrollWorker,
   updateWorker,
-  addJob
+  addJob,
+  fetchRandomAadhaar
 } from '../controller/admin.js'
 
 // Defining the routes
@@ -87,5 +88,13 @@ router.post('/reject-application', rejectApplication)
  * @access public
  **/
 router.post('/add-job', addJob)
+
+// Route for fetching a random aadhaar number for demo
+/**
+ * @route GET api/admin/random-aadhaar
+ * @description fetch an unused random aadhaar number from database.
+ * @access public
+ **/
+router.get('/random-aadhaar', fetchRandomAadhaar)
 
 export { router as adminRoutes }
