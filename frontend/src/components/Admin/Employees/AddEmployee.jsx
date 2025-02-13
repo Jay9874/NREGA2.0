@@ -5,6 +5,11 @@ import { FormLoading } from '../../Errors'
 import { toast } from 'sonner'
 import { Input } from '.'
 import { Switch } from '@headlessui/react'
+import {
+  UsersIcon,
+  BarsArrowUpIcon,
+  CloudArrowDownIcon
+} from '@heroicons/react/20/solid'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
@@ -24,7 +29,7 @@ export default function AddEmployee () {
   } = useAdminStore()
 
   const [aadhaarNo, setAadhaarNo] = useState(
-    lastAddedAadhaar ? lastAddedAadhaar.aadhaar_no : ''
+    lastAddedAadhaar ? lastAddedAadhaar.aadhar_no : ''
   )
   const [demo, setDemo] = useState(false)
   const [preview, setPreview] = useState(null)
@@ -35,21 +40,24 @@ export default function AddEmployee () {
     id: lastAddedUser.id,
     mgnrega_id: '',
     address: profile.location_id.id,
-    photo: null,
     mobile_no: '',
+    photo: null,
     email: lastAddedUser.email,
     age: lastAddedAadhaar ? lastAddedAadhaar.age : '',
     dob: lastAddedAadhaar ? lastAddedAadhaar.dob : '',
     father_name: lastAddedAadhaar ? lastAddedAadhaar.father_name : '',
     bank_account_no: lastAddedAadhaar ? lastAddedAadhaar.bank_account_no : ''
   })
+
   async function handleSubmit (e) {
     try {
       e.preventDefault()
-      const updatedFormData = { ...formData, aadhar_no: aadhaarNo }
-      await createEmployee(updatedFormData, navigate)
+      const { employee } = await createEmployee(formData)
+      toast.success(`Worker ${employee.first_name} added successfully.`)
+      navigate('..')
     } catch (err) {
-      return toast.error(err)
+      console.log(err)
+      return toast.error('Something went wrong.')
     }
   }
   function handleChange (e) {
@@ -153,7 +161,7 @@ export default function AddEmployee () {
                       className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm sm:leading-6'
                       placeholder='id'
                     />
-                    <p className='px-3 py-0.5 invisible peer-disabled:visible text-gray-400 text-sm'>
+                    <p className='px-3 invisible peer-disabled:visible text-gray-400 text-sm'>
                       Last Created User ID
                     </p>
                   </div>
@@ -205,31 +213,38 @@ export default function AddEmployee () {
                       </Switch>
                     </div>
                   </div>
-                  <div className='flex mt-2 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md'>
-                    <input
-                      type='text'
-                      name='aadhar_no'
-                      id='aadhaar'
-                      value={aadhaarNo}
-                      onChange={e => setAadhaarNo(e.target.value)}
-                      className='block w-full border-gray-300 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                      placeholder='0000-0000-0000'
-                      required
-                      title='Fetch details'
-                    />
-                    <button
-                      disabled={loading ? true : false}
-                      onClick={handleAadhaarClick}
-                      className={loading ? 'cursor-not-allowed' : ''}
-                    >
-                      <span className='flex items-center px-6'>
-                        <ion-icon
-                          style={{ color: '#00D100' }}
-                          size='large'
-                          name='cloud-download-outline'
-                        ></ion-icon>
-                      </span>
-                    </button>
+                  <div>
+                    <div className='mt-1 flex rounded-md shadow-sm'>
+                      <div className='relative flex flex-grow items-stretch focus-within:z-10'>
+                        <input
+                          type='text'
+                          name='aadhar_no'
+                          id='aadhaar'
+                          value={aadhaarNo}
+                          onChange={e => setAadhaarNo(e.target.value)}
+                          className='block w-full border-gray-300 rounded-none rounded-l-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                          placeholder='0000-0000-0000'
+                          required
+                          title='Fetch details'
+                        />
+                      </div>
+                      <button
+                        type='button'
+                        disabled={loading ? true : false}
+                        onClick={handleAadhaarClick}
+                        className={
+                          loading
+                            ? 'cursor-not-allowed'
+                            : 'relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+                        }
+                      >
+                        <CloudArrowDownIcon
+                          className='h-5 w-5 text-green-600'
+                          aria-hidden='true'
+                        />
+                        <span>Get bio</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -248,7 +263,7 @@ export default function AddEmployee () {
               </div>
             ) : (
               <div>
-                <div className='pb-12 mt-10 w-full grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2'>
+                <div className='mt-10 w-full grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2'>
                   {/* MGNREGA ID */}
                   <Input
                     type='text'

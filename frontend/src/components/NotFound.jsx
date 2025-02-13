@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 const NotFound = ({ path }) => {
+  console.log("path: ", path)
   const navigate = useNavigate()
   useEffect(() => {
     if (path == 'worker') navigate('/worker/dashboard')

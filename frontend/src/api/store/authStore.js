@@ -31,17 +31,10 @@ export const authStore = create((set, get) => ({
         const res = await fetch(url, options)
         const { data, error } = await res.json()
         if (error) throw error
-        const { user } = data
-        const activeUser = {
-          email: user.email,
-          type: user.user_metadata.userType,
-          id: user.id,
-          photo: user.user_metadata.avatar
-        }
-        set({ user: activeUser })
-        localStorage.setItem('suid', JSON.stringify({ user: activeUser }))
+        set({ user: data })
+        localStorage.setItem('suid', JSON.stringify({ user: data }))
         set({ loading: false })
-        resolve(activeUser)
+        resolve(data)
       } catch (err) {
         set({ loading: false })
         reject(err)
@@ -62,23 +55,17 @@ export const authStore = create((set, get) => ({
         headers: headers
       }
       const url = `${get().base}/api/auth/login`
-      const toastId = toast.loading('Logging you in...', { duration: Infinity })
+      toast.loading('Logging you in...', { duration: Infinity })
       const res = await fetch(url, options)
       const { data, error } = await res.json()
       if (error) throw error
-      const { user } = data
-      const activeUser = {
-        email: user.email,
-        type: user.user_metadata.userType,
-        id: user.id,
-        photo: user.user_metadata.avatar
-      }
-      set({ user: activeUser })
-      localStorage.setItem('suid', JSON.stringify({ user: activeUser }))
+      console.log("data is: ", data)
+      set({ user: data })
+      localStorage.setItem('suid', JSON.stringify({ user: data }))
       set({ loading: false })
       toast.dismiss()
       toast.success('Login successful!')
-      navigate(`/${activeUser.type}/dashboard`)
+      navigate(`/${data.type}/dashboard`)
     } catch (err) {
       toast.error(err.message)
       toast.dismiss()

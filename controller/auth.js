@@ -22,17 +22,32 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body
     const supabase = createClient({ req, res })
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const {
+      data: { user },
+      error
+    } = await supabase.auth.signInWithPassword({
       email: email,
       password: password
     })
     if (error) throw error
+    const { data: profile, error: errAtProfile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+    if (errAtProfile) throw errAtProfile
+    const loggedUser = {
+      email: profile[0].email,
+      type: profile[0].user_type,
+      id: user.id,
+      photo: profile[0].avatar
+    }
+    console.log('profile: ', profile)
     res.status(200).send({
-      data: data,
+      data: loggedUser,
       error: null
     })
   } catch (err) {
-    const error = { ...err, message: 'Failed to fetch.' }
+    const error = { ...err, message: 'Unable to login, try again.' }
     console.log(err)
     return res.status(403).send({
       data: null,
@@ -87,14 +102,32 @@ const signup = async (req, res) => {
 
 const pageRefresh = async (req, res) => {
   try {
+    const supabase = createClient({ req, res })
     const encodedCookie = req.cookies[process.env.AUTH_TOKEN]
     const decodedCookie = decodeURIComponent(encodedCookie)
     const access_token = decodedCookie.access_token
-    const supabase = createClient({ req, res })
-    const { data, error } = await supabase.auth.getUser(access_token)
+
+    //  Getting the user from auth table
+    const {
+      data: { user },
+      error
+    } = await supabase.auth.getUser(access_token)
     if (error) throw error
+
+    // Getting the profile for this user
+    const { data: profile, error: errAtProfile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+    if (errAtProfile) throw errAtProfile
+    const loggedUser = {
+      email: profile[0].email,
+      type: profile[0].user_type,
+      id: user.id,
+      photo: profile[0].avatar
+    }
     return res.status(200).send({
-      data: data,
+      data: loggedUser,
       error: null
     })
   } catch (err) {

@@ -74,18 +74,18 @@ export const useAdminStore = create((set, get) => ({
       }
       const options = {
         method: 'POST',
-        body: JSON.stringify(userData),
         credentials: 'include',
-        headers: { 'content-type': 'application/json' }
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(userData)
       }
       const url = `${get().base}/api/admin/createuser`
-      toast.loading('Adding User...')
+      toast.loading('Adding User...', { duration: Infinity })
       const res = await fetch(url, options)
       const { data, error } = await res.json()
       toast.dismiss()
       set({ loading: false })
       if (error) throw error
-      toast.success('New user added.')
+      toast.success('New user added, check email to verify.')
       localStorage.setItem('lastAddedUser', JSON.stringify(data))
       set({ lastAddedUser: data })
       return data
@@ -96,7 +96,7 @@ export const useAdminStore = create((set, get) => ({
   },
   setAadhaarData: async aadhaarNo => {
     try {
-      const toastId = toast.loading('Getting aadhaar data...')
+      toast.loading('Getting aadhaar data...', { duration: Infinity })
       localStorage.removeItem('lastAddedAadhaar')
       const userData = { aadhaar: aadhaarNo }
       const options = {
@@ -108,6 +108,7 @@ export const useAdminStore = create((set, get) => ({
       const url = `${get().base}/api/admin/aadhaar`
       const res = await fetch(url, options)
       const { data, error } = await res.json()
+      toast.dismiss()
       if (error) throw error
       const updatedData = { ...data, age: calculateAge(data.dob) }
       localStorage.setItem('lastAddedAadhaar', JSON.stringify(updatedData))
@@ -115,36 +116,36 @@ export const useAdminStore = create((set, get) => ({
       toast.success('Fields filled with aadhaar data.')
       return updatedData
     } catch (error) {
-      toast.dismiss()
       return toast.error(`${error}, Please try again.`)
     }
   },
-  createEmployee: async (userData, navigate) => {
-    try {
-      set({ loading: true })
-      const options = {
-        method: 'POST',
-        body: JSON.stringify(userData),
-        headers: { 'content-type': 'application/json' }
+  createEmployee: async userData => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        set({ loading: true })
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          body: JSON.stringify(userData),
+          headers: { 'content-type': 'application/json' }
+        }
+        const url = `${get().base}/api/admin/createemp`
+        toast.loading('Adding worker...', { duration: Infinity })
+        const res = await fetch(url, options)
+        const { data, error } = await res.json()
+        toast.dismiss()
+        if (error) throw error
+        await get().setEmployees()
+        set({ lastAddedUser: null, lastAddedAadhaar: null })
+        localStorage.removeItem('lastAddedUser')
+        localStorage.removeItem('lastAddedAadhaar')
+        set({ loading: false })
+        resolve(data)
+      } catch (error) {
+        toast.dismiss()
+        reject(error)
       }
-      const url = `${get().base}/api/admin/createemp`
-      const toastID = toast.loading('Adding Employee...')
-      const res = await fetch(url, options)
-      const { data, error } = await res.json()
-      toast.dismiss(toastID)
-      set({ loading: false })
-      if (error) throw error
-      toast.success('Employee added successfully')
-      navigate('/admin/employee')
-      await get().setEmployees()
-      set({ lastAddedUser: null, lastAddedAadhaar: null })
-      localStorage.removeItem('lastAddedUser')
-      localStorage.removeItem('lastAddedAadhaar')
-      return data
-    } catch (error) {
-      toast.dismiss()
-      return toast.error(error.message)
-    }
+    })
   },
   setEmployees: async () => {
     return new Promise(async (resolve, reject) => {

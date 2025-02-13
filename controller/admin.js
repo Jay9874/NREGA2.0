@@ -42,15 +42,11 @@ const createEmployee = async (req, res) => {
       last_name: last_name,
       email: email,
       id: id,
+      mobile_no: mobile_no,
       user_type: 'worker'
     }
     const filename = `${id}`
     const fileType = base64String.match(/^data:(.+);base64/)?.[1]
-    const { data: createdProfile, error: errAtPr } = await supabase
-      .from('profiles')
-      .insert([newProfile])
-      .select()
-    if (errAtPr) throw errAtPr
     const { data, error: errAtFile } = await supabase.storage
       .from('worker_profile')
       .upload(`avatars/${filename}`, decode(base64), {
@@ -63,6 +59,12 @@ const createEmployee = async (req, res) => {
       .from('worker_profile')
       .getPublicUrl(`avatars/${filename}`)
     if (errAtUrl) throw errAtUrl
+    newProfile['avatar'] = url.publicUrl
+    const { data: createdProfile, error: errAtPr } = await supabase
+      .from('profiles')
+      .insert([newProfile])
+      .select()
+    if (errAtPr) throw errAtPr
     newEmplyee = { ...newEmplyee, photo: url.publicUrl }
     delete newEmplyee.queryImage
     const { data: createdEmp, error: errAtEmp } = await supabase
@@ -71,7 +73,7 @@ const createEmployee = async (req, res) => {
       .select()
     if (errAtEmp) throw errAtEmp
     return res.status(201).send({
-      data: { profile: createdProfile, employee: createdEmp },
+      data: { profile: createdProfile[0], employee: createdEmp[0] },
       error: null
     })
   } catch (err) {
@@ -147,8 +149,10 @@ const fetchAadhaar = async (req, res) => {
       if (workerExist.length !== 0)
         throw new Error('Worker already exists with this Aadhaar.')
     }
+    const aNum = aadhaar[0].aadhaar_no
+    delete aadhaar[0].aadhaar_no
     return res.status(201).send({
-      data: aadhaar[0],
+      data: { ...aadhaar[0], aadhar_no: aNum },
       error: null
     })
   } catch (err) {
