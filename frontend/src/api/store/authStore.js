@@ -59,7 +59,6 @@ export const authStore = create((set, get) => ({
       const res = await fetch(url, options)
       const { data, error } = await res.json()
       if (error) throw error
-      console.log("data is: ", data)
       set({ user: data })
       localStorage.setItem('suid', JSON.stringify({ user: data }))
       set({ loading: false })
@@ -67,7 +66,7 @@ export const authStore = create((set, get) => ({
       toast.success('Login successful!')
       navigate(`/${data.type}/dashboard`)
     } catch (err) {
-      toast.error(err.message)
+      toast.error(err)
       toast.dismiss()
       set({ loading: false })
       return err
@@ -209,6 +208,34 @@ export const authStore = create((set, get) => ({
         resolve(data)
       } catch (err) {
         console.log(err)
+        reject(err)
+      }
+    })
+  },
+  verify: async (hash, type) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        toast.loading('Verifying the link...', { duration: Infinity })
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            Accept: 'Application/json',
+            'Content-Type': 'Application/json'
+          },
+          body: JSON.stringify({ token_hash: hash, type: type })
+        }
+        const url = `${get().base}/api/auth/verify`
+        const res = await fetch(url, options)
+        const { data, error } = await res.json()
+        toast.dismiss()
+        if (error) throw error
+        set({ user: data })
+        localStorage.setItem('suid', JSON.stringify({ user: data }))
+        resolve(data)
+      } catch (err) {
+        console.log(err)
+        toast.error(err)
         reject(err)
       }
     })

@@ -41,17 +41,14 @@ const login = async (req, res) => {
       id: user.id,
       photo: profile[0].avatar
     }
-    console.log('profile: ', profile)
     res.status(200).send({
       data: loggedUser,
       error: null
     })
   } catch (err) {
-    const error = { ...err, message: 'Unable to login, try again.' }
-    console.log(err)
     return res.status(403).send({
       data: null,
-      error: error
+      error: err.message
     })
   }
 }
@@ -173,7 +170,10 @@ const getNotification = async (req, res) => {
     const supabase = createClient({ req, res })
     const table =
       type == 'worker' ? 'worker_notifications' : 'sachiv_notifications'
-    const { data, error } = await supabase.from(table).select('*')
+    const { data, error } = await supabase
+      .from(table)
+      .select('*')
+      .eq('user_id', userId)
     if (error) throw error
     return res.status(200).send({
       data: data,
@@ -212,6 +212,39 @@ const clearANotification = async (req, res) => {
   }
 }
 
+const verify = async (req, res) => {
+  try {
+    const { token_hash, type } = req.body
+    const supabase = createClient({ req, res })
+    let {
+      data: { session, user },
+      error
+    } = await supabase.auth.verifyOtp({ token_hash, type })
+    if (error) throw error
+    const { data: profile, error: errAtProfile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+    if (errAtProfile) throw errAtProfile
+    const loggedUser = {
+      email: profile[0].email,
+      type: profile[0].user_type,
+      id: user.id,
+      photo: profile[0].avatar
+    }
+    return res.status(200).send({
+      data: loggedUser,
+      error: null
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send({
+      data: null,
+      error: err.message
+    })
+  }
+}
+
 export {
   confirmSignup,
   login,
@@ -220,5 +253,6 @@ export {
   pageRefresh,
   updateMeta,
   getNotification,
-  clearANotification
+  clearANotification,
+  verify
 }

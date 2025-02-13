@@ -7,11 +7,18 @@ import Calendar from './Calendar'
 import DynamicTable from '../DynamicTable'
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 
-
 const tableHeading = [
   { name: 'Work', css_normal: '', css_list: '' },
-  { name: 'Deadline', css_normal: 'lg:table-cell hidden', css_list: 'lg:table-cell' },
-  { name: 'Presence', css_normal: 'sm:table-cell hidden', css_list: 'table-cell sm:hidden' }
+  {
+    name: 'Deadline',
+    css_normal: 'lg:table-cell hidden',
+    css_list: 'lg:table-cell'
+  },
+  {
+    name: 'Presence',
+    css_normal: 'sm:table-cell hidden',
+    css_list: 'table-cell sm:hidden'
+  }
 ]
 
 export default function Attendance () {
@@ -105,13 +112,21 @@ export default function Attendance () {
   }
   // Handle filter change
   async function handleChange (id, label, value) {
-    setSelected(prev => ({ ...prev, [label]: value }))
-    await getLandmarkData(id, value)
-    setLoadFilter(true)
+    if (locations.length == 0) {
+      return toast.message('Cant move out of universe.')
+    } else {
+      setSelected(prev => ({ ...prev, [label]: value }))
+      await getLandmarkData(id, value)
+      setLoadFilter(true)
+    }
   }
   async function handlePanchayatChange (id, label, value) {
-    setSelected(prev => ({ ...prev, [label]: value }))
-    setLoadFilter(true)
+    if (locations.length == 0) {
+      return toast.message('Cant move out of universe.')
+    } else {
+      setSelected(prev => ({ ...prev, [label]: value }))
+      setLoadFilter(true)
+    }
   }
 
   // Handle row click
@@ -127,13 +142,26 @@ export default function Attendance () {
   }
 
   useEffect(() => {
-    if (dataLoaded && !filterInitialized) {
-      initFilter()
-      setLoadFilter(true)
-    }
-    if (loadFilter) {
-      setAttendance(selected)
-      setLoadFilter(false)
+    if (locations.length == 0) {
+      setStates(['in a galaxy'])
+      setDistricts(['far'])
+      setBlocks(['far'])
+      setPanchayats(['away'])
+      setSelected({
+        state: 'in a galaxy',
+        district: 'far',
+        block: 'far',
+        panchayat: 'away'
+      })
+    } else {
+      if (dataLoaded && !filterInitialized) {
+        initFilter()
+        setLoadFilter(true)
+      }
+      if (loadFilter) {
+        setAttendance(selected)
+        setLoadFilter(false)
+      }
     }
   }, [dataLoaded, loadFilter])
 
@@ -231,4 +259,3 @@ export default function Attendance () {
     </div>
   )
 }
-

@@ -4,7 +4,7 @@ import { decode } from 'base64-arraybuffer'
 const createUser = async (req, res) => {
   try {
     const supabase = createClient({ req, res })
-    const { email, password } = req.body
+    const { email, password, redirectUrl } = req.body
     const { data: user, error: err } = await supabase
       .from('profiles')
       .select('*')
@@ -14,7 +14,10 @@ const createUser = async (req, res) => {
       throw new Error('A user with this email already exists.')
     const { data: newUser, error } = await supabase.auth.signUp({
       email: email,
-      password: password
+      password: password,
+      options: {
+        emailRedirectTo: redirectUrl
+      }
     })
     if (error) throw error
     return res.status(201).send({
@@ -42,7 +45,7 @@ const createEmployee = async (req, res) => {
       last_name: last_name,
       email: email,
       id: id,
-      mobile_no: mobile_no,
+      mobile_no: user.mobile_no,
       user_type: 'worker'
     }
     const filename = `${id}`

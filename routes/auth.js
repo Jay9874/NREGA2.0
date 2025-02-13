@@ -8,7 +8,8 @@ import {
   logout,
   pageRefresh,
   signup,
-  updateMeta
+  updateMeta,
+  verify
 } from '../controller/auth.js'
 /**
  * @route GET api/auth/confirm
@@ -65,7 +66,6 @@ router.post('/logout', logout)
  **/
 router.post('/notification', getNotification)
 
-
 // clear a notification for both users (admin and worker)
 /**
  * @route POST api/auth/clear-notification
@@ -73,5 +73,13 @@ router.post('/notification', getNotification)
  * @access public
  **/
 router.post('/clear-notification', clearANotification)
+
+// Verify the link upon new user creation
+/**
+ * @route POST api/auth/verify
+ * @description verify the token with new user verification link.
+ * @access public
+ **/
+router.post('/verify', verify)
 
 export { router as authRoutes }

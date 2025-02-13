@@ -1,5 +1,5 @@
 import img1 from '../assets/images/bg.jpg'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
@@ -20,10 +20,36 @@ export default function Home () {
   const { checkUser, demoLogin } = authStore()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [expandedActionBtn, setExpandedActionBtn] = useState(false)
+
+  // email address verification
+  const { verify } = authStore()
+  const { token_hash, type } = Object.fromEntries(
+    new URLSearchParams(window.location.search)
+  )
+
+  async function verifyLink (token_hash, type) {
+    try {
+      const data = await verify(token_hash, type)
+      navigate(`/${data.type}/dashboard`)
+      toast.dismiss()
+      toast.success('Email verified and logged in successfully!', {
+        duration: 500
+      })
+    } catch (err) {
+      console.log(err)
+      navigate('')
+    }
+  }
+
+  useEffect(() => {
+    if (token_hash && token_hash != undefined) {
+      verifyLink(token_hash, type)
+    }
+  }, [])
+
   async function checkSession () {
     try {
       const token = JSON.parse(localStorage.getItem('suid'))
-      console.log(token)
       if (token) {
         const user = await checkUser()
         navigate(`/${user.type}/dashboard`)

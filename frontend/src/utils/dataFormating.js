@@ -9,6 +9,7 @@ function formatMessage (username, text) {
 }
 
 function timestampToDate (timestamp) {
+  if (timestamp == undefined) return null
   // Create a new JavaScript Date object from the PostgreSQL timestamp.
   const date = new Date(timestamp)
 

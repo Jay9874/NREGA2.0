@@ -28,10 +28,17 @@ export default function Payment () {
   const highlights = [
     {
       label: 'Amount',
-      value: `₹${payment[0]?.amount.toFixed(2)}`
+      value: `₹ ${
+        payment[0]?.amount.toFixed(2) ? payment[0]?.amount.toFixed(2) : 'NIL'
+      }`
     },
-    { label: 'Date', value: timestampToDate(payment[0]?.created_at) },
-    { label: 'Transc. ID', value: payment[0]?.transaction_id },
+    {
+      label: 'Date',
+      value: timestampToDate(payment[0]?.created_at)
+        ? timestampToDate(payment[0]?.created_at)
+        : 'End of Universe'
+    },
+    { label: 'Transc. ID', value: payment[0]?.transaction_id},
     { label: 'Status', value: payment[0]?.status }
   ]
 

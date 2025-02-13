@@ -4,6 +4,10 @@ import { calculateAge, timestampToDate } from '../../utils/dataFormating'
 import { authStore } from './authStore'
 import { toast } from 'sonner'
 const NODE_ENV = import.meta.env.MODE
+const redirectUrl =
+  NODE_ENV === 'development'
+    ? 'http://localhost:5173/'
+    : 'https://nrega-2-0.vercel.app/'
 
 export const useAdminStore = create((set, get) => ({
   user: authStore.getState().user,
@@ -70,7 +74,8 @@ export const useAdminStore = create((set, get) => ({
       //This data will be sent to the server with the POST request.
       const userData = {
         email: user.email,
-        password: user.password
+        password: user.password,
+        redirectUrl: redirectUrl
       }
       const options = {
         method: 'POST',
@@ -142,6 +147,7 @@ export const useAdminStore = create((set, get) => ({
         set({ loading: false })
         resolve(data)
       } catch (error) {
+        set({ loading: false })
         toast.dismiss()
         reject(error)
       }

@@ -149,13 +149,17 @@ export const useWorkerStore = create((set, get) => ({
         .eq('worker_id', get().user.id)
         .eq('status', 'present')
         .order('created_at', { ascending: false })
-      set({ totalPresent: attendances.length })
-      const lastPresence = {
-        work_name: attendances[0].attendance_for.job_name,
-        location: formatLocationShort(attendances[0].attendance_for.location_id)
+      if (attendances.length > 0) {
+        set({ totalPresent: attendances.length })
+        const lastPresence = {
+          work_name: attendances[0].attendance_for.job_name,
+          location: formatLocationShort(
+            attendances[0].attendance_for.location_id
+          )
+        }
+        set({ lastAttendance: lastPresence })
+        return attendances
       }
-      set({ lastAttendance: lastPresence })
-      return attendances
     } catch (error) {
       console.log(error)
       toast.error(error.message)
@@ -256,27 +260,32 @@ export const useWorkerStore = create((set, get) => ({
         .eq('status', 'present')
         .order('created_at', { ascending: false })
         .limit(1)
-      const job = attendance[0].jobs
-      const deadline = timestampToDate(job.job_deadline)
-      const { days, percentage } = jobDuration(job.created_at, job.job_deadline)
-      const presence = attendance.length
-      const { data } = await supabase
-        .from('job_enrollments')
-        .select(`job`)
-        .eq('job', job.job_id)
-        .eq('status', 'enrolled')
-      set({
-        lastWork: {
-          location: job?.location_id,
-          name: job?.job_name,
-          presence: presence,
-          labours: data.length,
-          deadline: deadline,
-          duration: days,
-          completion: percentage,
-          desc: job?.job_description
-        }
-      })
+      if (attendance.length > 0) {
+        const job = attendance[0]?.jobs
+        const deadline = timestampToDate(job.job_deadline)
+        const { days, percentage } = jobDuration(
+          job.created_at,
+          job.job_deadline
+        )
+        const presence = attendance.length
+        const { data } = await supabase
+          .from('job_enrollments')
+          .select(`job`)
+          .eq('job', job.job_id)
+          .eq('status', 'enrolled')
+        set({
+          lastWork: {
+            location: job?.location_id,
+            name: job?.job_name,
+            presence: presence,
+            labours: data.length,
+            deadline: deadline,
+            duration: days,
+            completion: percentage,
+            desc: job?.job_description
+          }
+        })
+      }
     } catch (error) {
       console.log(error)
       toast.error(error.message)
