@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAdminStore } from '../../../api/store'
-import { toast } from 'sonner'
-import { UsersIcon, BarsArrowUpIcon } from '@heroicons/react/20/solid'
 
 export default function AddUser ({ onUserCreation }) {
   const { addUser, loading } = useAdminStore()
@@ -62,32 +60,7 @@ export default function AddUser ({ onUserCreation }) {
           </p>
         </div>
         {/* Password */}
-        {/* <div className='mt-2 md:w-1/2'>
-          <label
-            htmlFor='password'
-            className='block text-sm font-medium text-gray-700'
-          >
-            Password
-          </label>
-          <div className='mt-1'>
-            <input
-              type='password'
-              name='password'
-              id='password'
-              required
-              value={user.password}
-              onChange={handleChange}
-              className='block w-full rounded-md border-gray-300 shadow-sm sm:text-sm'
-              placeholder='atleast 8 digit'
-              aria-describedby='password-description'
-              autoComplete='new-password'
-            />
-          </div>
-          <p className='mt-2 text-sm text-yellow-500' id='email-description'>
-            It will be used as password for logging
-            in.
-          </p>
-        </div> */}
+        
         <div className='mt-2 md:w-1/2'>
           <label
             htmlFor='password'
@@ -97,8 +70,7 @@ export default function AddUser ({ onUserCreation }) {
           </label>
           <div className='mt-1 flex rounded-md shadow-sm'>
             <div className='relative flex flex-grow items-stretch focus-within:z-10'>
-              {/* <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'>
-              </div> */}
+              
               <input
                 className='block w-full rounded-none rounded-l-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
                 type='password'
@@ -107,7 +79,6 @@ export default function AddUser ({ onUserCreation }) {
                 required
                 value={user.password}
                 onChange={handleChange}
-                // className='block w-full rounded-md border-gray-300 shadow-sm sm:text-sm'
                 placeholder='atleast 8 digit'
                 aria-describedby='password-description'
                 autoComplete='new-password'
@@ -117,11 +88,6 @@ export default function AddUser ({ onUserCreation }) {
               type='button'
               className='relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
             >
-              {/* <BarsArrowUpIcon
-                className='h-5 w-5 text-gray-400'
-                aria-hidden='true'
-              />
-              <span>Sort</span> */}
               <ion-icon name="eye-off-outline"></ion-icon>
             </button>
           </div>
