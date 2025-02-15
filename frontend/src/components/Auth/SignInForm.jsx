@@ -54,7 +54,7 @@ export default function SignInForm () {
                 </div>
               </div>
 
-              <div className='space-y-1'>
+              {/* <div className='space-y-1'>
                 <label
                   htmlFor='password'
                   className='block text-sm font-medium text-gray-700'
@@ -77,6 +77,38 @@ export default function SignInForm () {
                     }
                     className='block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
                   />
+                </div>
+              </div> */}
+              <div className='mt-2 md:w-1/2'>
+                <label
+                  htmlFor='password'
+                  className='block text-sm font-medium text-gray-700'
+                >
+                  Password
+                </label>
+                <div className='mt-1 flex rounded-md shadow-sm'>
+                  <div className='relative flex flex-grow items-stretch focus-within:z-10'>
+                    <input
+                      className='block w-full rounded-none rounded-l-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                      type='password'
+                      name='password'
+                      id='password'
+                      required
+                      value={loginInfo.password}
+                      onChange={e =>
+                        setLoginInfo({ ...loginInfo, password: e.target.value })
+                      }
+                      placeholder='atleast 8 digit'
+                      aria-describedby='password-description'
+                      autoComplete='new-password'
+                    />
+                  </div>
+                  <button
+                    type='button'
+                    className='relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+                  >
+                    <ion-icon name='eye-off-outline'></ion-icon>
+                  </button>
                 </div>
               </div>
               <div className='flex items-center justify-between'>
