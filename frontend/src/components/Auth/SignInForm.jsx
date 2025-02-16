@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { authStore } from '../../api/store/authStore'
 import HCaptcha from '@hcaptcha/react-hcaptcha'
@@ -6,6 +6,8 @@ const sitekey = import.meta.env.VITE_CAPTCHA_SITE_KEY
 
 export default function SignInForm () {
   const { loginUser, demoLogin, setCaptchaToken } = authStore()
+  const [showPassword, setShowPassword] = useState(false)
+  const crossRef = useRef(null)
   const navigate = useNavigate()
   const captcha = useRef()
   const [loginInfo, setLoginInfo] = useState({
@@ -19,6 +21,22 @@ export default function SignInForm () {
     e.preventDefault()
     loginUser(loginInfo.email, loginInfo.password, navigate)
   }
+  useEffect(() => {
+    if (crossRef.current) {
+      const len = crossRef.current.getTotalLength()
+      crossRef.current.style.strokeDasharray = len
+    }
+  }, [])
+
+  function handleEyeBtn (e) {
+    console.log('clicked eye')
+    if (showPassword) {
+      setShowPassword(false)
+    } else {
+      setShowPassword(true)
+    }
+  }
+
   return (
     <div className='flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
       <div className='mx-auto w-full max-w-sm lg:w-96'>
@@ -54,32 +72,7 @@ export default function SignInForm () {
                 </div>
               </div>
 
-              {/* <div className='space-y-1'>
-                <label
-                  htmlFor='password'
-                  className='block text-sm font-medium text-gray-700'
-                >
-                  Password
-                </label>
-                <div className='mt-1'>
-                  <input
-                    id='password'
-                    name='password'
-                    type='password'
-                    autoComplete='current-password'
-                    required
-                    value={loginInfo.password}
-                    onChange={e =>
-                      setLoginInfo({
-                        ...loginInfo,
-                        password: e.target.value
-                      })
-                    }
-                    className='block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
-                  />
-                </div>
-              </div> */}
-              <div className='mt-2 md:w-1/2'>
+              <div className='mt-2'>
                 <label
                   htmlFor='password'
                   className='block text-sm font-medium text-gray-700'
@@ -90,7 +83,7 @@ export default function SignInForm () {
                   <div className='relative flex flex-grow items-stretch focus-within:z-10'>
                     <input
                       className='block w-full rounded-none rounded-l-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
-                      type='password'
+                      type={`${showPassword ? 'text' : 'password'}`}
                       name='password'
                       id='password'
                       required
@@ -105,9 +98,38 @@ export default function SignInForm () {
                   </div>
                   <button
                     type='button'
+                    onClick={handleEyeBtn}
                     className='relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
                   >
-                    <ion-icon name='eye-off-outline'></ion-icon>
+                    <svg
+                      width='20'
+                      height='15'
+                      xmlns='http://www.w3.org/2000/svg'
+                    >
+                      
+                      <path
+                        className='stroke-gray-400'
+                        d='M2.5 7.5 a 8.5 8.5 0 0 1 15 0 a 8.5 8.5 0 0 1 -15 0 z'
+                        fill='transparent'
+                      />
+      
+                      <circle
+                        className='fill-gray-400'
+                        cx='10'
+                        cy='7.5'
+                        r={3}
+                      />
+                      {/* the indicator */}
+                      <path
+                        ref={crossRef}
+                        className={`eye-btn ${
+                          showPassword ? 'strike-off' : 'strike'
+                        } fill-gray-400 stroke-gray-400`}
+                        d='M3 0.5 l 14 14'
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                      />
+                    </svg>
                   </button>
                 </div>
               </div>
