@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { authStore } from '../../api/store/authStore'
 import { toast } from 'sonner'
+import PasswordInput from '../PasswordInput'
 
 export default function ResetPass () {
   const navigate = useNavigate()
@@ -10,6 +11,10 @@ export default function ResetPass () {
     new_password: '',
     confirm_password: ''
   })
+  function handleInput (e) {
+    const { name, value } = e.target
+    setPassword(prev => ({ ...prev, [name]: value }))
+  }
   return (
     <div className='flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
       <div className='mx-auto w-full max-w-sm lg:w-96'>
@@ -33,47 +38,25 @@ export default function ResetPass () {
               }}
             >
               <div>
-                <label
-                  htmlFor='new'
-                  className='block text-sm font-medium text-gray-700'
-                >
-                  New Password
-                </label>
-                <div className='mt-1'>
-                  <input
-                    id='new'
-                    name='password'
-                    type='password'
-                    value={password.new_password}
-                    required
-                    onChange={e =>
-                      setPassword({ ...password, new_password: e.target.value })
-                    }
-                    className='block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
-                  />
-                </div>
-                <label
-                  htmlFor='repeat'
-                  className='block text-sm font-medium text-gray-700'
-                >
-                  Repeat Password
-                </label>
-                <div className='mt-1'>
-                  <input
-                    id='repeat'
-                    name='repeat'
-                    type='password'
-                    value={password.confirm_password}
-                    required
-                    onChange={e =>
-                      setPassword({
-                        ...password,
-                        confirm_password: e.target.value
-                      })
-                    }
-                    className='block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
-                  />
-                </div>
+                <PasswordInput
+                  label='New Password'
+                  name='new_password'
+                  id='new_password'
+                  value={password.new_password}
+                  hint='Enter your new password'
+                  onChange={handleInput}
+                  parentClass='mt-2'
+                />
+               
+                <PasswordInput
+                  label='Repeat Password'
+                  name='confirm_password'
+                  id='confirm_password'
+                  value={password.confirm_password}
+                  hint='Retype your new password'
+                  onChange={handleInput}
+                  parentClass='mt-2'
+                />
               </div>
               <div>
                 <button
