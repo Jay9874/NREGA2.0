@@ -62,7 +62,6 @@ export const Admin = () => {
         navigation={adminNavigation}
       />
       <div className='flex flex-1 flex-col md:ml-64'>
-        <Banner text='The admin panel is being built.' />
         <TopNavbar
           setSidebarOpen={setSidebarOpen}
           userNavigation={adminTopNavigation}
