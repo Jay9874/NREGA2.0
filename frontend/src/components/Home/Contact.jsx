@@ -46,7 +46,7 @@ export default function Contact () {
         <div className='bg-white py-16 px-6 lg:col-span-3 lg:py-24 lg:px-8 xl:pl-12'>
           <div className='mx-auto max-w-lg lg:max-w-none'>
             <form
-              action='mailto:jayprakashsharma225@gmail.com'
+              action='https://mailto:jayprakashsharma225@gmail.com'
               method='POST'
               className='grid grid-cols-1 gap-y-6'
               encType='text/plain'
