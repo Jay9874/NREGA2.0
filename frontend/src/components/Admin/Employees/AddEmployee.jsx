@@ -32,8 +32,10 @@ export default function AddEmployee () {
     lastAddedAadhaar ? lastAddedAadhaar.aadhar_no : ''
   )
   const [demo, setDemo] = useState(false)
+  const [randomFamily, setRandomFamily] = useState(false)
   const [preview, setPreview] = useState(null)
   const [formData, setFormData] = useState({
+    family_id: '',
     first_name: '',
     last_name: '',
     sex: '',
@@ -53,7 +55,7 @@ export default function AddEmployee () {
     try {
       e.preventDefault()
       const { employee } = await createEmployee(formData)
-      toast.success(`Worker ${employee.first_name} added successfully.`)
+      toast.success(`Worker "${employee.first_name}" added successfully.`)
       navigate('..')
     } catch (err) {
       console.log(err)
@@ -77,6 +79,19 @@ export default function AddEmployee () {
       } else {
         setAadhaarNo('')
         setDemo(false)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  // Get random family id
+  async function handleFamily (e) {
+    try {
+      if (randomFamily) {
+        setRandomFamily(false)
+      } else {
+        setRandomFamily(true)
       }
     } catch (err) {
       console.log(err)
@@ -275,6 +290,53 @@ export default function AddEmployee () {
                     className='col-span-1'
                     placeholder='MG-00-00'
                   />
+
+                  {/* Family ID */}
+                  <Input
+                    type='text'
+                    name='family_id'
+                    id='family_id'
+                    label='Family ID'
+                    value={formData.family_id}
+                    onChange={handleChange}
+                    className='col-span-1'
+                    placeholder='XYZAB-0-0'
+                  />
+                  {/* Random family toggler */}
+                  <div className='flex items-center gap-2'>
+                    <span className='text-sm font-normal text-gray-600'>
+                      Add to random family
+                    </span>
+                    <Switch
+                      checked={randomFamily}
+                      onChange={handleFamily}
+                      className='group relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2'
+                    >
+                      <span className='sr-only'>
+                        fetch random aadhaar number for demo
+                      </span>
+
+                      <span
+                        aria-hidden='true'
+                        className='pointer-events-none absolute h-full w-full rounded-md bg-white'
+                      />
+                      <span
+                        aria-hidden='true'
+                        className={classNames(
+                          randomFamily ? 'bg-green-600' : 'bg-gray-200',
+                          'pointer-events-none absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out'
+                        )}
+                      />
+                      <span
+                        aria-hidden='true'
+                        className={classNames(
+                          randomFamily ? 'translate-x-5' : 'translate-x-0',
+                          'pointer-events-none absolute left-0 inline-block h-5 w-5 transform rounded-full border border-gray-200 bg-white shadow ring-0 transition-transform duration-200 ease-in-out'
+                        )}
+                      />
+                    </Switch>
+                  </div>
+
                   {/* Profile Picture */}
                   <div className='col-span-1'>
                     <label
