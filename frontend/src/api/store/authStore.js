@@ -1,12 +1,10 @@
 import { create } from 'zustand'
 import { supabase } from '..'
 import { toast } from 'sonner'
-const NODE_ENV = import.meta.env.MODE
 
 export const authStore = create((set, get) => ({
   user: { email: '', type: '', id: '', photo: '' },
   notifications: [],
-  base: NODE_ENV === 'development' ? 'http://localhost:8080' : '',
   captchaToken: '',
   loading: false,
   notificationPanel: false,
@@ -27,8 +25,7 @@ export const authStore = create((set, get) => ({
             Accept: 'application/json'
           }
         }
-        const url = `${get().base}/api/auth/validate`
-        const res = await fetch(url, options)
+        const res = await fetch('/api/auth/validate', options)
         const { data, error } = await res.json()
         if (error) throw error
         set({ user: data })
@@ -43,6 +40,8 @@ export const authStore = create((set, get) => ({
   },
   loginUser: async (email, password, navigate) => {
     try {
+      if (!window.navigator.onLine)
+        return toast.error('No internet connection.')
       set({ loading: true })
       const body = { email: email, password: password }
       var headers = new Headers()
@@ -54,9 +53,8 @@ export const authStore = create((set, get) => ({
         credentials: 'include',
         headers: headers
       }
-      const url = `${get().base}/api/auth/login`
       toast.loading('Logging you in...', { duration: Infinity })
-      const res = await fetch(url, options)
+      const res = await fetch('/api/auth/login', options)
       const { data, error } = await res.json()
       if (error) throw error
       set({ user: data })
@@ -94,8 +92,7 @@ export const authStore = create((set, get) => ({
           Accept: 'application/json'
         }
       }
-      const url = `${get().base}/api/auth/logout`
-      const res = await fetch(url, options)
+      const res = await fetch('/api/auth/logout', options)
       const { data, error } = await res.json()
       if (error) throw error
       toast.dismiss()
@@ -109,7 +106,7 @@ export const authStore = create((set, get) => ({
       return data
     } catch (err) {
       set({ loading: false })
-      toast.error("Something went wrong, try again.")
+      toast.error('Something went wrong, try again.')
       toast.dismiss()
       return null
     }
@@ -147,6 +144,7 @@ export const authStore = create((set, get) => ({
     }
   },
   demoLogin: async (email, type, navigate) => {
+    if (!window.navigator.onLine) return toast.error('No internet connection.')
     const loginUser = get().loginUser
     let password = ''
     if (type === 'worker') {
@@ -169,7 +167,7 @@ export const authStore = create((set, get) => ({
           },
           body: JSON.stringify({ userId: id, type: type })
         }
-        const res = await fetch(`${get().base}/api/auth/notification`, options)
+        const res = await fetch('/api/auth/notification', options)
         const { data, error } = await res.json()
         if (error) throw error
         set({ notifications: data })
@@ -195,10 +193,7 @@ export const authStore = create((set, get) => ({
           },
           body: JSON.stringify({ notificationId: notificationId, type: type })
         }
-        const res = await fetch(
-          `${get().base}/api/auth/clear-notification`,
-          options
-        )
+        const res = await fetch('/api/auth/clear-notification', options)
         const { data, error } = await res.json()
         if (error) throw error
         const updatedNotifications = notifications.filter(
@@ -225,8 +220,7 @@ export const authStore = create((set, get) => ({
           },
           body: JSON.stringify({ token_hash: hash, type: type })
         }
-        const url = `${get().base}/api/auth/verify`
-        const res = await fetch(url, options)
+        const res = await fetch('/api/auth/verify', options)
         const { data, error } = await res.json()
         toast.dismiss()
         if (error) throw error

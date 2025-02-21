@@ -5,6 +5,27 @@ import {
 } from '../frontend/src/utils/dataFormating.js'
 import { createClient } from '../lib/supabase.js'
 
+const setProfile = async (req, res) => {
+  try {
+    const { workerId } = req.body
+    const supabase = createClient({ req, res })
+    const { data: profile, error } = await supabase
+      .from('worker')
+      .select(`*, address(*)`)
+      .eq('id', workerId)
+    if (error) throw error
+    return res.status(200).send({
+      data: profile[0],
+      error: null
+    })
+  } catch (err) {
+    return res.status(500).send({
+      data: null,
+      error: err
+    })
+  }
+}
+
 const applyToJob = async (req, res) => {
   try {
     var detail = req.body
@@ -23,6 +44,7 @@ const applyToJob = async (req, res) => {
     const { data: notification, error: errAtNotification } = await supabase
       .from('sachiv_notifications')
       .insert({
+        user_id: detail.to_sachiv,
         category: 'job application',
         tagline: `Required job in job id: ${detail.job}`,
         details: {
@@ -39,6 +61,7 @@ const applyToJob = async (req, res) => {
       await supabase
         .from('worker_notifications')
         .insert({
+          user_id: detail.by_worker,
           category: 'job application',
           tagline: `Applied for job in job id: ${detail.job}`,
           details: {
@@ -143,4 +166,59 @@ const nearbyJobs = async (req, res) => {
   }
 }
 
-export { applyToJob, entitlement, nearbyJobs }
+const workingOn = async (req, res) => {
+  try {
+    const { workerId } = req.body
+    const supabase = createClient({ req, res })
+
+    // Getting info about last worker with worker id
+    const { data: enrollment, error } = await supabase
+      .from('job_enrollments')
+      .select(`*, job(*, location_id(*))`)
+      .eq('by_worker', workerId)
+      .eq('status', 'working on')
+    if (error) throw error
+    const job = enrollment[0]?.job
+    const deadline = timestampToDate(job.job_deadline)
+    const { days, percentage } = jobDuration(job.created_at, job.job_deadline)
+
+    // Getting the attendance of last work for the worker
+    const { data: attendance, error: errAtAttendance } = await supabase
+      .from('attendance')
+      .select('id')
+      .eq('worker_id', workerId)
+      .eq('status', 'present')
+      .eq('attendance_for', job.job_id)
+    if (errAtAttendance) throw errAtAttendance
+
+    // Getting number of labours working on the job with the worker
+    const { data: labours, error: errAtLabour } = await supabase
+      .from('job_enrollments')
+      .select('id')
+      .eq('status', 'working on')
+    if (errAtLabour) throw errAtLabour
+
+    const lastWork = {
+      location: job.location_id,
+      name: job.job_name,
+      presence: attendance.length,
+      labours: labours.length,
+      deadline: deadline,
+      duration: days,
+      completion: percentage,
+      desc: job.job_description
+    }
+    return res.status(200).send({
+      data: lastWork,
+      error: null
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send({
+      data: null,
+      error: err
+    })
+  }
+}
+
+export { applyToJob, entitlement, nearbyJobs, workingOn, setProfile }

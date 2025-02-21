@@ -1,6 +1,28 @@
 import { createClient } from '../lib/supabase.js'
 import { decode } from 'base64-arraybuffer'
 
+const setProfile = async (req, res) => {
+  try {
+    const { sachivId } = req.body
+    const supabase = createClient({ req, res })
+    const { data: profile, error } = await supabase
+      .from('sachiv')
+      .select(`*, location_id(*)`)
+      .eq('id', sachivId)
+    if (error) throw error
+    return res.status(200).send({
+      data: profile[0],
+      error: null
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send({
+      data: null,
+      error: err
+    })
+  }
+}
+
 const createUser = async (req, res) => {
   try {
     const supabase = createClient({ req, res })
@@ -29,6 +51,28 @@ const createUser = async (req, res) => {
     return res.status(409).send({
       data: null,
       error: err.message
+    })
+  }
+}
+
+const fetchEmployees = async (req, res) => {
+  try {
+    const { locationId } = req.body
+    const supabase = createClient({ req, res })
+    const { data: employees, error } = await supabase
+      .from('worker')
+      .select('*, address(*)')
+      .eq('address', locationId)
+    if (error) throw error
+    return res.status(200).send({
+      data: employees,
+      error: null
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send({
+      data: null,
+      error: err
     })
   }
 }
@@ -416,8 +460,10 @@ const fetchRandomAadhaar = async (req, res) => {
   }
 }
 export {
+  setProfile,
   createUser,
   fetchAadhaar,
+  fetchEmployees,
   createEmployee,
   updateWorker,
   dashboardData,

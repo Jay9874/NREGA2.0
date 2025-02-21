@@ -3,13 +3,17 @@ import React, { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { authStore, useWorkerStore } from '../../api/store'
 import { toast } from 'sonner'
-import { timestampToDate } from '../../utils/dataFormating'
+import { jobDuration, timestampToDate } from '../../utils/dataFormating'
+import { getDateStr } from '../../utils/generate_date'
 
 export default function EnrollJob () {
-  const [timeDuration, setTimeDuration] = useState(15)
+  const [timeDuration, setTimeDuration] = useState(1)
+  const [maxDuration, setMaxDuration] = useState(1)
   const [loadingJobDetail, setLoadingJobDetail] = useState(true)
   const [entitlement, setEntitlement] = useState(0)
   const [job, setJob] = useState({})
+  const [minJoining, setMinJoining] = useState('')
+  const [maxJoining, setMaxJoining] = useState('')
   const [startDate, setStartDate] = useState('')
   const { jobId } = useParams()
   const navigate = useNavigate()
@@ -43,7 +47,15 @@ export default function EnrollJob () {
   async function setupJobDetail () {
     try {
       const currJob = nearbyJobs.filter((job, index) => job.job_id == jobId)[0]
-      setJob(currJob)
+      var dateObj = new Date()
+      var maxDate = new Date(currJob?.job_deadline)
+      // Add 1 days
+      dateObj.setDate(dateObj.getDate() + 1)
+      maxDate.setDate(maxDate.getDate() - 1)
+      dateObj = dateObj.toISOString().slice(0, 10)
+      maxDate = maxDate.toISOString().slice(0, 10)
+      setMinJoining(dateObj)
+      setMaxDuration(maxDate)
       const options = {
         method: 'POST',
         body: JSON.stringify({ workerId: user?.id }),
@@ -53,11 +65,12 @@ export default function EnrollJob () {
           Accept: 'Application/json'
         }
       }
-      const res = await fetch(`/api/worker/entitlement`, options)
+      const res = await fetch('/api/worker/entitlement', options)
       const { data, error } = await res.json()
       if (error) throw error
       setEntitlement(data?.entitlement)
       if (timeDuration == entitlement) setDisabled('all')
+      setJob(currJob)
       setLoadingJobDetail(false)
     } catch (err) {
       console.log(err)
@@ -68,10 +81,10 @@ export default function EnrollJob () {
   function handleDuration (e) {
     var { name } = e.target
     if (name == 'add-outline') {
-      if (timeDuration < entitlement)
+      if (timeDuration < maxDuration)
         setTimeDuration(prev => {
-          if (prev == 15 && timeDuration < entitlement) setDisabled('none')
-          if (prev + 1 == entitlement) setDisabled('plus')
+          if (prev == 15 && timeDuration < maxDuration) setDisabled('none')
+          if (prev + 1 == maxDuration) setDisabled('plus')
           return (prev += 1)
         })
     } else if (name == 'remove-outline') {
@@ -84,12 +97,20 @@ export default function EnrollJob () {
     } else if ((name = 'manual-duration')) {
       var value = parseInt(e.target.value)
       if (value < 16) setDisabled('minus')
-      else if (value >= 16 && value < entitlement) setDisabled('none')
-      else if (value == entitlement) setDisabled('plus')
-
+      else if (value >= 16 && value < maxDuration) setDisabled('none')
+      else if (value == maxDuration) setDisabled('plus')
       setTimeDuration(parseInt(e.target.value))
     }
   }
+
+  function handleJoiningChange (e) {
+    const { name, value } = e.target
+    const currJob = job
+    const days = jobDuration(value, currJob.job_deadline).days
+    setMaxDuration(days)
+    setStartDate(value)
+  }
+
   useEffect(() => {
     setupJobDetail()
   }, [jobId])
@@ -100,37 +121,53 @@ export default function EnrollJob () {
           <div className='flex w-full items-center gap-2 flex-wrap justify-between p-6'>
             <div className='flex-1'>
               <h2 className='mb-4 font-medium'>
-                Job application <span className='text-gray-500'>in</span>
+                Job application <span className='text-gray-500'>for</span>
               </h2>
-              <div className='flex items-center space-x-3'>
+              {loadingJobDetail ? (
+                <EnrollJob />
+              ) : (
                 <div>
-                  <h3 className='text-sm font-medium text-gray-900'>
-                    {job?.job_name}
-                  </h3>
-                  <p className='text-xs text-gray-700'>
-                    <i>_{job.job_description}</i>
-                  </p>
+                  <div className='flex items-center space-x-3'>
+                    <div>
+                      <h3 className='text-sm font-medium text-gray-900'>
+                        {job?.job_name}
+                      </h3>
+                      <p className='text-xs text-gray-700'>
+                        <i>_{job.job_description}</i>
+                      </p>
+                    </div>
+                    <span className='inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800'>
+                      {job?.locationObj?.gp} GP
+                    </span>
+                  </div>
+                  <div className='flex flex-wrap gap-x-2 gap-y-1'>
+                    <p className='mt-1 truncate text-sm text-gray-500'>
+                      Distance:{' '}
+                      <span className='text-indigo-700 font-medium'>
+                        {job?.locationObj?.dist} Km
+                      </span>
+                    </p>
+                    <p className='mt-1 truncate text-sm text-gray-500'>
+                      Inauguration:{' '}
+                      <span className='text-gray-700'>
+                        {timestampToDate(job.job_start_date)}
+                      </span>
+                    </p>
+                    <p className='mt-1 truncate text-sm text-gray-500'>
+                      Deadline:{' '}
+                      <span className='text-gray-700'>
+                        {timestampToDate(job.job_deadline)}
+                      </span>
+                    </p>
+                    <p className='mt-1 truncate text-sm text-gray-500'>
+                      Family entitlement:{' '}
+                      <span className='text-gray-700'>
+                        {entitlement} days left
+                      </span>
+                    </p>
+                  </div>
                 </div>
-                <span className='inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800'>
-                  {job?.locationObj?.gp} GP
-                </span>
-              </div>
-              <p className='mt-1 truncate text-sm text-gray-500'>
-                Distance:{' '}
-                <span className='text-indigo-700 font-medium'>
-                  {job?.locationObj?.dist} Km
-                </span>
-              </p>
-              <p className='mt-1 truncate text-sm text-gray-500'>
-                Inauguration:{' '}
-                <span className='text-gray-700'>
-                  {timestampToDate(job.job_start_date)}
-                </span>
-              </p>
-              <p className='mt-1 truncate text-sm text-gray-500'>
-                Family entitlement:{' '}
-                <span className='text-gray-700'>{entitlement} days left</span>
-              </p>
+              )}
             </div>
           </div>
           <form className='px-6 pb-6' onSubmit={sendApplication}>
@@ -147,13 +184,13 @@ export default function EnrollJob () {
                   name='start_date'
                   type='date'
                   value={startDate}
-                  min={new Date().toISOString().slice(0, 10)}
+                  min={minJoining}
                   max={new Date(new Date().getFullYear() + 1, 2, 32)
                     .toISOString()
                     .slice(0, 10)}
                   required
                   placeholder='YYYY-MM-DD'
-                  onChange={e => setStartDate(e.target.value)}
+                  onChange={handleJoiningChange}
                   className='block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
                 />
               </div>
@@ -179,9 +216,9 @@ export default function EnrollJob () {
                 <input
                   value={timeDuration}
                   type='number'
-                  min={15}
+                  min={1}
                   name='manual-duration'
-                  max={entitlement}
+                  max={maxDuration}
                   required
                   onChange={handleDuration}
                   className='block w-1/3 appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'

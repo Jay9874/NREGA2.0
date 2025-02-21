@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { supabase } from '..'
 import { calculateAge, timestampToDate } from '../../utils/dataFormating'
 import { authStore } from './authStore'
 import { toast } from 'sonner'
@@ -13,7 +12,6 @@ export const useAdminStore = create((set, get) => ({
   user: authStore.getState().user,
   loading: false,
   notifications: [],
-  base: NODE_ENV === 'development' ? 'http://localhost:8080' : '',
   profile: {},
   employees: [],
   jobs: [],
@@ -53,18 +51,25 @@ export const useAdminStore = create((set, get) => ({
       try {
         const token = JSON.parse(localStorage.getItem('suid'))
         const { id } = token.user
-        const { data: profile, error } = await supabase
-          .from('sachiv')
-          .select(`*, location_id(*)`)
-          .eq('id', id)
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify({ sachivId: id })
+        }
+        const res = await fetch('/api/admin/profile', options)
+        const { data, error } = await res.json()
         if (error) throw error
-        set({ profile: profile[0] })
-        resolve(profile[0])
+        set({ profile: data })
+        resolve(data)
       } catch (error) {
         console.log(error)
         toast.dismiss()
         toast.error(error.message)
-        throw error
+        reject(error)
       }
     })
   },
@@ -83,9 +88,8 @@ export const useAdminStore = create((set, get) => ({
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(userData)
       }
-      const url = `${get().base}/api/admin/createuser`
       toast.loading('Adding User...', { duration: Infinity })
-      const res = await fetch(url, options)
+      const res = await fetch('/api/admin/createuser', options)
       const { data, error } = await res.json()
       toast.dismiss()
       set({ loading: false })
@@ -110,8 +114,7 @@ export const useAdminStore = create((set, get) => ({
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
       }
-      const url = `${get().base}/api/admin/aadhaar`
-      const res = await fetch(url, options)
+      const res = await fetch('/api/admin/aadhaar', options)
       const { data, error } = await res.json()
       toast.dismiss()
       if (error) throw error
@@ -134,9 +137,8 @@ export const useAdminStore = create((set, get) => ({
           body: JSON.stringify(userData),
           headers: { 'content-type': 'application/json' }
         }
-        const url = `${get().base}/api/admin/createemp`
         toast.loading('Adding worker...', { duration: Infinity })
-        const res = await fetch(url, options)
+        const res = await fetch('/api/admin/createemp', options)
         const { data, error } = await res.json()
         toast.dismiss()
         if (error) throw error
@@ -156,16 +158,21 @@ export const useAdminStore = create((set, get) => ({
   setEmployees: async () => {
     return new Promise(async (resolve, reject) => {
       try {
-        const { data: employees, error } = await supabase
-          .from('worker')
-          .select('*, address(*)')
-          .eq('address', get().profile.location_id.id)
-        if (error) {
-          toast.error(error.message)
-          throw error
+        const { id } = get().profile.location_id
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify({ locationId: id })
         }
-        set({ employees: employees })
-        resolve(employees)
+        const res = await fetch('/api/admin/get-employees', options)
+        const { data, error } = await res.json()
+        if (error) throw error
+        set({ employees: data })
+        resolve(data)
       } catch (error) {
         toast.dismiss()
         toast.error(error.message)
@@ -189,8 +196,7 @@ export const useAdminStore = create((set, get) => ({
           },
           body: JSON.stringify(updatedDetails)
         }
-        const url = `${get().base}/api/admin/update-worker`
-        const res = await fetch(url, options)
+        const res = await fetch('/api/admin/update-worker', options)
         const { data, error } = await res.json()
         if (error) throw error
         const updatedEmployees = await get().setEmployees()
@@ -226,8 +232,7 @@ export const useAdminStore = create((set, get) => ({
           },
           body: JSON.stringify(body)
         }
-        const url = `${get().base}/api/admin/dashboard`
-        const res = await fetch(url, options)
+        const res = await fetch('/api/admin/dashboard', options)
         const { data, error } = await res.json()
         if (error) {
           console.log(error)
@@ -250,7 +255,7 @@ export const useAdminStore = create((set, get) => ({
         resolve(data)
       } catch (err) {
         console.log(err)
-        throw err
+        reject(err)
       }
     })
   },
@@ -267,10 +272,7 @@ export const useAdminStore = create((set, get) => ({
           },
           body: JSON.stringify({ job_id: job_id, workers: workers })
         }
-        const res = await fetch(
-          `${get().base}/api/admin/add-attendance`,
-          options
-        )
+        const res = await fetch('/api/admin/add-attendance', options)
         const { data, error } = await res.json()
         set({ loading: false })
         if (error) throw error
@@ -297,7 +299,7 @@ export const useAdminStore = create((set, get) => ({
           adminId: profile.id
         })
       }
-      const res = await fetch(`${get().base}/api/admin/payout`, options)
+      const res = await fetch('/api/admin/payout', options)
       const {
         data: { payments, gpo },
         error
@@ -333,10 +335,7 @@ export const useAdminStore = create((set, get) => ({
           },
           body: JSON.stringify({ applicationId: applicationId, sender: id })
         }
-        const res = await fetch(
-          `${get().base}/api/admin/enroll-worker`,
-          options
-        )
+        const res = await fetch('/api/admin/enroll-worker', options)
         const { data, error } = await res.json()
         if (error) throw error
         toast.success('Successfully enrolled.')
@@ -367,10 +366,7 @@ export const useAdminStore = create((set, get) => ({
             remark: remark
           })
         }
-        const res = await fetch(
-          `${get().base}/api/admin/reject-application`,
-          options
-        )
+        const res = await fetch('/api/admin/reject-application', options)
         const { data, error } = await res.json()
         if (error) throw error
         set({ loading: false })
@@ -399,8 +395,7 @@ export const useAdminStore = create((set, get) => ({
           },
           body: JSON.stringify(jobDetails)
         }
-        const url = `${get().base}/api/admin/add-job`
-        const res = await fetch(url, options)
+        const res = await fetch('/api/admin/add-job', options)
         const { data, error } = await res.json()
         if (error) throw error
         set({ loading: false })
@@ -430,8 +425,7 @@ export const useAdminStore = create((set, get) => ({
             Accept: 'Application/json'
           }
         }
-        const url = `${get().base}/api/admin/random-aadhaar`
-        const res = await fetch(url, options)
+        const res = await fetch('/api/admin/random-aadhaar', options)
         const { data, error } = await res.json()
         toast.dismiss()
         if (error) throw error

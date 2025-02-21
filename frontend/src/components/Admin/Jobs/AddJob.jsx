@@ -136,7 +136,7 @@ export default function AddJob () {
 
         <form className='px-6' onSubmit={handleSubmit}>
           <div className='w-full grid grid-cols-1 gap-x-6 gap-y-2 lg:grid-cols-3 sm:grid-cols-2'>
-            <div className=''>
+            <div>
               {/* Input fields for jobs details */}
               <div className='mt-4'>
                 <label

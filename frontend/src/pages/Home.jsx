@@ -41,6 +41,18 @@ export default function Home () {
     }
   }
 
+  async function handleDemo (email, type, nav) {
+    try {
+      if (window.navigator.onLine) {
+        demoLogin(email, type, nav)
+      } else {
+        toast.error('No internet connection.')
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   useEffect(() => {
     if (token_hash && token_hash != undefined) {
       verifyLink(token_hash, type)
@@ -218,7 +230,7 @@ export default function Home () {
                     >
                       <button
                         onClick={() =>
-                          demoLogin(
+                          handleDemo(
                             'jayprakashsharma225@gmail.com',
                             'admin',
                             navigate
@@ -234,7 +246,7 @@ export default function Home () {
                       </button>
                       <button
                         onClick={() =>
-                          demoLogin('jay.gdsc@gmail.com', 'worker', navigate)
+                          handleDemo('jay.gdsc@gmail.com', 'worker', navigate)
                         }
                         className='bg-green-500 w-full mt-[1px] py-1.5 flex justify-between items-center pl-3.5 pr-2'
                       >

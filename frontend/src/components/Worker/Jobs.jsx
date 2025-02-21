@@ -1,8 +1,9 @@
 import { toast } from 'sonner'
 import { useWorkerStore } from '../../api/store'
 import DynamicTable from '../DynamicTable'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
+import { timestampToDate } from '../../utils/dataFormating'
 
 const tableHeading = [
   { name: 'Work', css_normal: '', css_list: '' },
@@ -25,17 +26,20 @@ const tableHeading = [
 ]
 
 const statusStyles = {
-  enrolled: 'bg-green-100 text-green-800',
+  enrolled: 'bg-indigo-100 text-indigo-800',
   applied: 'bg-yellow-100 text-yellow-800',
   rejected: 'bg-red-100 text-red-800',
+  completed: 'bg-green-100 text-green-800',
+  'working on': 'bg-indigo-100 text-indigo-800'
 }
 
 const Jobs = () => {
-  const { lastWork, nearbyJobs } = useWorkerStore()
+  const { lastWork, nearbyJobs, currentlyEnrolled, setCurrentlyEnrolled } =
+    useWorkerStore()
+  const [updatedJobs, setUpdatedJobs] = useState()
+  const [currentJob, setCurrentJob] = useState(null)
+  const [curr, setCurr] = useState(null)
   const navigate = useNavigate()
-  const [modalState, setModalState] = useState(false)
-  const [sachivId, setSachivId] = useState('')
-  const [jobToEnroll, setJobToEnroll] = useState()
   const highlight = [
     {
       label: 'Your presence',
@@ -45,39 +49,67 @@ const Jobs = () => {
     { label: 'Completion', value: `${lastWork.completion}%` },
     { label: 'Deadline', value: lastWork.deadline }
   ]
-  async function jobProfile (jobId, sachivId, job) {
-    setSachivId(sachivId)
-    setJobToEnroll(job)
-    setModalState(true)
+  async function jobProfile (jobId) {
+    console.log('curr: ', curr)
+    if (curr) {
+      return toast.message('You are currently enrolled in', {
+        description: `'${curr.jobName}' from ${curr.start} to ${curr.end}.`
+      })
+    }
     return navigate(`enroll/${jobId}`)
   }
-  const updatedJobs = nearbyJobs.map(job => ({
-    ...job,
-    Location: (
-      <span>
-        <span className='text-indigo-700 font-medium'>
-          {job.locationObj.dist} Km{' '}
-        </span>
-        <span>from {job.locationObj.gp} GP</span>
-      </span>
-    ),
-    Status:
-      job.Status == 'enrolled' ? (
-        'enrolled'
-      ) : job.Status == 'applied' ? (
-        'applied'
-      ) : job.Status == 'rejected' ? (
-        'rejected'
-      ) : (
-        <button onClick={() => jobProfile(job.job_id, job.sachiv_id, job)}>
-          <p className='-ml-2 flex items-center w-[80px] justify-between gap-1 ring-1 ring-indigo-500 text-indigo-700 px-2.5 py-0.5 bg-indigo-50 rounded-full'>
-            Enroll
-            <span className='sr-only'>, {job.job_name}</span>
-            <ion-icon color='tertiary' name='arrow-forward-outline'></ion-icon>
-          </p>
-        </button>
-      )
-  }))
+
+  useEffect(() => {
+    var end = new Date(currentJob?.start)
+    end.setDate(end.getDate() + currentJob?.time_period)
+    setCurrentlyEnrolled({
+      start: timestampToDate(currentJob?.job_start_date),
+      end: timestampToDate(end),
+      jobName: currentJob?.job_name
+    })
+    setCurr({
+      start: timestampToDate(currentJob?.job_start_date),
+      end: timestampToDate(end),
+      jobName: currentJob?.job_name
+    })
+  }, [currentJob])
+
+  useEffect(() => {
+    var currentJob = {}
+    const jobsArr = nearbyJobs?.map(job => {
+      if (job.Status == 'working on') {
+        currentJob = job
+      }
+      return {
+        ...job,
+        Location: (
+          <span>
+            <span className='text-indigo-700 font-medium'>
+              {job.locationObj.dist} Km{' '}
+            </span>
+            <span>from {job.locationObj.gp} GP</span>
+          </span>
+        ),
+        Status:
+          job.Status == 'unenrolled' ? (
+            <button onClick={() => jobProfile(job.job_id, job.sachiv_id, job)}>
+              <p className='-ml-2 flex items-center w-[80px] justify-between gap-1 ring-1 ring-indigo-500 text-indigo-700 px-2.5 py-0.5 bg-indigo-50 rounded-full'>
+                Enroll
+                <span className='sr-only'>, {job.job_name}</span>
+                <ion-icon
+                  color='tertiary'
+                  name='arrow-forward-outline'
+                ></ion-icon>
+              </p>
+            </button>
+          ) : (
+            job.Status
+          )
+      }
+    })
+    setUpdatedJobs(jobsArr)
+    setCurrentJob(currentJob)
+  }, [])
 
   return (
     <main className='relative'>
@@ -89,12 +121,14 @@ const Jobs = () => {
               Your working site
             </h3>
             <p className='mt-2 max-w-4xl text-sm text-gray-700'>
-              {lastWork.name} at {lastWork.location.district},{' '}
+              <b>{lastWork.name}</b> at {lastWork.location.district},{' '}
               {lastWork.location.panchayat} <br />
               <i>
                 {'_'}
                 {lastWork.desc}
               </i>
+              <br />
+              till {currentlyEnrolled?.end}
             </p>
           </div>
           <div className=' bg-white pb-1 sm:pb-4 border-gray-200'>

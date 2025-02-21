@@ -33,7 +33,7 @@ export const Worker = () => {
   async function handleSetup () {
     try {
       setLoading(true)
-      await setProfile(navigate)
+      const data = await setProfile()
       await setPayment()
       await setLocations()
       await setLastWork()

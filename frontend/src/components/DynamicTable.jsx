@@ -39,7 +39,7 @@ export default function DynamicTable ({
           </tr>
         </thead>
         <tbody className='divide-y divide-gray-200 bg-white'>
-          {data.map((itm, index) => {
+          {data?.map((itm, index) => {
             return (
               <tr key={index}>
                 {headings.map((header, idx) =>

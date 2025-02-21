@@ -12,16 +12,32 @@ import {
   enrollWorker,
   updateWorker,
   addJob,
-  fetchRandomAadhaar
+  fetchRandomAadhaar,
+  setProfile,
+  fetchEmployees
 } from '../controller/admin.js'
 
 // Defining the routes
+/**
+ * @route POST api/admin/profile
+ * @description the the biometric data about sachiv.
+ * @access public
+ **/
+router.post('/profile', setProfile)
+
 /**
  * @route POST api/admin/create
  * @description register user
  * @access public
  **/
 router.post('/createuser', createUser)
+
+/**
+ * @route POST api/admin/get-employees
+ * @description get all the employees in the GP.
+ * @access public
+ **/
+router.post('/get-employees', fetchEmployees)
 
 /**
  * @route POST api/admin/createemp

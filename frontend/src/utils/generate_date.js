@@ -75,4 +75,4 @@ var genDates = function (selectedAttnd) {
   })
 }
 
-export { genDates }
+export { genDates, getDateStr }
