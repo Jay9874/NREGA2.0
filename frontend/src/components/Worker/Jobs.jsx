@@ -49,7 +49,8 @@ const Jobs = () => {
     { label: 'Completion', value: `${lastWork.completion}%` },
     { label: 'Deadline', value: lastWork.deadline }
   ]
-  async function jobProfile (jobId) {
+  function jobProfile (jobId, sachivId, job) {
+    console.log("clicked the button")
     console.log('curr: ', curr)
     if (curr) {
       return toast.message('You are currently enrolled in', {
@@ -77,9 +78,9 @@ const Jobs = () => {
   useEffect(() => {
     var currentJob = {}
     const jobsArr = nearbyJobs?.map(job => {
-      if (job.Status == 'working on') {
-        currentJob = job
-      }
+      // if (job.Status == 'working on') {
+      //   currentJob = job
+      // }
       return {
         ...job,
         Location: (

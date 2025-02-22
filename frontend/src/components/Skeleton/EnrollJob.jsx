@@ -1,6 +1,7 @@
 import React from 'react'
 
 export default function EnrollJob () {
+  console.log("got the request.")
   return (
     <div
       role='status'

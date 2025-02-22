@@ -47,15 +47,15 @@ export default function EnrollJob () {
   async function setupJobDetail () {
     try {
       const currJob = nearbyJobs.filter((job, index) => job.job_id == jobId)[0]
-      var dateObj = new Date()
-      var maxDate = new Date(currJob?.job_deadline)
-      // Add 1 days
-      dateObj.setDate(dateObj.getDate() + 1)
-      maxDate.setDate(maxDate.getDate() - 1)
-      dateObj = dateObj.toISOString().slice(0, 10)
-      maxDate = maxDate.toISOString().slice(0, 10)
-      setMinJoining(dateObj)
-      setMaxDuration(maxDate)
+      // var dateObj = new Date()
+      // var maxDate = new Date(currJob?.job_deadline)
+      // // Add 1 days
+      // dateObj.setDate(dateObj.getDate() + 1)
+      // maxDate.setDate(maxDate.getDate() - 1)
+      // dateObj = dateObj.toISOString().slice(0, 10)
+      // maxDate = maxDate.toISOString().slice(0, 10)
+      // setMinJoining(dateObj)
+      // setMaxDuration(maxDate)
       const options = {
         method: 'POST',
         body: JSON.stringify({ workerId: user?.id }),
@@ -68,7 +68,7 @@ export default function EnrollJob () {
       const res = await fetch('/api/worker/entitlement', options)
       const { data, error } = await res.json()
       if (error) throw error
-      setEntitlement(data?.entitlement)
+      setEntitlement(data.entitlement)
       if (timeDuration == entitlement) setDisabled('all')
       setJob(currJob)
       setLoadingJobDetail(false)
@@ -105,10 +105,10 @@ export default function EnrollJob () {
 
   function handleJoiningChange (e) {
     const { name, value } = e.target
-    const currJob = job
-    const days = jobDuration(value, currJob.job_deadline).days
-    setMaxDuration(days)
-    setStartDate(value)
+    // const currJob = job
+    // const days = jobDuration(value, currJob.job_deadline).days
+    // setMaxDuration(days)
+    // setStartDate(value)
   }
 
   useEffect(() => {
@@ -123,9 +123,9 @@ export default function EnrollJob () {
               <h2 className='mb-4 font-medium'>
                 Job application <span className='text-gray-500'>for</span>
               </h2>
-              {loadingJobDetail ? (
+              {/* {loadingJobDetail ? (
                 <EnrollJob />
-              ) : (
+              ) : ( */}
                 <div>
                   <div className='flex items-center space-x-3'>
                     <div>
@@ -167,7 +167,7 @@ export default function EnrollJob () {
                     </p>
                   </div>
                 </div>
-              )}
+              {/* )} */}
             </div>
           </div>
           <form className='px-6 pb-6' onSubmit={sendApplication}>
