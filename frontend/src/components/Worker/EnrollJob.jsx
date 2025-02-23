@@ -47,15 +47,15 @@ export default function EnrollJob () {
   async function setupJobDetail () {
     try {
       const currJob = nearbyJobs.filter((job, index) => job.job_id == jobId)[0]
-      // var dateObj = new Date()
-      // var maxDate = new Date(currJob?.job_deadline)
-      // // Add 1 days
-      // dateObj.setDate(dateObj.getDate() + 1)
-      // maxDate.setDate(maxDate.getDate() - 1)
-      // dateObj = dateObj.toISOString().slice(0, 10)
-      // maxDate = maxDate.toISOString().slice(0, 10)
-      // setMinJoining(dateObj)
-      // setMaxDuration(maxDate)
+      var dateObj = new Date()
+      var maxDate = new Date(currJob?.job_deadline)
+      // Add 1 days
+      dateObj.setDate(dateObj.getDate() + 1)
+      maxDate.setDate(maxDate.getDate() - 1)
+      dateObj = dateObj.toISOString().slice(0, 10)
+      maxDate = maxDate.toISOString().slice(0, 10)
+      setMinJoining(dateObj)
+      setMaxDuration(maxDate)
       const options = {
         method: 'POST',
         body: JSON.stringify({ workerId: user?.id }),
@@ -105,10 +105,10 @@ export default function EnrollJob () {
 
   function handleJoiningChange (e) {
     const { name, value } = e.target
-    // const currJob = job
-    // const days = jobDuration(value, currJob.job_deadline).days
-    // setMaxDuration(days)
-    // setStartDate(value)
+    const currJob = job
+    const days = jobDuration(value, currJob.job_deadline).days
+    setMaxDuration(days)
+    setStartDate(value)
   }
 
   useEffect(() => {
