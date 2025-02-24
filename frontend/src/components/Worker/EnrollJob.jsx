@@ -48,14 +48,16 @@ export default function EnrollJob () {
     try {
       const currJob = nearbyJobs.filter((job, index) => job.job_id == jobId)[0]
       var dateObj = new Date()
-      var maxDate = new Date(currJob?.job_deadline)
-      // Add 1 days
-      dateObj.setDate(dateObj.getDate() + 1)
-      maxDate.setDate(maxDate.getDate() - 1)
+      var maxDate = new Date(currJob.job_deadline)
+      if (new Date(currJob.job_start_date) > dateObj) {
+        dateObj = new Date(currJob.job_start_date)
+      } else {
+        dateObj.setDate(dateObj.getDate() + 1)
+      }
       dateObj = dateObj.toISOString().slice(0, 10)
       maxDate = maxDate.toISOString().slice(0, 10)
       setMinJoining(dateObj)
-      setMaxDuration(maxDate)
+      setMaxJoining(maxDate)
       setJob(currJob)
       const options = {
         method: 'POST',
@@ -83,21 +85,21 @@ export default function EnrollJob () {
     if (name == 'add-outline') {
       if (timeDuration < maxDuration)
         setTimeDuration(prev => {
-          if (prev == 15 && timeDuration < maxDuration) setDisabled('none')
+          if (prev == 1 && timeDuration < maxDuration) setDisabled('none')
           if (prev + 1 == maxDuration) setDisabled('plus')
           return (prev += 1)
         })
     } else if (name == 'remove-outline') {
-      if (timeDuration >= 16)
+      if (timeDuration >= 1)
         setTimeDuration(prev => {
-          if (prev > 16) setDisabled('none')
+          if (prev > 2) setDisabled('none')
           else setDisabled('minus')
           return (prev -= 1)
         })
     } else if ((name = 'manual-duration')) {
       var value = parseInt(e.target.value)
-      if (value < 16) setDisabled('minus')
-      else if (value >= 16 && value < maxDuration) setDisabled('none')
+      if (value < 2) setDisabled('minus')
+      else if (value >= 1 && value < maxDuration) setDisabled('none')
       else if (value == maxDuration) setDisabled('plus')
       setTimeDuration(parseInt(e.target.value))
     }
@@ -182,9 +184,7 @@ export default function EnrollJob () {
                   type='date'
                   value={startDate}
                   min={minJoining}
-                  max={new Date(new Date().getFullYear() + 1, 2, 32)
-                    .toISOString()
-                    .slice(0, 10)}
+                  max={maxJoining}
                   required
                   placeholder='YYYY-MM-DD'
                   onChange={handleJoiningChange}

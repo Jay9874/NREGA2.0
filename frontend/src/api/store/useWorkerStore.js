@@ -270,16 +270,25 @@ export const useWorkerStore = create((set, get) => ({
         const { data, error } = await res.json()
         if (error) throw error
         const { lastWork, enrollment } = data
+        set({ lastWork: lastWork })
         var end = new Date(enrollment.starting_date)
+        var now = new Date()
+        now.setHours(0, 0, 0, 0)
         end.setDate(end.getDate() + enrollment.time_period)
-        set({
-          lastWork: lastWork,
-          currentlyEnrolled: {
-            start: timestampToDate(enrollment.starting_date),
-            end: timestampToDate(end),
-            jobName: enrollment.job.job_name
-          }
-        })
+        if (now > end) {
+          set({
+            currentlyEnrolled: null
+          })
+        } else {
+          set({
+            currentlyEnrolled: {
+              start: timestampToDate(enrollment.starting_date),
+              end: timestampToDate(end),
+              jobName: enrollment.job.job_name
+            }
+          })
+        }
+
         resolve(lastWork)
       } catch (error) {
         reject(error)
@@ -383,5 +392,6 @@ export const useWorkerStore = create((set, get) => ({
         reject(err)
       }
     })
-  }
+  },
+ 
 }))

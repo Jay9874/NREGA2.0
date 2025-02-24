@@ -438,11 +438,26 @@ export const useAdminStore = create((set, get) => ({
       }
     })
   },
-  fetchARandomFamilyId: ()=>{
-    return new Promise(async(resolve, reject)=>{
-      try{
-        
-      }catch(err){
+  fetchARandomFamily: () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        toast.loading('Fetching a random family from db...', {
+          duration: Infinity
+        })
+        const options = {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          }
+        }
+        const res = await fetch('/api/admin/random-family', options)
+        const { data, error } = await res.json()
+        toast.dismiss()
+        if (error) throw error
+        resolve(data)
+      } catch (err) {
         console.log(err)
         reject(err)
       }

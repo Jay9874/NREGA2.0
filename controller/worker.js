@@ -92,7 +92,7 @@ const entitlement = async (req, res) => {
     const { data, error } = await supabase
       .from('households')
       .select('quota')
-      .eq('member_id', workerId)
+      .contains('members', [`${workerId}`])
     if (error) throw error
     return res.status(200).send({
       data: { entitlement: data[0].quota },
@@ -178,7 +178,6 @@ const workingOn = async (req, res) => {
       .eq('by_worker', workerId)
       .eq('status', 'working on')
     if (error) throw error
-    console.log(enrollment)
     if (enrollment.length == 0) throw new Error('Not working on any job.')
     const job = enrollment[0]?.job
     const deadline = timestampToDate(job.job_deadline)

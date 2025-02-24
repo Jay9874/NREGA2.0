@@ -14,7 +14,8 @@ import {
   addJob,
   fetchRandomAadhaar,
   setProfile,
-  fetchEmployees
+  fetchEmployees,
+  fetchRandomFamily
 } from '../controller/admin.js'
 
 // Defining the routes
@@ -112,5 +113,13 @@ router.post('/add-job', addJob)
  * @access public
  **/
 router.get('/random-aadhaar', fetchRandomAadhaar)
+
+// Route for fetching a random family id for demo
+/**
+ * @route GET api/admin/random-family
+ * @description fetch a random family id from database.
+ * @access public
+ **/
+router.get('/random-family', fetchRandomFamily)
 
 export { router as adminRoutes }

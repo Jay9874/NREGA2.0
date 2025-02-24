@@ -459,6 +459,27 @@ const fetchRandomAadhaar = async (req, res) => {
     })
   }
 }
+const fetchRandomFamily = async (req, res) => {
+  try {
+    const supabase = createClient({ req, res })
+    const { data, error } = await supabase
+      .from('households')
+      .select('*')
+      .is('members', null); 
+    if (error) throw error
+    const randInt = Math.floor(Math.random() * (data.length - 1 - 0 + 1) + 0)
+    return res.status(200).send({
+      data: data[randInt],
+      error: null
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send({
+      data: null,
+      error: err
+    })
+  }
+}
 export {
   setProfile,
   createUser,
@@ -473,5 +494,6 @@ export {
   enrollWorker,
   rejectApplication,
   addJob,
-  fetchRandomAadhaar
+  fetchRandomAadhaar,
+  fetchRandomFamily
 }

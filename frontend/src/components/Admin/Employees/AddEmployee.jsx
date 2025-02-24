@@ -25,7 +25,8 @@ export default function AddEmployee () {
     profile,
     loading,
     createEmployee,
-    fetchARandomAadhaar
+    fetchARandomAadhaar,
+    fetchARandomFamily
   } = useAdminStore()
 
   const [aadhaarNo, setAadhaarNo] = useState(
@@ -127,10 +128,18 @@ export default function AddEmployee () {
     }
   }, [formData.photo])
 
-  async function RandomFamilyID(){
-    try{
-      
-    }catch(err){
+  async function RandomFamilyID () {
+    try {
+      if (!randomFamily) {
+        const data = await fetchARandomFamily()
+        toast.success('Fetched a random family id, proceed with form.')
+        setFormData(prev => ({ ...prev, family_id: data.family_id }))
+        setRandomFamily(true)
+      } else {
+        setFormData(prev => ({ ...prev, family_id: '' }))
+        setRandomFamily(false)
+      }
+    } catch (err) {
       console.log(err)
     }
   }
@@ -288,11 +297,11 @@ export default function AddEmployee () {
                   />
 
                   {/* Family ID */}
-                  <div className='sm:col-span-3'>
-                    <div className='mt-2 sm:max-w-md'>
+                  <div className='col-span-1'>
+                    <div className='mt-2'>
                       <div className='flex justify-between items-center pr-1'>
                         <label
-                          htmlFor='aadhaar'
+                          htmlFor='family-id'
                           className='block text-sm font-medium leading-6 text-gray-900 whitespace-nowrap'
                         >
                           Family ID
@@ -304,12 +313,12 @@ export default function AddEmployee () {
                             Random family
                           </span>
                           <Switch
-                            checked={demo}
-                            onChange={handleDemoToggle}
+                            checked={randomFamily}
+                            onChange={RandomFamilyID}
                             className='group relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2'
                           >
                             <span className='sr-only'>
-                              fetch random aadhaar number for demo
+                              fetch random family id for demo
                             </span>
 
                             <span
@@ -319,14 +328,14 @@ export default function AddEmployee () {
                             <span
                               aria-hidden='true'
                               className={classNames(
-                                demo ? 'bg-green-600' : 'bg-gray-200',
+                                randomFamily ? 'bg-green-600' : 'bg-gray-200',
                                 'pointer-events-none absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out'
                               )}
                             />
                             <span
                               aria-hidden='true'
                               className={classNames(
-                                demo ? 'translate-x-5' : 'translate-x-0',
+                                randomFamily ? 'translate-x-5' : 'translate-x-0',
                                 'pointer-events-none absolute left-0 inline-block h-5 w-5 transform rounded-full border border-gray-200 bg-white shadow ring-0 transition-transform duration-200 ease-in-out'
                               )}
                             />
@@ -338,8 +347,8 @@ export default function AddEmployee () {
                           <div className='relative flex flex-grow items-stretch focus-within:z-10'>
                             <input
                               type='text'
-                              name='aadhar_no'
-                              id='aadhaar'
+                              name='family_id'
+                              id='family-id'
                               value={formData.family_id}
                               onChange={handleChange}
                               className='block w-full border-gray-300 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'

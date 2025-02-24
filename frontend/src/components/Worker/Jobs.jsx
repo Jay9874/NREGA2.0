@@ -34,8 +34,7 @@ const statusStyles = {
 }
 
 const Jobs = () => {
-  const { lastWork, nearbyJobs, currentlyEnrolled} =
-    useWorkerStore()
+  const { lastWork, nearbyJobs, currentlyEnrolled } = useWorkerStore()
   const [updatedJobs, setUpdatedJobs] = useState()
   const navigate = useNavigate()
   const highlight = [
@@ -102,8 +101,12 @@ const Jobs = () => {
                 {'_'}
                 {lastWork.desc}
               </i>
-              <br />
-              till {currentlyEnrolled?.end}
+              {currentlyEnrolled && (
+                <span>
+                  <br />
+                  till {currentlyEnrolled?.end}
+                </span>
+              )}
             </p>
           </div>
           <div className=' bg-white pb-1 sm:pb-4 border-gray-200'>
