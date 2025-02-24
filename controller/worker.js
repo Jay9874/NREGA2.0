@@ -178,6 +178,8 @@ const workingOn = async (req, res) => {
       .eq('by_worker', workerId)
       .eq('status', 'working on')
     if (error) throw error
+    console.log(enrollment)
+    if (enrollment.length == 0) throw new Error('Not working on any job.')
     const job = enrollment[0]?.job
     const deadline = timestampToDate(job.job_deadline)
     const { days, percentage } = jobDuration(job.created_at, job.job_deadline)
@@ -209,7 +211,7 @@ const workingOn = async (req, res) => {
       desc: job.job_description
     }
     return res.status(200).send({
-      data: lastWork,
+      data: { lastWork, enrollment: enrollment[0] },
       error: null
     })
   } catch (err) {

@@ -269,11 +269,19 @@ export const useWorkerStore = create((set, get) => ({
         const res = await fetch('/api/worker/working-on', options)
         const { data, error } = await res.json()
         if (error) throw error
-        set({ lastWork: data })
-        resolve(data)
+        const { lastWork, enrollment } = data
+        var end = new Date(enrollment.starting_date)
+        end.setDate(end.getDate() + enrollment.time_period)
+        set({
+          lastWork: lastWork,
+          currentlyEnrolled: {
+            start: timestampToDate(enrollment.starting_date),
+            end: timestampToDate(end),
+            jobName: enrollment.job.job_name
+          }
+        })
+        resolve(lastWork)
       } catch (error) {
-        console.log(error)
-        toast.error(error.message)
         reject(error)
       }
     })

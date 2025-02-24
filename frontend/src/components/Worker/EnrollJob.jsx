@@ -56,6 +56,7 @@ export default function EnrollJob () {
       maxDate = maxDate.toISOString().slice(0, 10)
       setMinJoining(dateObj)
       setMaxDuration(maxDate)
+      setJob(currJob)
       const options = {
         method: 'POST',
         body: JSON.stringify({ workerId: user?.id }),
@@ -70,7 +71,6 @@ export default function EnrollJob () {
       if (error) throw error
       setEntitlement(data.entitlement)
       if (timeDuration == entitlement) setDisabled('all')
-      setJob(currJob)
       setLoadingJobDetail(false)
     } catch (err) {
       console.log(err)
@@ -123,51 +123,48 @@ export default function EnrollJob () {
               <h2 className='mb-4 font-medium'>
                 Job application <span className='text-gray-500'>for</span>
               </h2>
-              {/* {loadingJobDetail ? (
-                <EnrollJob />
-              ) : ( */}
-                <div>
-                  <div className='flex items-center space-x-3'>
-                    <div>
-                      <h3 className='text-sm font-medium text-gray-900'>
-                        {job?.job_name}
-                      </h3>
-                      <p className='text-xs text-gray-700'>
-                        <i>_{job.job_description}</i>
-                      </p>
-                    </div>
-                    <span className='inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800'>
-                      {job?.locationObj?.gp} GP
-                    </span>
-                  </div>
-                  <div className='flex flex-wrap gap-x-2 gap-y-1'>
-                    <p className='mt-1 truncate text-sm text-gray-500'>
-                      Distance:{' '}
-                      <span className='text-indigo-700 font-medium'>
-                        {job?.locationObj?.dist} Km
-                      </span>
-                    </p>
-                    <p className='mt-1 truncate text-sm text-gray-500'>
-                      Inauguration:{' '}
-                      <span className='text-gray-700'>
-                        {timestampToDate(job.job_start_date)}
-                      </span>
-                    </p>
-                    <p className='mt-1 truncate text-sm text-gray-500'>
-                      Deadline:{' '}
-                      <span className='text-gray-700'>
-                        {timestampToDate(job.job_deadline)}
-                      </span>
-                    </p>
-                    <p className='mt-1 truncate text-sm text-gray-500'>
-                      Family entitlement:{' '}
-                      <span className='text-gray-700'>
-                        {entitlement} days left
-                      </span>
+
+              <div>
+                <div className='flex items-center space-x-3'>
+                  <div>
+                    <h3 className='text-sm font-medium text-gray-900'>
+                      {job?.job_name}
+                    </h3>
+                    <p className='text-xs text-gray-700'>
+                      <i>_{job.job_description}</i>
                     </p>
                   </div>
+                  <span className='inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800'>
+                    {job?.locationObj?.gp} GP
+                  </span>
                 </div>
-              {/* )} */}
+                <div className='flex flex-wrap gap-x-2 gap-y-1'>
+                  <p className='mt-1 truncate text-sm text-gray-500'>
+                    Distance:{' '}
+                    <span className='text-indigo-700 font-medium'>
+                      {job?.locationObj?.dist} Km
+                    </span>
+                  </p>
+                  <p className='mt-1 truncate text-sm text-gray-500'>
+                    Inauguration:{' '}
+                    <span className='text-gray-700'>
+                      {timestampToDate(job.job_start_date)}
+                    </span>
+                  </p>
+                  <p className='mt-1 truncate text-sm text-gray-500'>
+                    Deadline:{' '}
+                    <span className='text-gray-700'>
+                      {timestampToDate(job.job_deadline)}
+                    </span>
+                  </p>
+                  <p className='mt-1 truncate text-sm text-gray-500'>
+                    Family entitlement:{' '}
+                    <span className='text-gray-700'>
+                      {entitlement} days left
+                    </span>
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
           <form className='px-6 pb-6' onSubmit={sendApplication}>

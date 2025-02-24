@@ -10,6 +10,7 @@ import { workerNavigation } from '../utils/sidelinks'
 import { workerTopNavigation } from '../utils/dashboard_toplink'
 import HomeLoading from '../components/Skeleton/HomeLoading'
 import NotificationPanel from '../components/NotificationPanel'
+import { toast } from 'sonner'
 
 export const Worker = () => {
   const navigate = useNavigate()
@@ -36,21 +37,24 @@ export const Worker = () => {
       const data = await setProfile()
       await setPayment()
       await setLocations()
-      await setLastWork()
       await setLastAttendance()
       await setAllJobs()
       await setNearbyJobs()
       await setNotifications()
+      await setLastWork()
       setLoading(false)
       setDataLoaded(true)
     } catch (error) {
+      setLoading(false)
+      setDataLoaded(true)
+      toast.error("Something went wrong while getting your data.")
       return error
     }
   }
 
   useEffect(() => {
     handleSetup()
-        // Supabase Realtime
+    // Supabase Realtime
     const handleInserts = payload => {
       addToNotifications(payload.new)
     }

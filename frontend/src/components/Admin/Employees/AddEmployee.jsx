@@ -85,18 +85,6 @@ export default function AddEmployee () {
     }
   }
 
-  // Get random family id
-  async function handleFamily (e) {
-    try {
-      if (randomFamily) {
-        setRandomFamily(false)
-      } else {
-        setRandomFamily(true)
-      }
-    } catch (err) {
-      console.log(err)
-    }
-  }
   async function handleAadhaarClick (e) {
     e.preventDefault()
     const isNum = /^\d+$/.test(aadhaarNo)
@@ -138,6 +126,14 @@ export default function AddEmployee () {
       setPreview(null)
     }
   }, [formData.photo])
+
+  async function RandomFamilyID(){
+    try{
+      
+    }catch(err){
+      console.log(err)
+    }
+  }
 
   return loading ? (
     <div className='w-full text-center'>loading...</div>
@@ -292,20 +288,20 @@ export default function AddEmployee () {
                   />
 
                   {/* Family ID */}
-                  <div className='sm:col-span-3 '>
+                  <div className='sm:col-span-3'>
                     <div className='mt-2 sm:max-w-md'>
-                      <div className='flex justify-between items-center'>
+                      <div className='flex justify-between items-center pr-1'>
                         <label
                           htmlFor='aadhaar'
                           className='block text-sm font-medium leading-6 text-gray-900 whitespace-nowrap'
                         >
-                          Aadhaar Number
+                          Family ID
                         </label>
 
                         {/* Demo toggler */}
                         <div className='flex items-center gap-2'>
                           <span className='text-sm font-normal text-gray-600'>
-                            Random
+                            Random family
                           </span>
                           <Switch
                             checked={demo}
@@ -344,106 +340,18 @@ export default function AddEmployee () {
                               type='text'
                               name='aadhar_no'
                               id='aadhaar'
-                              value={aadhaarNo}
-                              onChange={e => setAadhaarNo(e.target.value)}
-                              className='block w-full border-gray-300 rounded-none rounded-l-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                              placeholder='0000-0000-0000'
+                              value={formData.family_id}
+                              onChange={handleChange}
+                              className='block w-full border-gray-300 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                              placeholder='FAPLOC-2-2'
                               required
                               title='Fetch details'
                             />
                           </div>
-                          <button
-                            type='button'
-                            disabled={loading ? true : false}
-                            onClick={handleAadhaarClick}
-                            className={
-                              loading
-                                ? 'cursor-not-allowed'
-                                : 'relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
-                            }
-                          >
-                            <CloudArrowDownIcon
-                              className='h-5 w-5 text-green-600'
-                              aria-hidden='true'
-                            />
-                            <span>Get bio</span>
-                          </button>
                         </div>
                       </div>
                     </div>
                   </div>
-                  {/* <div className='flex items-center gap-2'>
-                    <span className='text-sm font-normal text-gray-600'>
-                      Add to random family
-                    </span>
-                    <Switch
-                      checked={randomFamily}
-                      onChange={handleFamily}
-                      className='group relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2'
-                    >
-                      <span className='sr-only'>
-                        fetch random aadhaar number for demo
-                      </span>
-
-                      <span
-                        aria-hidden='true'
-                        className='pointer-events-none absolute h-full w-full rounded-md bg-white'
-                      />
-                      <span
-                        aria-hidden='true'
-                        className={classNames(
-                          randomFamily ? 'bg-green-600' : 'bg-gray-200',
-                          'pointer-events-none absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out'
-                        )}
-                      />
-                      <span
-                        aria-hidden='true'
-                        className={classNames(
-                          randomFamily ? 'translate-x-5' : 'translate-x-0',
-                          'pointer-events-none absolute left-0 inline-block h-5 w-5 transform rounded-full border border-gray-200 bg-white shadow ring-0 transition-transform duration-200 ease-in-out'
-                        )}
-                      />
-                    </Switch>
-                  </div>
-                  <div className={colValue}>
-                    <label
-                      htmlFor={id}
-                      className='block text-sm font-medium leading-6 text-gray-900'
-                    >
-                      {label}
-                    </label>
-                    <div className='mt-2 w-full'>
-                      <input
-                        type={type}
-                        name={name}
-                        id={id}
-                        value={value}
-                        onChange={onChange}
-                        disabled={disabled}
-                        placeholder={placeholder}
-                        className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
-                        required
-                        tooltip={tooltip}
-                        pattern={pattern}
-                      />
-                      {disabled && (
-                        <p className='mt-2 invisible peer-disabled:visible text-gray-400 text-sm'>
-                          {hint}
-                        </p>
-                      )}
-                    </div>
-                  </div> */}
-                  {/* <Input
-                    type='text'
-                    name='family_id'
-                    id='family_id'
-                    label='Family ID'
-                    value={formData.family_id}
-                    onChange={handleChange}
-                    className='col-span-1'
-                    placeholder='XYZAB-0-0'
-                  /> */}
-                  {/* Random family toggler */}
 
                   {/* Profile Picture */}
                   <div className='col-span-1'>

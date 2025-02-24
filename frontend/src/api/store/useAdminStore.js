@@ -437,5 +437,15 @@ export const useAdminStore = create((set, get) => ({
         reject(err)
       }
     })
+  },
+  fetchARandomFamilyId: ()=>{
+    return new Promise(async(resolve, reject)=>{
+      try{
+        
+      }catch(err){
+        console.log(err)
+        reject(err)
+      }
+    })
   }
 }))
