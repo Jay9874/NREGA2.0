@@ -15,7 +15,8 @@ import {
   fetchRandomAadhaar,
   setProfile,
   fetchEmployees,
-  fetchRandomFamily
+  fetchRandomFamily,
+  checkNregaIDAvailability
 } from '../controller/admin.js'
 
 // Defining the routes
@@ -121,5 +122,12 @@ router.get('/random-aadhaar', fetchRandomAadhaar)
  * @access public
  **/
 router.get('/random-family', fetchRandomFamily)
+
+/**
+ * @route GET api/admin/validate-nrega-id
+ * @description check availability of a nrega id.
+ * @access public
+ **/
+router.post('/validate-nrega-id', checkNregaIDAvailability)
 
 export { router as adminRoutes }

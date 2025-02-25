@@ -112,6 +112,13 @@ const createEmployee = async (req, res) => {
       .insert([newProfile])
       .select()
     if (errAtPr) throw errAtPr
+    // Adding worker to a family with family id given
+    const { data: family, error: errAtFamily } = await supabase
+      .from('households')
+      .insert('members', [`${user.family_id}`])
+      .eq('family_id', user.family_id)
+    if (errAtFamily) throw errAtFamily
+
     newEmplyee = { ...newEmplyee, photo: url.publicUrl }
     delete newEmplyee.queryImage
     const { data: createdEmp, error: errAtEmp } = await supabase
@@ -465,7 +472,7 @@ const fetchRandomFamily = async (req, res) => {
     const { data, error } = await supabase
       .from('households')
       .select('*')
-      .is('members', null); 
+      .is('members', null)
     if (error) throw error
     const randInt = Math.floor(Math.random() * (data.length - 1 - 0 + 1) + 0)
     return res.status(200).send({
@@ -477,6 +484,29 @@ const fetchRandomFamily = async (req, res) => {
     return res.status(500).send({
       data: null,
       error: err
+    })
+  }
+}
+
+const checkNregaIDAvailability = async (req, res) => {
+  try {
+    const { id } = req.body
+    const supabase = createClient({ req, res })
+    const { data, error } = await supabase
+      .from('worker')
+      .select('mgnrega_id')
+      .eq('mgnrega_id', id)
+    if (error) throw error
+    if (data.length > 0) throw new Error('Worker exists with this MGNREGA ID.')
+    return res.status(200).send({
+      data: `${id} is available.`,
+      error: null
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send({
+      data: null,
+      error: err.message
     })
   }
 }
@@ -495,5 +525,6 @@ export {
   rejectApplication,
   addJob,
   fetchRandomAadhaar,
-  fetchRandomFamily
+  fetchRandomFamily,
+  checkNregaIDAvailability
 }

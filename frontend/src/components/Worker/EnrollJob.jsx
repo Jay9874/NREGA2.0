@@ -18,7 +18,7 @@ export default function EnrollJob () {
   const { jobId } = useParams()
   const navigate = useNavigate()
   const { applyToJob, setNearbyJobs, nearbyJobs } = useWorkerStore()
-  const { user } = authStore()
+  const { user, profile } = authStore()
   const [disabled, setDisabled] = useState('minus')
 
   async function sendApplication (e) {
@@ -61,7 +61,7 @@ export default function EnrollJob () {
       setJob(currJob)
       const options = {
         method: 'POST',
-        body: JSON.stringify({ workerId: user?.id }),
+        body: JSON.stringify({ familyID: profile?.family_id }),
         credentials: 'include',
         headers: {
           'Content-Type': 'Application/json',

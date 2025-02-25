@@ -34,8 +34,8 @@ export default function Input({
           tooltip={tooltip}
           pattern={pattern}
         />
-        {disabled && (
-          <p className='mt-2 invisible peer-disabled:visible text-gray-400 text-sm'>
+        {hint && (
+          <p className='mt-2 text-gray-400 text-sm'>
             {hint}
           </p>
         )}

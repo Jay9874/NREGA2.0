@@ -26,13 +26,15 @@ export default function AddEmployee () {
     loading,
     createEmployee,
     fetchARandomAadhaar,
-    fetchARandomFamily
+    fetchARandomFamily,
+    validateNregaId
   } = useAdminStore()
 
   const [aadhaarNo, setAadhaarNo] = useState(
     lastAddedAadhaar ? lastAddedAadhaar.aadhar_no : ''
   )
   const [demo, setDemo] = useState(false)
+  const [uniqueId, setUniqueId] = useState('')
   const [randomFamily, setRandomFamily] = useState(false)
   const [preview, setPreview] = useState(null)
   const [formData, setFormData] = useState({
@@ -55,6 +57,8 @@ export default function AddEmployee () {
   async function handleSubmit (e) {
     try {
       e.preventDefault()
+      if (uniqueId == 'Not available')
+        return toast.error('Not unique MGNREGA ID.')
       const { employee } = await createEmployee(formData)
       toast.success(`Worker "${employee.first_name}" added successfully.`)
       navigate('..')
@@ -67,6 +71,30 @@ export default function AddEmployee () {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
+
+  // Handle MGNREGA id change with live validation
+  async function handleIDChange (e) {
+    try {
+      const { name, value } = e.target
+      setFormData(prev => ({ ...prev, [name]: value }))
+      if (value.length == 6) {
+        setUniqueId('checking...')
+        toast.loading('checking availability...', { duration: Infinity })
+        const data = await validateNregaId(value)
+        toast.dismiss()
+        toast.success(`${value} is available.`)
+        setUniqueId('available')
+      } else {
+        toast.dismiss()
+        setUniqueId('atleast 6 characters')
+      }
+    } catch (err) {
+      toast.dismiss()
+      toast.error(err)
+      setUniqueId('not available')
+    }
+  }
+
   function cantChange (e) {
     e.preventDefault()
   }
@@ -161,8 +189,8 @@ export default function AddEmployee () {
       <form onSubmit={handleSubmit}>
         <div className='space-y-6 px-6'>
           <div className='border-b border-gray-900/10 pb-6'>
-            <div className='mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-3'>
-              <div className='sm:col-span-3 sm:col-start-1'>
+            <div className='mt-10 grid gap-x-6 gap-y-8 grid-cols-1 sm:grid-cols-2'>
+              <div className='lg:col-span-1 col-span-2 sm:col-start-1'>
                 <label
                   htmlFor='uuid'
                   className='block text-sm font-medium leading-6 text-gray-900'
@@ -178,18 +206,19 @@ export default function AddEmployee () {
                       value={formData.id}
                       onChange={cantChange}
                       disabled
-                      className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm sm:leading-6'
+                      className='peer block w-full border-gray-300 rounded-none rounded-l-md border-0 text-gray-900 shadow-sm disabled:bg-gray-50 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 disabled:cursor-not-allowed disabled:text-gray-500 sm:text-sm sm:leading-6'
+                      // className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm sm:leading-6'
                       placeholder='id'
                     />
-                    <p className='px-3 invisible peer-disabled:visible text-gray-400 text-sm'>
-                      Last Created User ID
-                    </p>
+                    <div className='px-3 flex items-center justify-center whitespace-nowrap text-center invisible peer-disabled:visible text-gray-600 text-sm font-medium'>
+                      <p>Last created</p>
+                    </div>
                   </div>
                 </div>
               </div>
               {/* Aadhaar Number */}
-              <div className='sm:col-span-3 '>
-                <div className='mt-2 sm:max-w-md'>
+              <div className='lg:col-span-1 col-span-2 col-start-1 lg:col-start-2'>
+                <div className='sm:max-w-md'>
                   <div className='flex justify-between items-center'>
                     <label
                       htmlFor='aadhaar'
@@ -233,7 +262,7 @@ export default function AddEmployee () {
                       </Switch>
                     </div>
                   </div>
-                  <div>
+                  <div className='mt-2'>
                     <div className='mt-1 flex rounded-md shadow-sm'>
                       <div className='relative flex flex-grow items-stretch focus-within:z-10'>
                         <input
@@ -283,7 +312,7 @@ export default function AddEmployee () {
               </div>
             ) : (
               <div>
-                <div className='mt-10 w-full grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2'>
+                <div className='mt-10 w-full grid grid-cols-1 gap-x-6 gap-y-4 lg:grid-cols-3 sm:grid-cols-2'>
                   {/* MGNREGA ID */}
                   <Input
                     type='text'
@@ -291,14 +320,16 @@ export default function AddEmployee () {
                     id='mgnrega_id'
                     label='MGNREGA ID'
                     value={formData.mgnrega_id}
-                    onChange={handleChange}
+                    onChange={handleIDChange}
                     className='col-span-1'
-                    placeholder='MG-00-00'
+                    placeholder='MG1234'
+                    hint={`${uniqueId}`}
+                    pattern='[a-zA-Z]{2}[0-9]{4}'
                   />
 
                   {/* Family ID */}
                   <div className='col-span-1'>
-                    <div className='mt-2'>
+                    <div className=''>
                       <div className='flex justify-between items-center pr-1'>
                         <label
                           htmlFor='family-id'
@@ -335,14 +366,16 @@ export default function AddEmployee () {
                             <span
                               aria-hidden='true'
                               className={classNames(
-                                randomFamily ? 'translate-x-5' : 'translate-x-0',
+                                randomFamily
+                                  ? 'translate-x-5'
+                                  : 'translate-x-0',
                                 'pointer-events-none absolute left-0 inline-block h-5 w-5 transform rounded-full border border-gray-200 bg-white shadow ring-0 transition-transform duration-200 ease-in-out'
                               )}
                             />
                           </Switch>
                         </div>
                       </div>
-                      <div>
+                      <div className='mt-2'>
                         <div className='mt-1 flex rounded-md shadow-sm'>
                           <div className='relative flex flex-grow items-stretch focus-within:z-10'>
                             <input
@@ -351,7 +384,7 @@ export default function AddEmployee () {
                               id='family-id'
                               value={formData.family_id}
                               onChange={handleChange}
-                              className='block w-full border-gray-300 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                              className='peer block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm'
                               placeholder='FAPLOC-2-2'
                               required
                               title='Fetch details'
@@ -536,7 +569,7 @@ export default function AddEmployee () {
                                   : 'cursor-not-allowed'
                               } `}
                   >
-                    Save
+                    Create Worker
                   </button>
                 </div>
               </div>

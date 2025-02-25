@@ -462,5 +462,26 @@ export const useAdminStore = create((set, get) => ({
         reject(err)
       }
     })
+  },
+  validateNregaId: nregaId => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify({ id: nregaId })
+        }
+        const res = await fetch('/api/admin/validate-nrega-id', options)
+        const { data, error } = await res.json()
+        if (error) throw error
+        resolve(data)
+      } catch (err) {
+        reject(err)
+      }
+    })
   }
 }))

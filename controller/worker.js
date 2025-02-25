@@ -87,12 +87,12 @@ const applyToJob = async (req, res) => {
 
 const entitlement = async (req, res) => {
   try {
-    const { workerId } = req.body
+    const { familyId } = req.body
     const supabase = createClient({ req, res })
     const { data, error } = await supabase
       .from('households')
       .select('quota')
-      .contains('members', [`${workerId}`])
+      .eq('family_id', familyId)
     if (error) throw error
     return res.status(200).send({
       data: { entitlement: data[0].quota },
