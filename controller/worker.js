@@ -47,6 +47,8 @@ const applyToJob = async (req, res) => {
         user_id: detail.to_sachiv,
         category: 'job application',
         tagline: `Required job in job id: ${detail.job}`,
+        family_id: detail.family_id,
+        duration: detail.time_period,
         details: {
           Worker: detail.by_worker,
           Duration: `${detail.time_period} days`,

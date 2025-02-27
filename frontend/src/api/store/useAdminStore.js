@@ -321,7 +321,7 @@ export const useAdminStore = create((set, get) => ({
       toast.error(err.message)
     }
   },
-  enrollWorker: async applicationId => {
+  enrollWorker: (applicationId, notification) => {
     return new Promise(async (resolve, reject) => {
       try {
         set({ loading: true })
@@ -333,7 +333,11 @@ export const useAdminStore = create((set, get) => ({
             'Content-Type': 'Application/json',
             Accept: 'Application/json'
           },
-          body: JSON.stringify({ applicationId: applicationId, sender: id })
+          body: JSON.stringify({
+            applicationId: applicationId,
+            sender: id,
+            notification: notification
+          })
         }
         const res = await fetch('/api/admin/enroll-worker', options)
         const { data, error } = await res.json()

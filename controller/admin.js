@@ -325,7 +325,7 @@ const jobEnrollment = async (req, res) => {
 
 const enrollWorker = async (req, res) => {
   try {
-    const { applicationId } = req.body
+    const { applicationId, notification } = req.body
     const supabase = createClient({ req, res })
     const { data, error } = await supabase
       .from('job_enrollments')
@@ -333,6 +333,15 @@ const enrollWorker = async (req, res) => {
       .eq('application_id', applicationId)
       .select()
     if (error) throw error
+
+    // Reducing the family quota from 100 days guaranteed job
+    const numb = notification.Duration.replace(/^\D+/g, '')
+    console.log(numb)
+    const { data: quota, error: errAtQuota } = await supabase
+      .from('households')
+      .update({ quota: supabase.raw(`quota - ${Number(numb)}`) })
+      .eq('id', 1) // Assuming you're targeting a row with id = 1
+    if (errAtQuota) throw errAtQuota
 
     // Delete the last notification about this application from admin panel.
     const { data: deletionData, error: errAtDeletion } = await supabase

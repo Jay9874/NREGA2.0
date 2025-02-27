@@ -362,7 +362,14 @@ export const useWorkerStore = create((set, get) => ({
       Duration: `${jobDuration(item.created_at, item.job_deadline).days} Day`
     }
   },
-  applyToJob: (jobId, sachivId, startDate, timeDuration, locationId) => {
+  applyToJob: (
+    jobId,
+    sachivId,
+    startDate,
+    timeDuration,
+    locationId,
+    family_id
+  ) => {
     return new Promise(async (resolve, reject) => {
       try {
         const user = get().profile
@@ -372,7 +379,8 @@ export const useWorkerStore = create((set, get) => ({
           job: jobId,
           to_sachiv: sachivId,
           by_worker: user.id,
-          location_id: locationId
+          location_id: locationId,
+          family_id: family_id
         }
 
         const options = {
@@ -392,6 +400,5 @@ export const useWorkerStore = create((set, get) => ({
         reject(err)
       }
     })
-  },
- 
+  }
 }))

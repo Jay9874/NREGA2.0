@@ -61,7 +61,10 @@ export default function NotificationCard ({ notification, type }) {
                           type='button'
                           className='flex w-full items-center justify-center rounded-none rounded-tr-lg border border-transparent px-4 py-3 text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-indigo-500'
                           onClick={async () => {
-                            await enrollWorker(notification?.application_id)
+                            await enrollWorker(
+                              notification?.application_id,
+                              notification
+                            )
                             await clearANotification(notification.id)
                           }}
                         >
@@ -76,7 +79,6 @@ export default function NotificationCard ({ notification, type }) {
                           className='flex w-full items-center justify-center rounded-none rounded-br-lg border border-transparent px-4 py-3 text-sm font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500'
                           onClick={async () => {
                             await clearANotification(notification.id)
-                  
                           }}
                         >
                           Clear
