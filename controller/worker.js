@@ -178,7 +178,7 @@ const workingOn = async (req, res) => {
       .from('job_enrollments')
       .select(`*, job(*, location_id(*))`)
       .eq('by_worker', workerId)
-      .eq('status', 'working on')
+      .eq('status', 'enrolled')
     if (error) throw error
     if (enrollment.length == 0) throw new Error('Not working on any job.')
     const job = enrollment[0]?.job
@@ -198,7 +198,8 @@ const workingOn = async (req, res) => {
     const { data: labours, error: errAtLabour } = await supabase
       .from('job_enrollments')
       .select('id')
-      .eq('status', 'working on')
+      .eq('status', 'enroll')
+      .eq('job', job.job_id)
     if (errAtLabour) throw errAtLabour
 
     const lastWork = {

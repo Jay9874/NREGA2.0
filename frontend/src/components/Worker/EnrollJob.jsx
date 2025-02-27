@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { authStore, useWorkerStore } from '../../api/store'
+import { useWorkerStore } from '../../api/store'
 import { toast } from 'sonner'
 import { jobDuration, timestampToDate } from '../../utils/dataFormating'
 import { getDateStr } from '../../utils/generate_date'
@@ -18,8 +18,8 @@ export default function EnrollJob () {
   const { jobId } = useParams()
   const navigate = useNavigate()
   const { applyToJob, setNearbyJobs, nearbyJobs } = useWorkerStore()
-  const { user, profile } = authStore()
   const [disabled, setDisabled] = useState('minus')
+  const { profile } = useWorkerStore()
 
   async function sendApplication (e) {
     try {
@@ -60,9 +60,12 @@ export default function EnrollJob () {
       setMinJoining(dateObj)
       setMaxJoining(maxDate)
       setJob(currJob)
+      const body = {
+        familyId: profile.family_id
+      }
       const options = {
         method: 'POST',
-        body: JSON.stringify({ familyID: profile?.family_id }),
+        body: JSON.stringify(body),
         credentials: 'include',
         headers: {
           'Content-Type': 'Application/json',

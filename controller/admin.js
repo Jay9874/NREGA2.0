@@ -335,13 +335,16 @@ const enrollWorker = async (req, res) => {
     if (error) throw error
 
     // Reducing the family quota from 100 days guaranteed job
-    const numb = notification.Duration.replace(/^\D+/g, '')
-    console.log(numb)
-    const { data: quota, error: errAtQuota } = await supabase
-      .from('households')
-      .update({ quota: supabase.raw(`quota - ${Number(numb)}`) })
-      .eq('id', 1) // Assuming you're targeting a row with id = 1
+    const { family_id: fam_id, duration } = notification
+    let { data: quota, error: errAtQuota } = await supabase.rpc(
+      'reduce_quota',
+      {
+        duration,
+        fam_id
+      }
+    )
     if (errAtQuota) throw errAtQuota
+    console.log(quota)
 
     // Delete the last notification about this application from admin panel.
     const { data: deletionData, error: errAtDeletion } = await supabase
@@ -355,6 +358,7 @@ const enrollWorker = async (req, res) => {
     const { data: acceptedNotification, error: errAtAccept } = await supabase
       .from('worker_notifications')
       .insert({
+        user_id: notification.details.Worker,
         category: 'job application',
         tagline: `Accepted job application for job id: ${data[0].job}`,
         details: {
@@ -396,6 +400,7 @@ const rejectApplication = async (req, res) => {
     const { data: notificationUpdate, error: errAtUpdate } = await supabase
       .from('worker_notifications')
       .insert({
+        user_id: notification.details.Worker,
         category: 'job application',
         tagline: `Rejected job application for job id: ${JobId}`,
         details: {
