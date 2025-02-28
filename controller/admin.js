@@ -524,9 +524,35 @@ const checkNregaIDAvailability = async (req, res) => {
     })
   }
 }
+
+const resendLink = async (req, res) => {
+  try {
+    const { workerEmail, redirectUrl } = req.body
+    const supabase = createClient({ req, res })
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: workerEmail,
+      options: {
+        emailRedirectTo: redirectUrl
+      }
+    })
+    if (error) throw error
+    return res.status(200).send({
+      data: 'Successfully sent email',
+      error: null
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send({
+      data: null,
+      error: err
+    })
+  }
+}
 export {
   setProfile,
   createUser,
+  resendLink,
   fetchAadhaar,
   fetchEmployees,
   createEmployee,

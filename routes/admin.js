@@ -16,7 +16,8 @@ import {
   setProfile,
   fetchEmployees,
   fetchRandomFamily,
-  checkNregaIDAvailability
+  checkNregaIDAvailability,
+  resendLink
 } from '../controller/admin.js'
 
 // Defining the routes
@@ -129,5 +130,12 @@ router.get('/random-family', fetchRandomFamily)
  * @access public
  **/
 router.post('/validate-nrega-id', checkNregaIDAvailability)
+
+/**
+ * @route GET api/admin/resend-link
+ * @description resend the signup link to worker email.
+ * @access public
+ **/
+router.post('/resend-link', resendLink)
 
 export { router as adminRoutes }

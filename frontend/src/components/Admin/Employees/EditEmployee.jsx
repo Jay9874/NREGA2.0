@@ -6,12 +6,13 @@ import { toast } from 'sonner'
 
 export default function EditEmployee () {
   const { id } = useParams()
-  const { employees, updateWorker } = useAdminStore()
+  const { employees, updateWorker, resendLink } = useAdminStore()
   const [selectedFile, setSelectedFile] = useState()
   const [loading, setLoading] = useState()
   const [employee, setEmployee] = useState()
   const [preview, setPreview] = useState()
   const navigate = useNavigate()
+  const [email, setEmail] = useState('')
   const [profile, setProfile] = useState({
     id: '',
     mobile_no: ''
@@ -53,10 +54,25 @@ export default function EditEmployee () {
     }
   }
 
+  // Resend confirmation link on email
+  async function handleResendLink (e) {
+    try {
+      toast.loading('Resending confirmation link...')
+      const data = await resendLink(email)
+      toast.dismiss()
+      toast.success('Resent confirmation link, check email.')
+    } catch (err) {
+      toast.dismiss()
+      toast.error('Something went wrong.')
+      console.log(err)
+    }
+  }
+
   useEffect(() => {
     const [currEmployee] = employees.filter((emp, index) => emp.id == id)
     setEmployee(currEmployee)
     setPreview(currEmployee?.photo)
+    setEmail(currEmployee?.email)
     setProfile({
       id: currEmployee?.id,
       mobile_no: currEmployee?.mobile_no
@@ -81,7 +97,6 @@ export default function EditEmployee () {
   useEffect(() => {
     setPreview(employee?.photo)
   }, [employee])
-
   return (
     <>
       <Link to='..'>
@@ -123,6 +138,51 @@ export default function EditEmployee () {
               />
             </div>
           </div>
+          {/* Email validation link */}
+          <div className='mt-2 lg:col-span-1 col-span-2 col-start-1 lg:col-start-2'>
+            <div className='sm:max-w-md'>
+              <label
+                htmlFor='aadhaar'
+                className='block text-sm font-medium leading-6 text-gray-900 whitespace-nowrap'
+              >
+                Registered email
+              </label>
+
+              <div className='mt-1'>
+                <div className='mt-1 flex rounded-md shadow-sm'>
+                  <div className='relative flex flex-grow items-stretch focus-within:z-10'>
+                    <input
+                      type='text'
+                      name='registered_email'
+                      id='registered_email'
+                      value={email}
+                      disabled={true}
+                      className='block w-full cursor-not-allowed border-gray-300 bg-gray-100 rounded-none rounded-l-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6'
+                      required
+                      title='Registered email address'
+                    />
+                  </div>
+                  <button
+                    type='button'
+                    disabled={loading ? true : false}
+                    onClick={handleResendLink}
+                    className={
+                      loading
+                        ? 'cursor-not-allowed'
+                        : 'relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+                    }
+                  >
+                    <span className='flex-shrink-0'>
+                      {' '}
+                      <ion-icon color='success' name='send-outline'></ion-icon>
+                    </span>
+                    <span>Resend confirmation link</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* Photo updatation */}
           <div className='sm:col-span-6 mt-2'>
             <label
               htmlFor='photo'

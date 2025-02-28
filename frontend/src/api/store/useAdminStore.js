@@ -487,5 +487,30 @@ export const useAdminStore = create((set, get) => ({
         reject(err)
       }
     })
+  },
+  resendLink: workerEmail => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify({
+            workerEmail: workerEmail,
+            redirectUrl: redirectUrl
+          })
+        }
+        const res = await fetch('/api/admin/resend-link', options)
+        const { data, error } = await res.json()
+        if (error) throw error
+        resolve(data)
+      } catch (err) {
+        console.log(err)
+        reject(err)
+      }
+    })
   }
 }))
