@@ -144,19 +144,17 @@ export const useWorkerStore = create((set, get) => ({
   },
   setLastAttendance: async () => {
     try {
-      const { data: attendances } = await supabase
-        .from('attendance')
-        .select(`*, attendance_for(*, location_id(*))`)
-        .eq('worker_id', get().profile.id)
-        .eq('status', 'present')
-        .order('created_at', { ascending: false })
+      const { data: attendances, error } = await supabase
+        .from('job_enrollments')
+        .select(`*, location_id(*), job(*)`)
+        .eq('by_worker', get().profile.id)
+        .eq('status', 'enrolled')   
+      if (error) throw error
       if (attendances.length > 0) {
         set({ totalPresent: attendances.length })
         const lastPresence = {
-          work_name: attendances[0].attendance_for.job_name,
-          location: formatLocationShort(
-            attendances[0].attendance_for.location_id
-          )
+          work_name: attendances[0].job.job_name,
+          location: formatLocationShort(attendances[0].location_id)
         }
         set({ lastAttendance: lastPresence })
         return attendances

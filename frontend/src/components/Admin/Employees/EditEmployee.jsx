@@ -191,7 +191,7 @@ export default function EditEmployee () {
                              : 'cursor-not-allowed'
                          } `}
             >
-              Save
+              Update
             </button>
           </div>
         </form>

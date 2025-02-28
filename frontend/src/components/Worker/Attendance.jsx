@@ -167,9 +167,9 @@ export default function Attendance () {
 
   return (
     // The Attendance popup
-    <div className='relative min-h-[calc(100vh-64px)]'>
+    <div>
       {isAttendanceActive && (
-        <div className='absolute overflow-scroll md:px-16 px-4 backdrop-blur-sm py-16 bg-gray-300 bg-opacity-75 inset-0 h-full w-full z-20'>
+        <div className='fixed md:ml-64 overflow-scroll md:px-16 px-4 backdrop-blur-sm py-16 bg-gray-300 bg-opacity-75 inset-0 h-full min-h-[100vh] max-w-full z-20'>
           <Calendar />
         </div>
       )}
