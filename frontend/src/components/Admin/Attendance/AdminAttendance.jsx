@@ -4,14 +4,12 @@ import { useAdminStore } from '../../../api/store'
 import { jobDuration, timestampToDate } from '../../../utils/dataFormating'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
+import { distance } from '../../../utils/getLocation'
 
 export default function AdminAttendance () {
   const { jobs, workerMap, profile } = useAdminStore()
   const [locationGrant, setlocationGrant] = useState('prompt')
-  const [location, setLocation] = useState({
-    long: '',
-    lat: ''
-  })
+  const [location, setLocation] = useState([])
   const navigate = useNavigate()
 
   const updatedJobs = jobs.map((job, index) => {
@@ -24,6 +22,28 @@ export default function AdminAttendance () {
       timestamp: job.job_deadline
     }
   })
+
+  async function giveAttendance (work) {
+    try {
+      handlePermission()
+      const { job_id } = work
+      if (locationGrant == 'denied')
+        return toast.warning('Allow location sharing to continue.')
+      else if (locationGrant == 'granted') {
+        const dist = distance(work.geotag, location, 'K').toFixed(2)
+        if (dist > 0.2) {
+          toast.message(`Your distance is ${dist}km from work site.`, {
+            description: 'Please, stay within 200m from work site.'
+          })
+          throw new Error('Stay within 200m.')
+        }
+        return navigate(`job/${job_id}`)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   function handlePermission () {
     const options = {
       enableHighAccuracy: true,
@@ -32,7 +52,7 @@ export default function AdminAttendance () {
     }
     function success (pos) {
       const crd = pos.coords
-      setLocation(() => ({ long: crd.longitude, lat: crd.latitude }))
+      setLocation(() => [crd.longitude, crd.latitude])
     }
     function error (err) {
       console.warn(`ERROR(${err.code}): ${err.message}`)
@@ -48,7 +68,7 @@ export default function AdminAttendance () {
           navigator.geolocation.getCurrentPosition(
             pos => {
               const crd = pos.coords
-              setLocation(() => ({ long: crd.longitude, lat: crd.latitude }))
+              setLocation(() => [crd.longitude, crd.latitude])
             },
             positionDenied,
             {
@@ -66,12 +86,6 @@ export default function AdminAttendance () {
     handlePermission()
   }, [])
 
-  async function giveAttendance (jobId) {
-    handlePermission()
-    if (locationGrant == 'denied')
-      return toast.warning('Allow location sharing to continue.')
-    return navigate(`job/${jobId}`)
-  }
   return (
     <main className='relative h-[calc(100vh-65px)] w-full overflow-scroll'>
       {/* Overlay model for job attendance */}
@@ -249,7 +263,7 @@ export default function AdminAttendance () {
                             ></ion-icon>
                           </p>
                         ) : (
-                          <button onClick={() => giveAttendance(work.job_id)}>
+                          <button onClick={() => giveAttendance(work)}>
                             <p className='flex items-center w-[150px] justify-between gap-2 ring-1 ring-indigo-500 text-indigo-700 px-4 py-1 bg-indigo-50 rounded-full'>
                               Attendance
                               <span className='sr-only'>, {work.Name}</span>

@@ -1,6 +1,5 @@
-import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/20/solid'
 import Toggle from './Toggle'
-import { useRef, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Link,
   useNavigate,
@@ -17,7 +16,6 @@ function classNames (...classes) {
 
 export default function JobAttendance () {
   const { jobId } = useParams()
-  const [imageUploaded, setImageUploaded] = useState(false)
   const [selectedFile, setSelectedFile] = useState()
   const [preview, setPreview] = useState()
   const [location, locationGrant] = useOutletContext()
@@ -74,10 +72,17 @@ export default function JobAttendance () {
 
   async function saveAttendance () {
     try {
-      toast.loading("Saving attendance...")
+      toast.loading('Saving attendance...')
+      const dist = distance(work.geotag, location, 'K').toFixed(2)
+      // if (dist > 0.2) {
+      //   toast.message(`Your distance is ${dist}km from work site.`, {
+      //     description: 'Please, stay within 200m from work site.'
+      //   })
+      //   throw new Error('Stay within 200m.')
+      // }
       const data = await addAttendance(jobId, workers)
       toast.dismiss()
-      toast.success("Attendance saved successfully.")
+      toast.success('Attendance saved successfully.')
       navigate('..')
     } catch (err) {
       console.log(err)
@@ -104,7 +109,7 @@ export default function JobAttendance () {
                 Geo-tag: {work?.coordinates}
               </p>
               <p className='mt-1 truncate text-sm text-gray-500'>
-                Live: {`${work?.live?.lat}, ${work?.live?.long}`}
+                Live: {`${work?.live[0]}, ${work?.live[1]}`}
               </p>
               <p className='mt-1 truncate text-sm text-gray-500'>
                 {work?.date}
