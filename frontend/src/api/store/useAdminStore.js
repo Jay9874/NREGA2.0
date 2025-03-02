@@ -241,10 +241,7 @@ export const useAdminStore = create((set, get) => ({
         const newMap = new Map()
         data.enrollments.forEach((enrollment, index) => {
           const count = newMap.get(enrollment.job.job_id)
-          if (enrollment.status == 'enrolled') {
-            newMap.set(enrollment.job.job_id, count ? count + 1 : 1)
-          }
-
+          newMap.set(enrollment.job.job_id, count ? count + 1 : 1)
           get().setWorkerMap(newMap)
         })
         set({
@@ -259,7 +256,7 @@ export const useAdminStore = create((set, get) => ({
       }
     })
   },
-  addAttendance: (job_id, workers) => {
+  addAttendance: (job_id, workers, images) => {
     return new Promise(async (resolve, reject) => {
       try {
         set({ loading: true })
@@ -270,7 +267,11 @@ export const useAdminStore = create((set, get) => ({
             'Content-Type': 'Application/json',
             Accept: 'Application/json'
           },
-          body: JSON.stringify({ job_id: job_id, workers: workers })
+          body: JSON.stringify({
+            job_id: job_id,
+            workers: workers,
+            images: images
+          })
         }
         const res = await fetch('/api/admin/add-attendance', options)
         const { data, error } = await res.json()

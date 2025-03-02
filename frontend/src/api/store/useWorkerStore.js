@@ -148,7 +148,7 @@ export const useWorkerStore = create((set, get) => ({
         .from('job_enrollments')
         .select(`*, location_id(*), job(*)`)
         .eq('by_worker', get().profile.id)
-        .eq('status', 'enrolled')   
+        .eq('status', 'enrolled')
       if (error) throw error
       if (attendances.length > 0) {
         set({ totalPresent: attendances.length })
@@ -393,6 +393,7 @@ export const useWorkerStore = create((set, get) => ({
         const res = await fetch('/api/worker/apply', options)
         const { data, error } = await res.json()
         if (error) throw error
+        await get().setNearbyJobs()
         resolve(data)
       } catch (err) {
         reject(err)

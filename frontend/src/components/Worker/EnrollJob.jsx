@@ -36,7 +36,6 @@ export default function EnrollJob () {
       )
       toast.dismiss()
       toast.success(`Successfully applied to "${job.job_name}".`)
-      setNearbyJobs()
       navigate('..')
     } catch (err) {
       console.log(err)

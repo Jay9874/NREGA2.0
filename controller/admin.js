@@ -235,6 +235,7 @@ const dashboardData = async (req, res) => {
     const { data: enrollmentData, error: errAtEnrollment } = await supabase
       .from('job_enrollments')
       .select('*, by_worker(*), job(*)')
+      .eq('status', 'enrolled')
     if (errAtEnrollment) throw errAtEnrollment
     const { data: paymentData, error: errAtPayment } = await supabase
       .from('payments')
@@ -258,7 +259,37 @@ const dashboardData = async (req, res) => {
 
 const addAttendance = async (req, res) => {
   try {
-    const { job_id, workers } = req.body
+    const { job_id, workers, images } = req.body
+    const supabase = createClient({ req, res })
+
+    const base64String1 = images.workers
+    const base64String2 = images.progress
+    const base64Worker = base64String1.split('base64,')[1]
+    const base64Progress = base64String2.split('base64,')[1]
+    const workerFile = `${Date.now()}`
+    const progressFile = `${Date.now()}`
+    const fileType = base64String1.match(/^data:(.+);base64/)?.[1]
+
+    // Storing the progress photo for ML process
+    const { data: publicUrl, error: errAtFile } = await supabase.storage
+      .from('job_progress')
+      .upload(`${job_id}/progress/${progressFile}`, decode(base64Progress), {
+        contentType: fileType,
+        cacheControl: '3600',
+        upsert: true
+      })
+    if (errAtFile) throw errAtFile
+    // Storing the workers group photo for today
+    const { data: ulr, error: errAtupload } = await supabase.storage
+      .from('job_progress')
+      .upload(`${job_id}/workers/${workerFile}`, decode(base64Worker), {
+        contentType: fileType,
+        cacheControl: '3600',
+        upsert: true
+      })
+    if (errAtupload) throw errAtupload
+
+    // Saving the attendance
     const workersArr = Object.keys(workers).map((id, index) => ({
       worker_id: id,
       attendance_for: job_id,
@@ -266,7 +297,6 @@ const addAttendance = async (req, res) => {
       attendance_uid: workers[id].attendance_uid
     }))
     // input multiple rows in the database
-    const supabase = createClient({ req, res })
     const { data, error } = await supabase
       .from('attendance')
       .upsert(workersArr)
@@ -278,7 +308,7 @@ const addAttendance = async (req, res) => {
     })
   } catch (err) {
     console.log(err)
-    return res.status(err.status).send({ data: null, error: err })
+    return res.status(500).send({ data: null, error: err })
   }
 }
 
@@ -443,7 +473,7 @@ const addJob = async (req, res) => {
 
     const { data: publicUrl, error: errAtFile } = await supabase.storage
       .from('job_progress')
-      .upload(`${data[0].job_id}/${filename}`, decode(base64), {
+      .upload(`${data[0].job_id}/progress/${filename}`, decode(base64), {
         contentType: fileType,
         cacheControl: '3600',
         upsert: true

@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { distance } from '../../../utils/getLocation'
 
 export default function AdminAttendance () {
-  const { jobs, workerMap, profile } = useAdminStore()
+  const { jobs, workerMap, profile, enrollments } = useAdminStore()
   const [locationGrant, setlocationGrant] = useState('prompt')
   const [location, setLocation] = useState([])
   const navigate = useNavigate()
@@ -27,6 +27,15 @@ export default function AdminAttendance () {
     try {
       handlePermission()
       const { job_id } = work
+      var now = new Date()
+      now.setHours(0, 0, 0, 0)
+      // Check if atleast one worker present today for a selected job to give attendance
+      const availableWorker = enrollments.filter(enrollment => {
+        return (
+          new Date(enrollment.end_date) >= now &&
+          enrollment.job.job_id == work.job_id
+        )
+      })
       if (locationGrant == 'denied')
         return toast.warning('Allow location sharing to continue.')
       else if (locationGrant == 'granted') {
@@ -36,6 +45,10 @@ export default function AdminAttendance () {
             description: 'Please, stay within 200m from work site.'
           })
           throw new Error('Stay within 200m.')
+        }
+        if (availableWorker.length < 1) {
+          toast.error('No worker came today on work site.')
+          throw new Error('No worker on site.')
         }
         return navigate(`job/${job_id}`)
       }

@@ -9,6 +9,8 @@ import {
 import { toast } from 'sonner'
 import { useAdminStore } from '../../../api/store'
 import { getToday } from '../../../utils/dataFormating'
+import ImageField from './ImageField'
+import { distance } from '../../../utils/getLocation'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
@@ -16,33 +18,77 @@ function classNames (...classes) {
 
 export default function JobAttendance () {
   const { jobId } = useParams()
-  const [selectedFile, setSelectedFile] = useState()
-  const [preview, setPreview] = useState()
   const [location, locationGrant] = useOutletContext()
   const { profile, enrollments, addAttendance } = useAdminStore()
   const [workers, setWorkers] = useState({})
+  const [imgVerification, setImgVerification] = useState(false)
   const [work, setWork] = useState()
+  const [metadata, setMetadata] = useState({
+    workers: null,
+    progress: null
+  })
+  const [images, setImages] = useState({
+    workers: '',
+    progress: ''
+  })
   const navigate = useNavigate()
 
-  useEffect(() => {
-    if (!selectedFile) {
-      setPreview(undefined)
-      return
+  async function saveAttendance () {
+    try {
+      const dist = distance(work.geotag, location, 'K').toFixed(2)
+      if (dist > 0.2) {
+        toast.message(`Your distance is ${dist}km from work site.`, {
+          description: 'Please, stay within 200m from work site.'
+        })
+        throw new Error('Stay within 200m.')
+      }
+      if (!imgVerification) {
+        toast.error('The images uploaded is/are not authentic.')
+        throw new Error('The images uploaded is/are not authentic.')
+      }
+      toast.loading('Saving attendance...')
+      const data = await addAttendance(jobId, workers, images)
+      toast.dismiss()
+      toast.success('Attendance saved successfully.')
+      navigate('..')
+    } catch (err) {
+      console.log(err)
+      toast.dismiss()
+      return toast.error('Something went wrong!')
     }
-    const objectUrl = URL.createObjectURL(selectedFile)
-    setPreview(objectUrl)
-    // free memory when ever this component is unmounted
-    return () => URL.revokeObjectURL(objectUrl)
-  }, [selectedFile])
+  }
 
-  // function for file preview
-  const onSelectFile = e => {
-    if (!e.target.files || e.target.files.length === 0) {
-      setSelectedFile(undefined)
-      return
+  function onImageSelect (imageFor, imageFile, metadata) {
+    const imgPosition = [metadata.longitude, metadata.latitude]
+    const imgCreation = new Date(metadata.CreateDate).toDateString()
+    var created = new Date(imgCreation)
+    var now = new Date()
+    created.setHours(0, 0, 0, 0)
+    now.setHours(0, 0, 0, 0)
+    const capturingDistance = distance(imgPosition, location, 'K').toFixed(2)
+    setMetadata(prev => ({
+      ...prev,
+      [imageFor]: { imgPosition, imgCreation, capturingDistance }
+    }))
+    setImages(prev => ({ ...prev, [imageFor]: imageFile }))
+    if (capturingDistance > 0.2) {
+      setImgVerification(false)
+      return toast.warning(
+        `The image captured at ${capturingDistance}km from work site, should be within 200m.`
+      )
     }
-    // I've kept this example simple by using the first image instead of multiple
-    setSelectedFile(e.target.files[0])
+    if (created < now) {
+      setImgVerification(false)
+      return toast.warning(
+        `The image captured is an old one, upload today's image.`
+      )
+    }
+    setImgVerification(true)
+  }
+
+  function resetImg (imgName) {
+    setMetadata(prev => ({ ...prev, [imgName]: null }))
+    setImages(prev => ({ ...prev, [imgName]: '' }))
   }
 
   useEffect(() => {
@@ -54,15 +100,17 @@ export default function JobAttendance () {
         attendance: 'absent',
         attendance_uid: job.by_worker.id + '-' + getToday()
       }
-      if (job.job.job_id == jobId) {
+      var today = new Date()
+      today.setHours(0, 0, 0, 0)
+      if (job.job.job_id == jobId && new Date(job.end_date) >= today) {
         setWorkers(prev => ({ ...prev, [impId]: emp }))
         if (!work) {
           setWork({
+            ...job.job,
             name: job.job.job_name,
             gp: `${profile?.location_id?.panchayat} GP`,
             coordinates: `${job.job.geotag[0]}, ${job.job.geotag[1]}`,
-            live: location,
-            date: `Date: ${new Date().toLocaleDateString()}`
+            date: `${new Date().toLocaleDateString()}`
           })
         }
         return true
@@ -70,32 +118,11 @@ export default function JobAttendance () {
     })
   }, [jobId])
 
-  async function saveAttendance () {
-    try {
-      toast.loading('Saving attendance...')
-      const dist = distance(work.geotag, location, 'K').toFixed(2)
-      // if (dist > 0.2) {
-      //   toast.message(`Your distance is ${dist}km from work site.`, {
-      //     description: 'Please, stay within 200m from work site.'
-      //   })
-      //   throw new Error('Stay within 200m.')
-      // }
-      const data = await addAttendance(jobId, workers)
-      toast.dismiss()
-      toast.success('Attendance saved successfully.')
-      navigate('..')
-    } catch (err) {
-      console.log(err)
-      toast.dismiss()
-      return toast.error('Something went wrong!')
-    }
-  }
-
   return (
     <div className='overlay-modal overscroll-contain h-full overflow-scroll sticky top-0 w-full backdrop-blur-sm z-20 bg-gray-300 bg-opacity-75'>
-      <div className='flex justify-center px-4 py-6'>
+      <div className='max-w-[500px] mx-auto px-4 py-6'>
         <div className='rounded-lg bg-white'>
-          <div className='flex w-full items-center gap-2 flex-wrap justify-between p-6'>
+          <div className='grid p-6'>
             <div className='flex-1'>
               <div className='flex items-center space-x-3'>
                 <h3 className='text-sm font-medium text-gray-900'>
@@ -105,98 +132,72 @@ export default function JobAttendance () {
                   {work?.gp}
                 </span>
               </div>
-              <p className='mt-1 truncate text-sm text-gray-500'>
-                Geo-tag: {work?.coordinates}
+              <p className='italic text-sm text-gray-700'>
+                _{work?.job_description}
               </p>
-              <p className='mt-1 truncate text-sm text-gray-500'>
-                Live: {`${work?.live[0]}, ${work?.live[1]}`}
-              </p>
-              <p className='mt-1 truncate text-sm text-gray-500'>
-                {work?.date}
-              </p>
+              <div className='font-medium'>
+                <p className='mt-2 truncate font-medium text-sm text-gray-500'>
+                  Geo-tag: {work?.coordinates}
+                </p>
+                <p className='mt-1 truncate text-sm text-gray-500'>
+                  Live location: {`${location[0]}, ${location[1]}`}
+                </p>
+                <p className='mt-1 truncate text-sm text-gray-500'>
+                  Today: {work?.date}
+                </p>
+              </div>
             </div>
-            <div className='sm:col-span-6'>
-              <div
-                className={`mt-1 flex w-full justify-center rounded-md border-2 border-dashed border-gray-300 ${
-                  selectedFile ? 'p-1' : 'px-6 pt-5 pb-6'
-                } `}
-              >
-                {!selectedFile && (
-                  <div className='space-y-1 text-center'>
-                    <svg
-                      className='mx-auto h-12 w-12 text-gray-400'
-                      stroke='currentColor'
-                      fill='none'
-                      viewBox='0 0 48 48'
-                      aria-hidden='true'
-                    >
-                      <path
-                        d='M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02'
-                        strokeWidth={2}
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                      />
-                    </svg>
-                    <div className='flex text-sm text-gray-600'>
-                      <label
-                        htmlFor='file-upload'
-                        className='relative cursor-pointer rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500'
-                      >
-                        <span>Progress photo</span>
-                        <input
-                          id='file-upload'
-                          name='file-upload'
-                          type='file'
-                          required
-                          accept='image/png, image/jpeg, image/jpg'
-                          className='sr-only'
-                          onChange={onSelectFile}
-                        />
-                      </label>
-                    </div>
-                    <p className='text-xs text-gray-500'>
-                      PNG, or JPG up to 10MB
+            <div className='mt-6 grid sm:grid-cols-2 gap-4'>
+              <div className='col-start-1 flex sm:flex-col justify-center gap-2 flex-wrap'>
+                <ImageField
+                  id='worker-img'
+                  name='worker-img'
+                  imgName='workers'
+                  label='Workers photo'
+                  onChange={onImageSelect}
+                  clickReset={() => resetImg('workers')}
+                />
+                {metadata.workers && (
+                  <div className='p-2 text-left text-xs text-gray-400'>
+                    <p className='font-mono'>
+                      lon: {metadata?.workers?.imgPosition[0]}
+                    </p>
+                    <p className='font-mono'>
+                      lat: {metadata?.workers?.imgPosition[1]}
+                    </p>
+
+                    <p className='font-mono'>
+                      Date: {metadata?.workers?.imgCreation}
+                    </p>
+                    <p className='font-mono'>
+                      Distance: {metadata?.workers?.capturingDistance}km
                     </p>
                   </div>
                 )}
-
-                {/* Preview Image if uploaded */}
-                {selectedFile && (
-                  <div className='preview-cont relative h-[150px] w-[150px]'>
-                    <img
-                      className='h-[100%] w-[100%]'
-                      src={preview}
-                      alt='Progress photo'
-                    />
-                    <div className='absolute flex flex-col items-center gap-2 top-0 right-0 z-10 p-1'>
-                      <label
-                        title='Change Image'
-                        className='edit-btn cursor-pointer flex items-center justify-center rounded-full h-[24px] w-[24px] bg-gray-200 '
-                      >
-                        <ion-icon
-                          color='primary'
-                          name='pencil-outline'
-                        ></ion-icon>
-                        <input
-                          id='file-upload'
-                          name='file-upload'
-                          type='file'
-                          accept='image/png, image/jpeg, image/jpg'
-                          className='sr-only'
-                          onChange={onSelectFile}
-                        />
-                      </label>
-                      <button
-                        onClick={() => setSelectedFile(null)}
-                        title='Cancel'
-                        className='close-btn flex items-center justify-center rounded-full h-[24px] w-[24px] bg-gray-200 '
-                      >
-                        <ion-icon
-                          color='danger'
-                          name='close-outline'
-                        ></ion-icon>
-                      </button>
-                    </div>
+              </div>
+              <div className='sm:col-start-2 col-start-1 flex justify-center gap-2 sm:flex-col flex-wrap'>
+                <ImageField
+                  id='progress-img'
+                  name='progress-img'
+                  imgName='progress'
+                  label='Progress photo'
+                  onChange={onImageSelect}
+                  clickReset={() => resetImg('progress')}
+                />
+                {metadata.progress && (
+                  <div className='p-2 text-left text-xs text-gray-400'>
+                    <p className='font-mono'>
+                      lon: {metadata?.progress?.imgPosition[0]}
+                    </p>
+                    <p className='font-mono'>
+                      lat: {metadata?.progress?.imgPosition[1]}
+                    </p>
+                    <p className='font-mono'>
+                      Date: {metadata?.progress?.imgCreation}
+                    </p>
+                    <p className='font-mono'>
+                      Distance: {metadata?.progress?.capturingDistance}km
+                    </p>
                   </div>
                 )}
               </div>

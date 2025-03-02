@@ -29,11 +29,15 @@ const setProfile = async (req, res) => {
 const applyToJob = async (req, res) => {
   try {
     var detail = req.body
+    console.log(detail)
+    var end = new Date(detail.starting_date)
+    end.setDate(end.getDate() + detail.time_period)
     detail = {
       ...detail,
       application_id: `ap_${detail.job}_${detail.by_worker}`,
       status: 'applied',
-      remark: 'The application is under processing.'
+      remark: 'The application is under processing.',
+      end_date: end
     }
     const supabase = createClient({ req, res })
     const { data, error } = await supabase
@@ -198,7 +202,7 @@ const workingOn = async (req, res) => {
     const { data: labours, error: errAtLabour } = await supabase
       .from('job_enrollments')
       .select('id')
-      .eq('status', 'enroll')
+      .eq('status', 'enrolled')
       .eq('job', job.job_id)
     if (errAtLabour) throw errAtLabour
 
