@@ -18,9 +18,9 @@ export default function ImageField ({
       const reader = new FileReader()
       reader.onloadend = () => {
         setPreview(reader.result)
-        exifr.parse(selectedFile).then(output => {
-          onChange(imgName, reader.result, output)
-        })
+        // exifr.parse(selectedFile).then(output => {
+        //   onChange(imgName, reader.result, output)
+        // })
       }
       reader.readAsDataURL(selectedFile) //represented as a base64string
       reader.onload = () => {
@@ -112,6 +112,7 @@ export default function ImageField ({
                   id='file-upload'
                   name='file-upload'
                   type='file'
+                  required
                   accept='image/png, image/jpeg, image/jpg'
                   className='sr-only'
                   onChange={onSelectFile}
