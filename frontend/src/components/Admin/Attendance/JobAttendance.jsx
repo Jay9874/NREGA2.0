@@ -12,10 +12,6 @@ import { getToday } from '../../../utils/dataFormating'
 import ImageField from './ImageField'
 import { distance } from '../../../utils/getLocation'
 
-function classNames (...classes) {
-  return classes.filter(Boolean).join(' ')
-}
-
 export default function JobAttendance () {
   const { jobId } = useParams()
   const [location, locationGrant] = useOutletContext()

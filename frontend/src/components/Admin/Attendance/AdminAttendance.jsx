@@ -1,4 +1,4 @@
-import { Link, Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { useAdminStore } from '../../../api/store'
 import { jobDuration, timestampToDate } from '../../../utils/dataFormating'

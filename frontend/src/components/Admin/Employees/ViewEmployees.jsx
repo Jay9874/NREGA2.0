@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAdminStore } from '../../../api/store'
 import { ChevronDownIcon, CheckCircleIcon } from '@heroicons/react/20/solid'
-import { useEffect } from 'react'
 
 export default function ViewEmployees () {
   const { employees, profile } = useAdminStore()

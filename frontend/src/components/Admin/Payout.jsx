@@ -89,7 +89,7 @@ export default function Payout () {
       {/* Recent Payments */}
       <div className='mx-auto mt-8 max-w-6xl'>
         <h2 className='text-lg font-medium leading-6 text-gray-900'>All payments</h2>
-        <p className='text-sm font-normal font-normal text-gray-600'>auto credited with <b>DBT (Direct Benefit Transfer)</b></p>
+        <p className='text-sm font-normal text-gray-600'>auto credited with <b>DBT (Direct Benefit Transfer)</b></p>
       </div>
       {payments?.length === 0 ? (
         <div className='mx-auto max-w-7xl px-12 text-center pt-4'>
