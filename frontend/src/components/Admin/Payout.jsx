@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { useAdminStore } from '../../api/store'
-import { timestampToDate } from '../../utils/dataFormating'
 import DynamicTable from '../DynamicTable'
 
 function classNames (...classes) {
