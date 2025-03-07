@@ -513,5 +513,33 @@ export const useAdminStore = create((set, get) => ({
         reject(err)
       }
     })
+  },
+  setPayout: () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        toast.loading('Getting the payment info...', { duration: Infinity })
+        const { id } = get().profile
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify({
+            id: id
+          })
+        }
+        const res = await fetch('/api/admin/set-payout', options)
+        const { data, error } = await res.json()
+        toast.dismiss()
+        if (error) throw error
+        console.log(data)
+        resolve(data)
+      } catch (err) {
+        console.log(err)
+        reject(null)
+      }
+    })
   }
 }))

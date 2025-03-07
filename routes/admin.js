@@ -17,7 +17,8 @@ import {
   fetchEmployees,
   fetchRandomFamily,
   checkNregaIDAvailability,
-  resendLink
+  resendLink,
+  setPayout
 } from '../controller/admin.js'
 
 // Defining the routes
@@ -137,5 +138,12 @@ router.post('/validate-nrega-id', checkNregaIDAvailability)
  * @access public
  **/
 router.post('/resend-link', resendLink)
+
+/**
+ * @route GET api/admin/set-payout
+ * @description set the compensation and unpaid workers info.
+ * @access public
+ **/
+router.post('/set-payout', setPayout)
 
 export { router as adminRoutes }

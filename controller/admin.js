@@ -579,6 +579,40 @@ const resendLink = async (req, res) => {
     })
   }
 }
+
+const setPayout = async (req, res) => {
+  try {
+    const { id } = req.body
+    const supabase = createClient({ req, res })
+    // Getting the payment data
+    const { data, error } = await supabase
+      .from('payments')
+      .select('status')
+      .eq('GPO_id', id)
+      .or(status.eq.failed, status.eq.processing)
+    if (error) throw error
+    console.log('data: ', data)
+
+    // Getting pending applications
+    const { data: pendingApp, error: errAtApp } = await supabase
+      .from('job_enrollments')
+      .select('*')
+      .eq('status', 'applied')
+      .eq('to_sachiv', id)
+    if (errAtApp) throw errAtApp
+    console.log(pendingApp)
+    return res.status(200).send({
+      data: { pending: pendingApp, payments: data },
+      error: null
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send({
+      data: null,
+      error: err
+    })
+  }
+}
 export {
   setProfile,
   createUser,
@@ -596,5 +630,6 @@ export {
   addJob,
   fetchRandomAadhaar,
   fetchRandomFamily,
-  checkNregaIDAvailability
+  checkNregaIDAvailability,
+  setPayout
 }
