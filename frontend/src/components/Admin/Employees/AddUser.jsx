@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAdminStore } from '../../../api/store'
-import EyeButton from '../../EyeButton'
 import PasswordInput from '../../PasswordInput'
 
 export default function AddUser ({ onUserCreation }) {

@@ -47,11 +47,11 @@ const Jobs = () => {
     { label: 'Deadline', value: lastWork.deadline }
   ]
   function jobProfile (jobId, sachivId, job) {
-    // if (currentlyEnrolled) {
-    //   return toast.message('You are currently enrolled in', {
-    //     description: `'${currentlyEnrolled.jobName}' from ${currentlyEnrolled.start} to ${currentlyEnrolled.end}.`
-    //   })
-    // }
+    if (currentlyEnrolled) {
+      return toast.message('You are currently enrolled in', {
+        description: `'${currentlyEnrolled.jobName}' from ${currentlyEnrolled.start} to ${currentlyEnrolled.end}.`
+      })
+    }
     return navigate(`enroll/${jobId}`)
   }
 

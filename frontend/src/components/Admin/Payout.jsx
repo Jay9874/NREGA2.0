@@ -102,7 +102,7 @@ export default function Payout () {
         <h2 className='text-lg font-medium leading-6 text-gray-900'>
           All payments
         </h2>
-        <p className='text-sm font-normal font-normal text-gray-600'>
+        <p className='text-sm font-normal text-gray-600'>
           auto credited with <b>DBT (Direct Benefit Transfer)</b>
         </p>
       </div>

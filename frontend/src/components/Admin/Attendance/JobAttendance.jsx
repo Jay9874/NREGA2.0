@@ -12,10 +12,6 @@ import { getToday } from '../../../utils/dataFormating'
 import ImageField from './ImageField'
 import { distance } from '../../../utils/getLocation'
 
-function classNames (...classes) {
-  return classes.filter(Boolean).join(' ')
-}
-
 export default function JobAttendance () {
   const { jobId } = useParams()
   const [location, locationGrant] = useOutletContext()
@@ -28,12 +24,12 @@ export default function JobAttendance () {
     progress: null
   })
   const [images, setImages] = useState({
-    workers: '',
-    progress: ''
+    workers: null,
+    progress: null
   })
   const navigate = useNavigate()
-
-  async function saveAttendance () {
+  async function saveAttendance (e) {
+    e.preventDefault()
     try {
       const dist = distance(work.geotag, location, 'K').toFixed(2)
       if (dist > 0.2) {
@@ -59,6 +55,14 @@ export default function JobAttendance () {
   }
 
   function onImageSelect (imageFor, imageFile, metadata) {
+    if (
+      metadata == undefined ||
+      metadata.longitude == undefined ||
+      metadata.CreateDate == undefined
+    )
+      return toast.warning(
+        'The uploaded image does not have metadata required, please upload another one.'
+      )
     const imgPosition = [metadata.longitude, metadata.latitude]
     const imgCreation = new Date(metadata.CreateDate).toDateString()
     var created = new Date(imgCreation)
@@ -121,7 +125,7 @@ export default function JobAttendance () {
   return (
     <div className='overlay-modal overscroll-contain h-full overflow-scroll sticky top-0 w-full backdrop-blur-sm z-20 bg-gray-300 bg-opacity-75'>
       <div className='max-w-[500px] mx-auto px-4 py-6'>
-        <div className='rounded-lg bg-white'>
+        <form onSubmit={saveAttendance} className='rounded-lg bg-white'>
           <div className='grid p-6'>
             <div className='flex-1'>
               <div className='flex items-center space-x-3'>
@@ -261,6 +265,7 @@ export default function JobAttendance () {
             <div className='no-scrollbar py-4 px-6 sticky w-full z-10 bottom-0 flex items-center gap-4 justify-center backdrop-blur backdrop-filter bg-gray-50 bg-opacity-75'>
               <button
                 disabled={locationGrant == 'denied'}
+                type='button'
                 className='w-full inline-flex items-center justify-center rounded-full border border-transparent bg-red-100 py-1.5 text-xs font-medium text-red-700 hover:bg-red-200 bg-opacity-75'
               >
                 <Link to='..' type='button' className='w-full'>
@@ -268,14 +273,14 @@ export default function JobAttendance () {
                 </Link>
               </button>
               <button
-                onClick={saveAttendance}
+                type='submit'
                 className='w-full inline-flex items-center justify-center rounded-full border border-transparent bg-indigo-100 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-200 bg-opacity-75'
               >
                 Save
               </button>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   )
