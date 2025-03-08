@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { useAdminStore } from '../../api/store'
-import { timestampToDate } from '../../utils/dataFormating'
 import DynamicTable from '../DynamicTable'
 
 function classNames (...classes) {
@@ -24,7 +23,7 @@ const tableHeading = [
 ]
 
 export default function Payout () {
-  const { payments, gpo, setPayout } = useAdminStore()
+  const { payments, gpo, setPayout, loading } = useAdminStore()
   const highlights = [
     {
       label: 'Budget',
@@ -35,10 +34,18 @@ export default function Payout () {
     { label: 'Compensation', value: '₹36,000' }
   ]
 
+  async function getData () {
+    try {
+      const data = await setPayout()
+      console.log(data)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   useEffect(() => {
-    const data = setPayout()
-    console.log(data)
-  }, [])
+    if (!loading) getData()
+  }, [loading])
   return (
     <main className='px-4 py-6 sm:px-6 lg:px-8'>
       <div>

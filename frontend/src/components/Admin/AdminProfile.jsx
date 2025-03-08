@@ -1,6 +1,7 @@
-import { useAdminStore } from '../../api/store'
+import { authStore, useAdminStore } from '../../api/store'
 export default function AdminProfile() {
   const { profile } = useAdminStore()
+  const {user} = authStore()
 
   return (
     <main>
@@ -22,7 +23,7 @@ export default function AdminProfile() {
               <dd className='mt-1 text-sm text-gray-900'>
                 <img
                   className='h-16 w-16 rounded-full'
-                  src={profile.photo}
+                  src={user.photo}
                   alt='profile_image'
                 />
               </dd>

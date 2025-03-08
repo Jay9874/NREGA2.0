@@ -534,7 +534,6 @@ export const useAdminStore = create((set, get) => ({
         const { data, error } = await res.json()
         toast.dismiss()
         if (error) throw error
-        console.log(data)
         resolve(data)
       } catch (err) {
         console.log(err)

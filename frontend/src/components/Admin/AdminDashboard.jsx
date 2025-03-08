@@ -1,5 +1,5 @@
 import RecentPayment from '../RecentPayment'
-import { useAdminStore } from '../../api/store'
+import { authStore, useAdminStore } from '../../api/store'
 import { GreetUserWithTime } from '../../api'
 import {
   MapPinIcon,
@@ -13,7 +13,8 @@ import { jobDuration } from '../../utils/dataFormating'
 import HomeLoading from '../Skeleton/HomeLoading'
 
 export default function Dashboard () {
-  const { profile, employees, jobs, payments, loading} = useAdminStore()
+  const { profile, employees, jobs, payments, loading } = useAdminStore()
+  const { user } = authStore()
   const totalJobDays = jobs.reduce((acc, curr) => {
     const { created_at, job_deadline } = curr
     const duration = jobDuration(created_at, job_deadline).days
@@ -62,14 +63,14 @@ export default function Dashboard () {
               <div className='flex items-center'>
                 <img
                   className='hidden h-16 w-16 rounded-full sm:block'
-                  src={profile?.photo}
+                  src={user?.photo}
                   alt='profile_image'
                 />
                 <div>
                   <div className='flex items-center'>
                     <img
                       className='h-16 w-16 rounded-full sm:hidden'
-                      src={profile?.photo}
+                      src={user?.photo}
                       alt='profile_image'
                     />
                     <h1 className='break-keep ml-3 text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:leading-9'>

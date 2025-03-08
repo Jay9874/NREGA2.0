@@ -6,8 +6,6 @@ import { toast } from 'sonner'
 import { Input } from '.'
 import { Switch } from '@headlessui/react'
 import {
-  UsersIcon,
-  BarsArrowUpIcon,
   CloudArrowDownIcon
 } from '@heroicons/react/20/solid'
 
