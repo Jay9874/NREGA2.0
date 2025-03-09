@@ -1,22 +1,14 @@
 import express from 'express'
 const router = express.Router()
 import {
-  clearANotification,
-  confirmSignup,
-  getNotification,
   login,
   logout,
   pageRefresh,
-  signup,
-  updateMeta,
+  recoverUser,
+  resetPassword,
   verify
 } from '../controller/auth.js'
-/**
- * @route GET api/auth/confirm
- * @description check user metadata
- * @access public
- **/
-router.get('/confirm', confirmSignup)
+import { checkSession } from '../middleware/checkSession.js'
 
 // Login route
 /**
@@ -26,14 +18,6 @@ router.get('/confirm', confirmSignup)
  **/
 router.post('/login', login)
 
-// Signup User
-/**
- * @route POST api/auth/signup
- * @description create a new account
- * @access public
- **/
-router.post('/signup', signup)
-
 // Validate access token
 /**
  * @route POST api/auth/validate
@@ -42,13 +26,21 @@ router.post('/signup', signup)
  **/
 router.post('/validate', pageRefresh)
 
-// Update user metadata
+// Reset the password for logged user.
 /**
- * @route POST api/auth/update-meta
- * @description update the meta data of existing user.
+ * @route POST api/auth/reset-password
+ * @description reset the password of a logged user.
  * @access public
  **/
-router.post('/update-meta', updateMeta)
+router.post('/reset-password', checkSession, resetPassword)
+
+// Recover a user sending invite link.
+/**
+ * @route POST api/auth/recover-user
+ * @description recover a user with magic link.
+ * @access public
+ **/
+router.post('/recover-user', recoverUser)
 
 // Logout a user from system
 /**
@@ -57,22 +49,6 @@ router.post('/update-meta', updateMeta)
  * @access public
  **/
 router.post('/logout', logout)
-
-// get notification for both users (admin and worker)
-/**
- * @route POST api/auth/notification
- * @description get all the notification for user id.
- * @access public
- **/
-router.post('/notification', getNotification)
-
-// clear a notification for both users (admin and worker)
-/**
- * @route POST api/auth/clear-notification
- * @description clear a notification for user id.
- * @access public
- **/
-router.post('/clear-notification', clearANotification)
 
 // Verify the link upon new user creation
 /**

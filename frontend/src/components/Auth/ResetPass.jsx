@@ -1,10 +1,12 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { authStore } from '../../api/store/authStore'
 import { toast } from 'sonner'
 import PasswordInput from '../PasswordInput'
 
 export default function ResetPass () {
+  const [searchParams] = useSearchParams()
+  const code = searchParams.get('code')
   const navigate = useNavigate()
   const { resetPassword, loading } = authStore()
   const [password, setPassword] = useState({
@@ -15,6 +17,32 @@ export default function ResetPass () {
     const { name, value } = e.target
     setPassword(prev => ({ ...prev, [name]: value }))
   }
+  async function handleSubmit (e) {
+    try {
+      e.preventDefault()
+      if (password.new_password !== password.confirm_password) {
+        toast.error('Passwords do not match', { duration: 1000 })
+        return null
+      }
+      const data = await resetPassword(password.new_password, token)
+      console.log(data)
+    } catch (err) {
+      toast.error(err)
+      console.error(err)
+    }
+  }
+
+  useEffect(() => {
+    const code = searchParams.get('code')
+    const error = searchParams.get('error')
+    if (error) {
+      const error_desc = searchParams.get('error_description')
+      toast.error(error_desc)
+    } else if (!code) toast.error('Link is invalid, create a new one.')
+    else if (code !== ''){
+      
+    } console.log(code)
+  }, [searchParams])
   return (
     <div className='flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
       <div className='mx-auto w-full max-w-sm lg:w-96'>
@@ -26,17 +54,7 @@ export default function ResetPass () {
 
         <div className='mt-8'>
           <div className='mt-6'>
-            <form
-              className='space-y-6'
-              onSubmit={e => {
-                e.preventDefault()
-                if (password.new_password !== password.confirm_password) {
-                  toast.error('Passwords do not match', { duration: 1000 })
-                  return null
-                }
-                resetPassword(password.new_password, navigate)
-              }}
-            >
+            <form className='space-y-6' onSubmit={handleSubmit}>
               <div>
                 <PasswordInput
                   label='New Password'
@@ -47,7 +65,7 @@ export default function ResetPass () {
                   onChange={handleInput}
                   parentClass='mt-2'
                 />
-               
+
                 <PasswordInput
                   label='Repeat Password'
                   name='confirm_password'

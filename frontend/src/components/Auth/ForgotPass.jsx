@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { authStore } from '../../api/store/authStore'
+import { toast } from 'sonner'
 
 export default function ForgotPass () {
   const navigate = useNavigate()
@@ -9,6 +10,17 @@ export default function ForgotPass () {
   const [loginInfo, setLoginInfo] = useState({
     email: ''
   })
+  async function handleSubmit (e) {
+    try {
+      e.preventDefault()
+      if (loginInfo.email === '')
+        return toast.error('Enter an email to send link.')
+      const data = await recoverUser(loginInfo.email)
+      navigate('/')
+    } catch (err) {
+      console.error(err)
+    }
+  }
   return (
     <div className='flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
       <div className='mx-auto w-full max-w-sm lg:w-96'>
@@ -20,13 +32,7 @@ export default function ForgotPass () {
 
         <div className='mt-8'>
           <div className='mt-6'>
-            <form
-              className='space-y-6'
-              onSubmit={e => {
-                e.preventDefault()
-                recoverUser(loginInfo.email, navigate)
-              }}
-            >
+            <form className='space-y-6' onSubmit={handleSubmit}>
               <div>
                 <label
                   htmlFor='email'
@@ -68,7 +74,11 @@ export default function ForgotPass () {
                 <button
                   type='submit'
                   disabled={loading}
-                  className={`flex ${loading? 'bg-indigo-300 cursor-wait':'bg-indigo-600 hover:bg-indigo-700'} w-full justify-center rounded-md border border-transparent  py-2 px-4 text-sm font-medium text-white shadow-sm  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
+                  className={`flex ${
+                    loading
+                      ? 'bg-indigo-300 cursor-wait'
+                      : 'bg-indigo-600 hover:bg-indigo-700'
+                  } w-full justify-center rounded-md border border-transparent  py-2 px-4 text-sm font-medium text-white shadow-sm  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
                 >
                   Send Recovery Email
                 </button>

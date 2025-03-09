@@ -123,13 +123,9 @@ const nearbyJobs = async (req, res) => {
       .eq('location_id', locationId)
       .then(async ({ data }) => {
         const sortedJobs = data.filter((job, index) => {
-          const [lat1, lon1] = job.geotag
-          const [lat2, lon2] = job.location_id.geotag
           const distanceBtwCords = distance(
-            lat1,
-            lon1,
-            lat2,
-            lon2,
+            job.geotag,
+            job.location_id.geotag,
             'K'
           ).toFixed(2)
           return distanceBtwCords <= 15
@@ -144,9 +140,11 @@ const nearbyJobs = async (req, res) => {
           return error
         }
         const hasEnrolled = data.length > 0 ? true : false
-        const [lat1, lon1] = item.geotag
-        const [lat2, lon2] = item.location_id.geotag
-        const distanceBtwCords = distance(lat1, lon1, lat2, lon2, 'K')
+        const distanceBtwCords = distance(
+          item.geotag,
+          item.location_id.geotag,
+          'K'
+        )
         const response = {
           ...item,
           Work: item.job_name,
@@ -168,6 +166,36 @@ const nearbyJobs = async (req, res) => {
     return res.status(500).send({
       data: null,
       error: err
+    })
+  }
+}
+
+// Set the the payments
+const payments = async (req, res) => {
+  try {
+    const { userId } = req.body
+    const supabase = createClient({ req, res })
+    const { data: payments } = await supabase
+      .from('payments')
+      .select(`*, payment_for(*)`)
+      .eq('payment_to', userId)
+      .order('created_at', { ascending: false })
+    const updatedPayments = payments.map((payment, index) => ({
+      ...payment,
+      Transaction: payment.payment_title,
+      Amount: `₹${payment.amount.toFixed(2)}`,
+      Date: timestampToDate(payment.created_at),
+      Status: payment.status
+    }))
+    return res.status(200).send({
+      data: updatedPayments,
+      error: null
+    })
+  } catch (err) {
+    console.error(err)
+    return res.status(500).send({
+      data: null,
+      error: 'Something went wrong while getting payments.'
     })
   }
 }
@@ -229,4 +257,4 @@ const workingOn = async (req, res) => {
   }
 }
 
-export { applyToJob, entitlement, nearbyJobs, workingOn, setProfile }
+export { applyToJob, entitlement, nearbyJobs, workingOn, setProfile, payments }

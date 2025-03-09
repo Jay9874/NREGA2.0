@@ -79,29 +79,24 @@ export const useWorkerStore = create((set, get) => ({
       }
     })
   },
-  setNearbyJobs: async () => {
+  setNearbyJobs: () => {
     return new Promise(async (resolve, reject) => {
       try {
-        const locationId = get().profile.address.id
-        await supabase
-          .from('jobs')
-          .select(`*, location_id(*)`)
-          .eq('location_id', locationId)
-          .then(async ({ data }) => {
-            const sortedJobs = data.filter((job, index) => {
-              const distanceBtwCords = distance(
-                job.geotag,
-                job.location_id.geotag,
-                'K'
-              ).toFixed(2)
-              return distanceBtwCords <= 15
-            })
-            const result = await Promise.all(
-              sortedJobs.map(get().getEnrollment)
-            )
-            set({ nearbyJobs: result })
-            resolve(result)
-          })
+        const { id } = get().profile.address
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify({ locationId: id })
+        }
+        const res = await fetch('/api/worker/nearby-jobs', options)
+        const { data, error } = await res.json()
+        if (error) throw error
+        set({ nearbyJobs: data })
+        resolve(data)
       } catch (error) {
         toast.error(error.message)
         reject(error)
@@ -121,26 +116,28 @@ export const useWorkerStore = create((set, get) => ({
     }
   },
   setPayment: async () => {
-    try {
-      const { data: payments } = await supabase
-        .from('payments')
-        .select(`*, payment_for(*)`)
-        .eq('payment_to', get().profile.id)
-        .order('created_at', { ascending: false })
-
-      const updatedPayments = payments.map((payment, index) => ({
-        ...payment,
-        Transaction: payment.payment_title,
-        Amount: `₹${payment.amount.toFixed(2)}`,
-        Date: timestampToDate(payment.created_at),
-        Status: payment.status
-      }))
-      set({ payment: updatedPayments })
-      return payments
-    } catch (error) {
-      toast.error(error.message)
-      return error
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { id } = get().profile
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify({ userId: id })
+        }
+        const res = await fetch('/api/worker/payments', options)
+        const { data, error } = await res.json()
+        if (error) throw error
+        set({ payment: data })
+        resolve(data)
+      } catch (error) {
+        toast.error(error.message)
+        reject(error)
+      }
+    })
   },
   setLastAttendance: async () => {
     try {

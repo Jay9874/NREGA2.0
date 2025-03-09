@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { supabase } from '..'
 import { toast } from 'sonner'
 
 export const authStore = create((set, get) => ({
@@ -111,37 +110,59 @@ export const authStore = create((set, get) => ({
       return null
     }
   },
-  recoverUser: async (email, navigate) => {
-    set({ loading: true })
-    const redirectURL = 'https://nrega-2-0.vercel.app/auth/reset'
-    toast.loading('Sending recovery email...')
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: redirectURL
+  recoverUser: email => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        set({ loading: true })
+        toast.loading('Sending recovery email...', { duration: Infinity })
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify({ email: email })
+        }
+        const res = await fetch('/api/auth/recover-user', options)
+        const { data, error } = await res.json()
+        if (error) throw error
+        set({ loading: false })
+        toast.dismiss()
+        toast.success('Recovery email sent!', { duration: 750 })
+        resolve(null)
+      } catch (err) {
+        console.log(err)
+        set({ loading: false })
+        toast.error(err)
+        reject()
+      }
     })
-    if (error) {
-      console.log(error)
-      set({ loading: false })
-      return toast.error(error.message)
-    } else {
-      set({ loading: false })
-      toast.dismiss()
-      toast.success('Recovery email sent!', { duration: 750 })
-      navigate('/')
-      return null
-    }
   },
-  resetPassword: async (new_password, navigate) => {
-    const { data, error } = await supabase.auth.updateUser({
-      password: new_password
+  resetPassword: new_password => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'Application/json',
+            Accept: 'Application/json'
+          },
+          body: JSON.stringify({ newPassword: new_password })
+        }
+        const res = await fetch('/api/auth/reset-password', options)
+        const { data, error } = await res.json()
+        if (error) throw error
+        console.log(data)
+        toast.success('Password reset successful!', { duration: 750 })
+        const user = get().user
+        navigate(`/${user.type}/dashboard`)
+        resolve(null)
+      } catch (err) {
+        reject(err)
+      }
     })
-    if (error) return toast.error(error.message)
-    else {
-      console.log(data)
-      toast.success('Password reset successful!', { duration: 750 })
-      const user = get().user
-      navigate(`/${user.type}/dashboard`)
-      return null
-    }
   },
   demoLogin: async (email, type, navigate) => {
     if (!window.navigator.onLine) return toast.error('No internet connection.')
@@ -167,7 +188,7 @@ export const authStore = create((set, get) => ({
           },
           body: JSON.stringify({ userId: id, type: type })
         }
-        const res = await fetch('/api/auth/notification', options)
+        const res = await fetch('/api/notification', options)
         const { data, error } = await res.json()
         if (error) throw error
         set({ notifications: data })
@@ -193,7 +214,7 @@ export const authStore = create((set, get) => ({
           },
           body: JSON.stringify({ notificationId: notificationId, type: type })
         }
-        const res = await fetch('/api/auth/clear-notification', options)
+        const res = await fetch('/api/clear-notification', options)
         const { data, error } = await res.json()
         if (error) throw error
         const updatedNotifications = notifications.filter(

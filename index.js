@@ -8,13 +8,14 @@ const nodeEnv = process.env.NODE_ENV
 const __dirname = path.resolve()
 import cookieParser from 'cookie-parser'
 const PORT = process.env.PORT || 8080
+import fs from 'fs'
 
 // Importing routes and custom middlewares
 import { adminRoutes } from './routes/admin.js'
 import { workerRoutes } from './routes/worker.js'
 import { authRoutes } from './routes/auth.js'
 import { checkSession } from './middleware/checkSession.js'
-
+import { commonRoutes } from './routes/common.js'
 
 const app = express()
 app.use(
@@ -34,11 +35,9 @@ app.use(express.static(path.resolve(__dirname, 'frontend', 'dist')))
 
 // Defining api routes methods
 app.use('/api/auth', authRoutes)
+app.use('/api', checkSession, commonRoutes)
 app.use('/api/admin', checkSession, adminRoutes)
 app.use('/api/worker', checkSession, workerRoutes)
-app.use('/api/test', (req, res) => {
-  res.send(`Hello from the server\n Directory is ${__dirname}`)
-})
 
 // Frontend Routes for vercel
 app.get('*', (req, res) => {
@@ -54,9 +53,10 @@ app.get('*', (req, res) => {
 
 // Error handler middleware
 app.use((err, req, res, next) => {
-  res.status(err.status).send({
+  console.error(err)
+  res.status(500).send({
     data: null,
-    error: err
+    error: 'Something went wrong.'
   })
 })
 
