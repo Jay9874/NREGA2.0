@@ -132,6 +132,7 @@ export const authStore = create((set, get) => ({
         toast.success('Recovery email sent!', { duration: 750 })
         resolve(null)
       } catch (err) {
+        toast.dismiss()
         console.log(err)
         set({ loading: false })
         toast.error(err)
@@ -160,6 +161,7 @@ export const authStore = create((set, get) => ({
         navigate(`/${user.type}/dashboard`)
         resolve(null)
       } catch (err) {
+        toast.dismiss()
         reject(err)
       }
     })

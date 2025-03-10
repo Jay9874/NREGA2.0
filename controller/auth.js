@@ -1,4 +1,5 @@
 import { createClient } from '../lib/supabase.js'
+import logger from '../utils/logger.js'
 
 const login = async (req, res) => {
   try {
@@ -164,17 +165,20 @@ const recoverUser = async (req, res) => {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectURL
     })
-    if (error) throw new Error('Could not send email.')
-    console.log(data)
+    if (error) {
+      logger.error(error)
+      throw new Error('Could not send email.')
+    }
+    logger.info(data)
     return res.status(200).send({
       data: 'Sent email with a link, check it.',
       error: null
     })
   } catch (err) {
-    console.error(err)
+    logger.error(err)
     return res.status(500).send({
       data: null,
-      error: 'Something went wrong at sending mail, try again.'
+      error: 'Something went wrong while sending mail, try again.'
     })
   }
 }
