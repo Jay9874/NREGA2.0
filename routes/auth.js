@@ -32,7 +32,7 @@ router.post('/validate', pageRefresh)
  * @description reset the password of a logged user.
  * @access public
  **/
-router.post('/reset-password', checkSession, resetPassword)
+router.post('/reset-password', resetPassword)
 
 // Recover a user sending invite link.
 /**

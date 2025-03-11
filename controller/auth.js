@@ -134,22 +134,33 @@ const verify = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   try {
-    const { newPassword } = req.body
+    const { newPassword, code } = req.body
+    logger.info(newPassword)
+    logger.info(code)
     const supabase = createClient({ req, res })
-    const { data, error } = await supabase.auth.updateUser({
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+    if (error) {
+      // logger.error(error)
+      console.log(error)
+      throw new Error('Could not validate code.')
+    }
+    const { data: user, error: errAtUpdate } = await supabase.auth.updateUser({
       password: newPassword
     })
-    if (error) throw new Error('Could not update the password.')
-    console.log(data)
+    if (errAtUpdate) {
+      logger.error(errAtUpdate)
+      throw new Error('Could not update the password.')
+    }
+    logger.data(data)
     return res.status(200).send({
-      data: data,
+      data: user,
       error: null
     })
   } catch (err) {
-    console.error(err)
+    // logger.error(err)
     return res.status(500).send({
       data: null,
-      error: 'Something went wrong while resetting password.'
+      error: err
     })
   }
 }
@@ -169,7 +180,7 @@ const recoverUser = async (req, res) => {
       logger.error(error)
       throw new Error('Could not send email.')
     }
-    logger.info(data)
+    logger.data(data)
     return res.status(200).send({
       data: 'Sent email with a link, check it.',
       error: null

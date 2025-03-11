@@ -6,6 +6,7 @@ import PasswordInput from '../PasswordInput'
 
 export default function ResetPass () {
   const [searchParams] = useSearchParams()
+  const [token, setToken] = useState('')
   const code = searchParams.get('code')
   const navigate = useNavigate()
   const { resetPassword, loading } = authStore()
@@ -24,10 +25,14 @@ export default function ResetPass () {
         toast.error('Passwords do not match', { duration: 1000 })
         return null
       }
+      if (!token || token === '') {
+        return toast.error('Invalid token, try creating a new one.')
+      }
       const data = await resetPassword(password.new_password, token)
       console.log(data)
     } catch (err) {
-      toast.error(err)
+      console.log(err)
+      toast.error(err.message)
       console.error(err)
     }
   }
@@ -38,10 +43,14 @@ export default function ResetPass () {
     if (error) {
       const error_desc = searchParams.get('error_description')
       toast.error(error_desc)
-    } else if (!code) toast.error('Link is invalid, create a new one.')
-    else if (code !== ''){
-      
-    } console.log(code)
+      setToken('')
+    } else if (!code) {
+      toast.error('Link is invalid, create a new one.')
+      setToken('')
+    } else if (code !== '') {
+      setToken(code)
+    }
+    console.log(code)
   }, [searchParams])
   return (
     <div className='flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
@@ -76,6 +85,13 @@ export default function ResetPass () {
                   parentClass='mt-2'
                 />
               </div>
+              <input
+                hidden
+                name='token'
+                value={token}
+                required
+                readOnly
+              />
               <div>
                 <button
                   type='submit'

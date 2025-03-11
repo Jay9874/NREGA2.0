@@ -140,7 +140,7 @@ export const authStore = create((set, get) => ({
       }
     })
   },
-  resetPassword: new_password => {
+  resetPassword: (new_password, code) => {
     return new Promise(async (resolve, reject) => {
       try {
         const options = {
@@ -150,7 +150,7 @@ export const authStore = create((set, get) => ({
             'Content-Type': 'Application/json',
             Accept: 'Application/json'
           },
-          body: JSON.stringify({ newPassword: new_password })
+          body: JSON.stringify({ newPassword: new_password, code: code })
         }
         const res = await fetch('/api/auth/reset-password', options)
         const { data, error } = await res.json()
