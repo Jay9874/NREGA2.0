@@ -29,7 +29,7 @@ export default function ResetPass () {
         return toast.error('Invalid token, try creating a new one.')
       }
       const data = await resetPassword(password.new_password, token)
-      console.log(data)
+      navigate(`/${data.type}/dashboard`)
     } catch (err) {
       toast.error(err)
     }

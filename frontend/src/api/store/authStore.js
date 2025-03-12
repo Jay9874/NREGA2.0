@@ -159,11 +159,9 @@ export const authStore = create((set, get) => ({
         toast.dismiss()
         set({ loading: false })
         if (error) throw error
-        console.log(data)
         toast.success('Password reset successful!')
         localStorage.setItem('suid', JSON.stringify({ user: data }))
-        navigate(`/${data.type}/dashboard`)
-        resolve(null)
+        resolve(data)
       } catch (err) {
         set({ loading: false })
         toast.dismiss()

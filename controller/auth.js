@@ -141,12 +141,14 @@ const resetPassword = async (req, res) => {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
     if (error)
       throw new Error('The link has been expired, create a new request.')
-    const { data: user, error: errAtUpdate } = await supabase.auth.updateUser({
-      password: newPassword
-    })
+    const { data: userData, error: errAtUpdate } =
+      await supabase.auth.updateUser({
+        password: newPassword
+      })
     if (errAtUpdate)
       throw new Error(`Could not update the password. ${errAtUpdate.message}`)
-    logger.data(user)
+    const { user } = userData
+    console.log('user: ', user.id)
     const { data: profile, error: errAtProfile } = await supabase
       .from('profiles')
       .select('*')
@@ -183,7 +185,12 @@ const recoverUser = async (req, res) => {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectURL
     })
-    if (error) throw new Error('Could not send email.')
+    if (error) {
+      logger.error(error)
+      throw new Error(
+        `Could not send email. ${error.message ? error.message : ''}`
+      )
+    }
     return res.status(200).send({
       data: 'Sent email with a link, check it.',
       error: null

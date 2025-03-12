@@ -1,6 +1,6 @@
 import { useWorkerStore } from '../../api/store'
 export default function Profile () {
-  const { profile, user } = useWorkerStore()
+  const { profile } = useWorkerStore()
 
   return (
     <main>
@@ -36,6 +36,10 @@ export default function Profile () {
               <dd className='mt-1 text-sm text-gray-900'>{profile.age}</dd>
             </div>
             <div className='sm:col-span-1'>
+              <dt className='text-sm font-medium text-gray-500'>Sex</dt>
+              <dd className='mt-1 text-sm text-gray-900'>{profile.sex}</dd>
+            </div>
+            <div className='sm:col-span-1'>
               <dt className='text-sm font-medium text-gray-500'>Father Name</dt>
               <dd className='mt-1 text-sm text-gray-900'>
                 {profile.father_name}
@@ -52,12 +56,18 @@ export default function Profile () {
               <dt className='text-sm font-medium text-gray-500'>
                 Email address
               </dt>
-              <dd className='mt-1 text-sm text-gray-900'>{user.email}</dd>
+              <dd className='mt-1 text-sm text-gray-900'>{profile.email}</dd>
             </div>
             <div className='sm:col-span-1'>
               <dt className='text-sm font-medium text-gray-500'>MGNREGA ID</dt>
               <dd className='mt-1 text-sm text-gray-900'>
                 {profile.mgnrega_id}
+              </dd>
+            </div>
+            <div className='sm:col-span-1'>
+              <dt className='text-sm font-medium text-gray-500'>Family ID</dt>
+              <dd className='mt-1 text-sm text-gray-900'>
+                {profile.family_id}
               </dd>
             </div>
             <div className='sm:col-span-1'>
