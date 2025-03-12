@@ -143,6 +143,8 @@ export const authStore = create((set, get) => ({
   resetPassword: (new_password, code) => {
     return new Promise(async (resolve, reject) => {
       try {
+        toast.loading('Changing the password...', { duration: Infinity })
+        set({ loading: true })
         const options = {
           method: 'POST',
           credentials: 'include',
@@ -154,13 +156,16 @@ export const authStore = create((set, get) => ({
         }
         const res = await fetch('/api/auth/reset-password', options)
         const { data, error } = await res.json()
+        toast.dismiss()
+        set({ loading: false })
         if (error) throw error
         console.log(data)
-        toast.success('Password reset successful!', { duration: 750 })
-        const user = get().user
-        navigate(`/${user.type}/dashboard`)
+        toast.success('Password reset successful!')
+        localStorage.setItem('suid', JSON.stringify({ user: data }))
+        navigate(`/${data.type}/dashboard`)
         resolve(null)
       } catch (err) {
+        set({ loading: false })
         toast.dismiss()
         reject(err)
       }

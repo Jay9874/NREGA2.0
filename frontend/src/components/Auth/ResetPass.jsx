@@ -31,9 +31,7 @@ export default function ResetPass () {
       const data = await resetPassword(password.new_password, token)
       console.log(data)
     } catch (err) {
-      console.log(err)
-      toast.error(err.message)
-      console.error(err)
+      toast.error(err)
     }
   }
 
@@ -50,7 +48,6 @@ export default function ResetPass () {
     } else if (code !== '') {
       setToken(code)
     }
-    console.log(code)
   }, [searchParams])
   return (
     <div className='flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
@@ -85,18 +82,16 @@ export default function ResetPass () {
                   parentClass='mt-2'
                 />
               </div>
-              <input
-                hidden
-                name='token'
-                value={token}
-                required
-                readOnly
-              />
+              <input hidden name='token' value={token} required readOnly />
               <div>
                 <button
                   type='submit'
                   disabled={loading}
-                  className='flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+                  className={`${
+                    loading
+                      ? 'bg-indigo-300 cursor-wait'
+                      : 'bg-indigo-600 hover:bg-indigo-700'
+                  } flex w-full justify-center rounded-md border border-transparent py-2 px-4 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
                 >
                   Confirm
                 </button>

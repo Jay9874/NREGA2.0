@@ -1,5 +1,7 @@
 import { createClient } from '../lib/supabase.js'
-import logger from '../utils/logger.js'
+// import log from '../utils/logger.js'
+// const logger = log(import.meta) // Pass `import.meta`
+import { logger } from '../utils/logger.js'
 
 const login = async (req, res) => {
   try {
@@ -135,32 +137,37 @@ const verify = async (req, res) => {
 const resetPassword = async (req, res) => {
   try {
     const { newPassword, code } = req.body
-    logger.info(newPassword)
-    logger.info(code)
     const supabase = createClient({ req, res })
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-    if (error) {
-      // logger.error(error)
-      console.log(error)
-      throw new Error('Could not validate code.')
-    }
+    if (error)
+      throw new Error('The link has been expired, create a new request.')
     const { data: user, error: errAtUpdate } = await supabase.auth.updateUser({
       password: newPassword
     })
-    if (errAtUpdate) {
-      logger.error(errAtUpdate)
-      throw new Error('Could not update the password.')
+    if (errAtUpdate)
+      throw new Error(`Could not update the password. ${errAtUpdate.message}`)
+    logger.data(user)
+    const { data: profile, error: errAtProfile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+    if (errAtProfile)
+      throw new Error(`Could not get profile info, please try again.`)
+    const loggedUser = {
+      email: profile[0].email,
+      type: profile[0].user_type,
+      id: user.id,
+      photo: profile[0].avatar
     }
-    logger.data(data)
     return res.status(200).send({
-      data: user,
+      data: loggedUser,
       error: null
     })
   } catch (err) {
-    // logger.error(err)
+    logger.error(err)
     return res.status(500).send({
       data: null,
-      error: err
+      error: err.message
     })
   }
 }
@@ -176,20 +183,16 @@ const recoverUser = async (req, res) => {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectURL
     })
-    if (error) {
-      logger.error(error)
-      throw new Error('Could not send email.')
-    }
-    logger.data(data)
+    if (error) throw new Error('Could not send email.')
     return res.status(200).send({
       data: 'Sent email with a link, check it.',
       error: null
     })
   } catch (err) {
-    logger.error(err)
+    logger.error(new Error(err))
     return res.status(500).send({
       data: null,
-      error: 'Something went wrong while sending mail, try again.'
+      error: err.message
     })
   }
 }
