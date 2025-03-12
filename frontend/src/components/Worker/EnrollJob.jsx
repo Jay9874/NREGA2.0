@@ -4,7 +4,6 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useWorkerStore } from '../../api/store'
 import { toast } from 'sonner'
 import { jobDuration, timestampToDate } from '../../utils/dataFormating'
-import { getDateStr } from '../../utils/generate_date'
 
 export default function EnrollJob () {
   const [timeDuration, setTimeDuration] = useState(1)

@@ -2,8 +2,7 @@ import { toast } from 'sonner'
 import { useWorkerStore } from '../../api/store'
 import DynamicTable from '../DynamicTable'
 import { useEffect, useState } from 'react'
-import { Link, Outlet, useNavigate } from 'react-router-dom'
-import { timestampToDate } from '../../utils/dataFormating'
+import { Outlet, useNavigate } from 'react-router-dom'
 
 const tableHeading = [
   { name: 'Work', css_normal: '', css_list: '' },

@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { Sidebar, TopNavbar, Banner } from '../components'
+import { Sidebar, TopNavbar} from '../components'
 import { authStore, useAdminStore } from '../api/store'
 import { supabase } from '../api'
 // Constants imports

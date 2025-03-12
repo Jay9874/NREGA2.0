@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { authStore } from '../../api/store/authStore'
 import { toast } from 'sonner'
 import PasswordInput from '../PasswordInput'

@@ -1,4 +1,4 @@
-import { BanknotesIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
+import { BanknotesIcon} from '@heroicons/react/20/solid'
 import { timestampToDate } from '../utils/dataFormating'
 const statusStyles = {
   successful: 'bg-green-100 text-green-800',
