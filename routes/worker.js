@@ -4,7 +4,8 @@ const router = express.Router()
 import {
   applyToJob,
   entitlement,
-  nearbyJobs,
+  getJobs,
+  payments,
   setProfile,
   workingOn
 } from '../controller/worker.js'
@@ -36,14 +37,14 @@ router.post('/working-on', workingOn)
  * @description jobs within 15km of logged worker.
  * @access public
  **/
-router.post('/nearby-jobs', nearbyJobs)
+router.post('/jobs', getJobs)
 
 /**
  * @route POST api/worker/payments
  * @description all the payments of logged user.
  * @access public
  **/
-router.post('/payments', nearbyJobs)
+router.post('/payments', payments)
 
 /**
  * @route POST api/worker/entitlement

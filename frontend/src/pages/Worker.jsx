@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { authStore, useWorkerStore } from '../api/store'
 // Importing all the components
@@ -13,13 +13,11 @@ import NotificationPanel from '../components/NotificationPanel'
 import { toast } from 'sonner'
 
 export const Worker = () => {
-  const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const {
     setProfile,
     setPayment,
-    setAllJobs,
-    setNearbyJobs,
+    setJobs,
     loading,
     setLoading,
     setDataLoaded,
@@ -34,12 +32,11 @@ export const Worker = () => {
   async function handleSetup () {
     try {
       setLoading(true)
-      const data = await setProfile()
+      await setProfile()
+      await setJobs()
       await setPayment()
       await setLocations()
       await setLastAttendance()
-      await setAllJobs()
-      await setNearbyJobs()
       await setNotifications()
       await setLastWork()
       setLoading(false)
@@ -47,7 +44,7 @@ export const Worker = () => {
     } catch (error) {
       setLoading(false)
       setDataLoaded(true)
-      toast.error("Something went wrong while getting your data.")
+      toast.error('Something went wrong while getting your data.')
       return error
     }
   }

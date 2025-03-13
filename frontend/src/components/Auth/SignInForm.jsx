@@ -67,7 +67,7 @@ export default function SignInForm () {
                     id='email'
                     name='email'
                     type='email'
-                    autoComplete='email'
+                    autoComplete='username'
                     value={loginInfo.email}
                     required
                     onChange={e =>
@@ -84,27 +84,23 @@ export default function SignInForm () {
                 value={loginInfo.password}
                 hint='Enter your password'
                 parentClass='mt-2'
+                autoComplete='current-password'
                 onChange={handleInput}
               />
               <div className='flex items-center justify-between'>
-                <div className='text-sm'>
-                  <Link
-                    to='/auth/recovery'
-                    className='font-medium text-indigo-600 hover:text-indigo-500'
-                  >
-                    Forgot your password?
-                  </Link>
-                </div>
-              </div>
-
-              <div>
-                <button
-                  type='submit'
-                  className='flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+                <Link
+                  to='/auth/recovery'
+                  className='font-medium text-sm text-indigo-600 hover:text-indigo-500'
                 >
-                  Sign in
-                </button>
+                  Forgot your password?
+                </Link>
               </div>
+              <button
+                type='submit'
+                className='flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+              >
+                Sign in
+              </button>
             </form>
           </div>
         </div>

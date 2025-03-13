@@ -21,8 +21,8 @@ export const useWorkerStore = create((set, get) => ({
   isAttendanceActive: false,
   selectedAttendance: {},
   nearbyJobs: [],
+  jobs: [],
   currentlyEnrolled: null,
-  allJobs: [],
   lastWork: {
     location: {},
     name: '',
@@ -79,10 +79,10 @@ export const useWorkerStore = create((set, get) => ({
       }
     })
   },
-  setNearbyJobs: () => {
+  setJobs: () => {
     return new Promise(async (resolve, reject) => {
       try {
-        const { id } = get().profile.address
+        const { address, id } = get().profile
         const options = {
           method: 'POST',
           credentials: 'include',
@@ -90,30 +90,18 @@ export const useWorkerStore = create((set, get) => ({
             'Content-Type': 'Application/json',
             Accept: 'Application/json'
           },
-          body: JSON.stringify({ locationId: id })
+          body: JSON.stringify({ locationId: address.id, workerId: id })
         }
-        const res = await fetch('/api/worker/nearby-jobs', options)
+        const res = await fetch('/api/worker/jobs', options)
         const { data, error } = await res.json()
         if (error) throw error
-        set({ nearbyJobs: data })
+        set({ nearbyJobs: data.nearbyJobs, jobs: data.allJobs })
         resolve(data)
       } catch (error) {
         toast.error(error.message)
         reject(error)
       }
     })
-  },
-  setAllJobs: async () => {
-    try {
-      const { data } = await supabase.from('jobs').select(`*, location_id(*)`)
-      const result = await Promise.all(data.map(get().getEnrollment))
-      set({ allJobs: result })
-      return result
-    } catch (error) {
-      console.log(error)
-      toast.error(error.message)
-      return error
-    }
   },
   setPayment: async () => {
     return new Promise(async (resolve, reject) => {
@@ -134,7 +122,7 @@ export const useWorkerStore = create((set, get) => ({
         set({ payment: data })
         resolve(data)
       } catch (error) {
-        toast.error(error.message)
+        toast.error(error)
         reject(error)
       }
     })
@@ -167,7 +155,7 @@ export const useWorkerStore = create((set, get) => ({
       try {
         set({ attendances: [] })
         set({ loadingAttendance: true })
-        const jobs = get().allJobs
+        const jobs = get().nearbyJobs
         const { data: locations } = await supabase
           .from('locations')
           .select('*')
@@ -212,7 +200,7 @@ export const useWorkerStore = create((set, get) => ({
           resolve(get().attendances)
         })
       } catch (err) {
-        toast.error(err.message)
+        toast.error(err)
         set({ loadingAttendance: false })
         reject(err)
       }
@@ -390,7 +378,7 @@ export const useWorkerStore = create((set, get) => ({
         const res = await fetch('/api/worker/apply', options)
         const { data, error } = await res.json()
         if (error) throw error
-        await get().setNearbyJobs()
+        await get().setJobs()
         resolve(data)
       } catch (err) {
         reject(err)

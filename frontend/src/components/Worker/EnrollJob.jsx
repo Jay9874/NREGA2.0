@@ -16,7 +16,7 @@ export default function EnrollJob () {
   const [startDate, setStartDate] = useState('')
   const { jobId } = useParams()
   const navigate = useNavigate()
-  const { applyToJob, setNearbyJobs, nearbyJobs } = useWorkerStore()
+  const { applyToJob, nearbyJobs } = useWorkerStore()
   const [disabled, setDisabled] = useState('minus')
   const { profile } = useWorkerStore()
 
@@ -139,14 +139,14 @@ export default function EnrollJob () {
                     </p>
                   </div>
                   <span className='inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800'>
-                    {job?.locationObj?.gp} GP
+                    {job?.locationInfo?.gp} GP
                   </span>
                 </div>
                 <div className='flex flex-wrap gap-x-2 gap-y-1'>
                   <p className='mt-1 truncate text-sm text-gray-500'>
                     Distance:{' '}
                     <span className='text-indigo-700 font-medium'>
-                      {job?.locationObj?.dist} Km
+                      {job?.locationInfo?.dist} Km
                     </span>
                   </p>
                   <p className='mt-1 truncate text-sm text-gray-500'>

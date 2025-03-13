@@ -3,7 +3,9 @@ import {
   jobDuration,
   timestampToDate
 } from '../frontend/src/utils/dataFormating.js'
+import { distance } from '../frontend/src/utils/getLocation.js'
 import { createClient } from '../lib/supabase.js'
+import { logger } from '../utils/logger.js'
 
 const setProfile = async (req, res) => {
   try {
@@ -29,7 +31,6 @@ const setProfile = async (req, res) => {
 const applyToJob = async (req, res) => {
   try {
     var detail = req.body
-    console.log(detail)
     var end = new Date(detail.starting_date)
     end.setDate(end.getDate() + detail.time_period)
     detail = {
@@ -39,6 +40,20 @@ const applyToJob = async (req, res) => {
       remark: 'The application is under processing.',
       end_date: end
     }
+
+    // Check if working on any other job in given time period
+    const { data: workingOn, error: errAtWorkingOn } = await supabase
+      .from('job_enrollments')
+      .select('job')
+      .eq('by_worker', detail.by_worker)
+      .gte('end_date', detail.starting_date)
+    if (errAtWorkingOn)
+      throw new Error('Could not get current working details.')
+    if (workingOn.length > 0)
+      throw new Error(
+        'You are engaged during given time period, finish it first.'
+      )
+      
     const supabase = createClient({ req, res })
     const { data, error } = await supabase
       .from('job_enrollments')
@@ -113,59 +128,75 @@ const entitlement = async (req, res) => {
   }
 }
 
-const nearbyJobs = async (req, res) => {
+const getJobs = async (req, res) => {
   try {
     const { locationId, workerId } = req.body
     const supabase = createClient({ req, res })
-    await supabase
+
+    // getting all the jobs in gram panchayat location (ID)
+    const { data: allJobs, error } = await supabase
       .from('jobs')
       .select(`*, location_id(*)`)
       .eq('location_id', locationId)
-      .then(async ({ data }) => {
-        const sortedJobs = data.filter((job, index) => {
-          const distanceBtwCords = distance(
-            job.geotag,
-            job.location_id.geotag,
-            'K'
-          ).toFixed(2)
-          return distanceBtwCords <= 15
-        })
-        const result = await Promise.all(sortedJobs.map(get().getEnrollment))
-        const { data: enrollment, error: errAtEnrol } = await supabase
-          .from('workers_jobs')
-          .select(`*`)
-          .eq('job_id', item.job_id)
-          .eq('worker_id', workerId)
-        if (error) {
-          return error
-        }
-        const hasEnrolled = data.length > 0 ? true : false
-        const distanceBtwCords = distance(
-          item.geotag,
-          item.location_id.geotag,
-          'K'
-        )
-        const response = {
-          ...item,
-          Work: item.job_name,
-          Location: `${formatLocationToGP(item.location_id)}`,
-          locationObj: {
-            dist: distanceBtwCords.toFixed(2),
-            gp: formatLocationToGP(item.location_id)
+    if (error) throw new Error("Couldn't get all jobs.")
+
+    // Get all the enrollment status w.r.t workerID and locationID (or panchayat)
+    const { data: enrollments, error: errorAtEnroll } = await supabase
+      .from('job_enrollments')
+      .select('*')
+      .eq('location_id', locationId)
+      .eq('by_worker', workerId)
+    if (errorAtEnroll) throw new Error('Could not get job enrollment status.')
+
+    if (enrollments.length === 0)
+      throw new Error('You are currently not working on any job.')
+
+    // Making a map of jobID->jobObject for easy access of status
+    let jobMap = new Map()
+    enrollments.forEach(enrollment => {
+      const { job } = enrollment
+      jobMap.set(job, enrollment)
+    })
+
+    // Sorting and modifying jobs nearby 15 km radius of worker(ID) gram panchayat location(ID)
+    const sortedJobs = []
+    allJobs.forEach(job => {
+      const distanceBtwCords = distance(
+        job.geotag,
+        job.location_id.geotag,
+        'K'
+      ).toFixed(2)
+      if (distanceBtwCords <= 15) {
+        // Merge sorted jobs with its respective enrollment status
+        let status = ''
+        let deadline = new Date(job.job_deadline)
+        let now = new Date()
+        deadline.setHours(0, 0, 0, 0)
+        now.setHours(0, 0, 0, 0)
+        if (deadline < now) status = 'completed'
+        else if (!jobMap.has(job.job_id)) status = 'unenrolled'
+        else status = jobMap.get(job.job_id).status
+
+        sortedJobs.push({
+          ...job,
+          locationInfo: {
+            dist: distanceBtwCords,
+            gp: formatLocationToGP(job.location_id)
           },
-          Status: hasEnrolled ? 'enrolled' : 'unenrolled',
-          Started: `${timestampToDate(item.created_at)}`,
-          Deadline: `${timestampToDate(item.job_deadline)}`,
-          Duration: `${
-            jobDuration(item.created_at, item.job_deadline).days
-          } Day`
-        }
-      })
+          Status: status
+        })
+      }
+    })
+
+    return res.status(200).send({
+      data: { allJobs: allJobs, nearbyJobs: sortedJobs },
+      error: null
+    })
   } catch (err) {
-    console.log(err)
+    logger.error(err)
     return res.status(500).send({
       data: null,
-      error: err
+      error: err.message
     })
   }
 }
@@ -210,7 +241,7 @@ const workingOn = async (req, res) => {
       .from('job_enrollments')
       .select(`*, job(*, location_id(*))`)
       .eq('by_worker', workerId)
-      .eq('status', 'enrolled')
+      .eq('status', 'working on')
     if (error) throw error
     if (enrollment.length == 0) throw new Error('Not working on any job.')
     const job = enrollment[0]?.job
@@ -230,7 +261,7 @@ const workingOn = async (req, res) => {
     const { data: labours, error: errAtLabour } = await supabase
       .from('job_enrollments')
       .select('id')
-      .eq('status', 'enrolled')
+      .eq('status', 'working on')
       .eq('job', job.job_id)
     if (errAtLabour) throw errAtLabour
 
@@ -257,4 +288,4 @@ const workingOn = async (req, res) => {
   }
 }
 
-export { applyToJob, entitlement, nearbyJobs, workingOn, setProfile, payments }
+export { applyToJob, entitlement, getJobs, workingOn, setProfile, payments }

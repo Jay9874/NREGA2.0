@@ -45,7 +45,7 @@ export default function ForgotPass () {
                     id='email'
                     name='email'
                     type='email'
-                    autoComplete='email'
+                    autoComplete='username'
                     value={loginInfo.email}
                     required
                     onChange={e =>

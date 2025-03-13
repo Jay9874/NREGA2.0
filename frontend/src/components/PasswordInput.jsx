@@ -6,6 +6,7 @@ export default function PasswordInput ({
   value,
   hint,
   id,
+  autoComplete,
   placeholder,
   onChange,
   disabled,
@@ -49,7 +50,7 @@ export default function PasswordInput ({
             onChange={onChange}
             placeholder={placeholder}
             aria-describedby='password-description'
-            autoComplete='new-password'
+            autoComplete={autoComplete}
             title={hint}
           />
         </div>

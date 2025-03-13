@@ -68,6 +68,7 @@ export default function ResetPass () {
                   id='new_password'
                   value={password.new_password}
                   hint='Enter your new password'
+                  autoComplete='new-password'
                   onChange={handleInput}
                   parentClass='mt-2'
                 />
@@ -79,6 +80,7 @@ export default function ResetPass () {
                   value={password.confirm_password}
                   hint='Retype your new password'
                   onChange={handleInput}
+                  autoComplete='new-password'
                   parentClass='mt-2'
                 />
               </div>

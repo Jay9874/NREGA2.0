@@ -1,4 +1,4 @@
-
+import { createClient } from "../lib/supabase.js"
 const getNotification = async (req, res) => {
   try {
     const { userId, type } = req.body
