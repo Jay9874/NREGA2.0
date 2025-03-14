@@ -4,6 +4,7 @@ const router = express.Router()
 import {
   applyToJob,
   entitlement,
+  getAttendances,
   getJobs,
   payments,
   setProfile,
@@ -38,6 +39,13 @@ router.post('/working-on', workingOn)
  * @access public
  **/
 router.post('/jobs', getJobs)
+
+/**
+ * @route POST api/worker/attendances
+ * @description all the attendances for all the jobs of a worker.
+ * @access public
+ **/
+router.post('/attendances', getAttendances)
 
 /**
  * @route POST api/worker/payments
