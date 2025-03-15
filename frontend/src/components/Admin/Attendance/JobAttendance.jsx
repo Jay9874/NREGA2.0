@@ -39,7 +39,6 @@ export default function JobAttendance () {
         throw new Error('Stay within 200m.')
       }
       if (!imgVerification) {
-        toast.error('The images uploaded is/are not authentic.')
         throw new Error('The images uploaded is/are not authentic.')
       }
       toast.loading('Saving attendance...')
@@ -50,7 +49,7 @@ export default function JobAttendance () {
     } catch (err) {
       console.log(err)
       toast.dismiss()
-      return toast.error('Something went wrong!')
+      return toast.error(err.message)
     }
   }
 

@@ -31,8 +31,10 @@ export default function Attendance () {
     setAttendancePopup,
     isAttendanceActive,
     selectAttendance,
-    setAttndPopupData
+    setAttndPopupData,
+    onAttendanceFilterChange
   } = useWorkerStore()
+  console.log('all the attendances are: ', attendances)
   const [filterInitialized, setFilterInitialized] = useState(false)
   const [loadFilter, setLoadFilter] = useState(false)
   const [states, setStates] = useState([])
@@ -111,13 +113,22 @@ export default function Attendance () {
     })
   }
   // Handle filter change
+  // async function handleChange (id, label, value) {
+  //   if (locations.length == 0) {
+  //     return toast.message('Cant move out of universe.')
+  //   } else {
+  //     setSelected(prev => ({ ...prev, [label]: value }))
+  //     await getLandmarkData(id, value)
+  //     setLoadFilter(true)
+  //   }
+  // }
+
+  // Handle any filter change
   async function handleChange (id, label, value) {
-    if (locations.length == 0) {
-      return toast.message('Cant move out of universe.')
-    } else {
-      setSelected(prev => ({ ...prev, [label]: value }))
-      await getLandmarkData(id, value)
-      setLoadFilter(true)
+    try {
+      console.log(id, label, value)
+    } catch (err) {
+      return err
     }
   }
   async function handlePanchayatChange (id, label, value) {
@@ -142,27 +153,27 @@ export default function Attendance () {
   }
 
   useEffect(() => {
-    if (locations.length == 0) {
-      setStates(['in a galaxy'])
-      setDistricts(['far'])
-      setBlocks(['far'])
-      setPanchayats(['away'])
-      setSelected({
-        state: 'in a galaxy',
-        district: 'far',
-        block: 'far',
-        panchayat: 'away'
-      })
-    } else {
-      if (dataLoaded && !filterInitialized) {
-        initFilter()
-        setLoadFilter(true)
-      }
-      if (loadFilter) {
-        setAttendance(selected)
-        setLoadFilter(false)
-      }
+    // if (locations.length == 0) {
+    //   setStates(['in a galaxy'])
+    //   setDistricts(['far'])
+    //   setBlocks(['far'])
+    //   setPanchayats(['away'])
+    //   setSelected({
+    //     state: 'in a galaxy',
+    //     district: 'far',
+    //     block: 'far',
+    //     panchayat: 'away'
+    //   })
+    // } else {
+    if (dataLoaded && !filterInitialized) {
+      initFilter()
+      setLoadFilter(true)
     }
+    if (loadFilter) {
+      onAttendanceFilterChange(selected)
+      setLoadFilter(false)
+    }
+    // }
   }, [dataLoaded, loadFilter])
 
   return (
@@ -225,7 +236,7 @@ export default function Attendance () {
                   label='panchayat'
                   selected={selected.panchayat}
                   id={3}
-                  onChange={handlePanchayatChange}
+                  onChange={handleChange}
                 />
               </div>
             </div>

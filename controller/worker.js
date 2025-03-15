@@ -290,58 +290,83 @@ const workingOn = async (req, res) => {
 
 const getAttendances = async (req, res) => {
   try {
-    // Return all the attendances for a given worker (with ID).
-    const { locationSelected } = req.body
+    const { workerId } = req.body
+    const supabase = createClient({ req, res })
 
-    const { data: locations } = await supabase
-      .from('locations')
-      .select('*')
-      .eq('state', locationSelected.state)
-      .eq('district', locationSelected.district)
-      .eq('block', locationSelected.block)
-      .eq('panchayat', locationSelected.panchayat)
-    const filteredJobs = jobs.filter(
-      job =>
-        job.location_id.id === locations[0]?.id &&
-        job.originalStatus === 'enrolled'
-    )
-    filteredJobs.forEach(async (job, index) => {
-      const { data } = await supabase
-        .from('attendance')
-        .select(`*, attendance_for(*, location_id(*))`)
-        .eq('worker_id', get().profile.id)
-        .eq('attendance_for', job.job_id)
-        .order('created_at', { ascending: false })
-      const presence = data.filter(item => item.status === 'present')
-      const dateStatus = data.map(item => {
-        return { [item.status]: timeToString(item.created_at) }
-      })
-      const previous = get().attendances
-      set({
-        attendances: [
-          ...previous,
-          {
-            id: index,
-            dates: dateStatus,
-            attendances: data,
-            Work: job.job_name,
-            Location: job.Location,
-            start: job.created_at,
-            end: job.job_deadline,
-            Deadline: timestampToDate(job.job_deadline),
-            Presence: `${presence.length}/${job.Duration}`
-          }
-        ]
-      })
-      set({ loadingAttendance: false })
-      resolve(get().attendances)
+    const { data: attendances, error } = await supabase
+      .from('attendance')
+      .select(`*, attendance_for(*, location_id(*))`)
+      .eq('worker_id', workerId)
+    if (error) {
+      logger.error(error)
+      throw new Error("Couldn't get all the attendances.")
+    }
+    return res.status(200).send({
+      data: attendances,
+      error: null
     })
   } catch (err) {
-    toast.error(err)
-    set({ loadingAttendance: false })
-    reject(err)
+    logger.error(err)
+    return res.status(500).send({
+      data: null,
+      error: err.message
+    })
   }
 }
+// const getAttendances = async (req, res) => {
+//   try {
+//     // Return all the attendances for a given worker (with ID).
+//     const { locationSelected } = req.body
+
+//     const { data: locations } = await supabase
+//       .from('locations')
+//       .select('*')
+//       .eq('state', locationSelected.state)
+//       .eq('district', locationSelected.district)
+//       .eq('block', locationSelected.block)
+//       .eq('panchayat', locationSelected.panchayat)
+//     const filteredJobs = jobs.filter(
+//       job =>
+//         job.location_id.id === locations[0]?.id &&
+//         job.originalStatus === 'enrolled'
+//     )
+//     filteredJobs.forEach(async (job, index) => {
+//       const { data } = await supabase
+//         .from('attendance')
+//         .select(`*, attendance_for(*, location_id(*))`)
+//         .eq('worker_id', get().profile.id)
+//         .eq('attendance_for', job.job_id)
+//         .order('created_at', { ascending: false })
+//       const presence = data.filter(item => item.status === 'present')
+//       const dateStatus = data.map(item => {
+//         return { [item.status]: timeToString(item.created_at) }
+//       })
+//       const previous = get().attendances
+//       set({
+//         attendances: [
+//           ...previous,
+//           {
+//             id: index,
+//             dates: dateStatus,
+//             attendances: data,
+//             Work: job.job_name,
+//             Location: job.Location,
+//             start: job.created_at,
+//             end: job.job_deadline,
+//             Deadline: timestampToDate(job.job_deadline),
+//             Presence: `${presence.length}/${job.Duration}`
+//           }
+//         ]
+//       })
+//       set({ loadingAttendance: false })
+//       resolve(get().attendances)
+//     })
+//   } catch (err) {
+//     toast.error(err)
+//     set({ loadingAttendance: false })
+//     reject(err)
+//   }
+// }
 
 export {
   applyToJob,
