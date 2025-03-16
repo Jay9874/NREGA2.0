@@ -36,7 +36,14 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 app.use(bodyParser.json({ limit: '50mb' }))
 
 // Static files like css, img, js and more
-app.use(express.static(path.resolve(__dirname, 'frontend', 'dist')))
+// app.use(express.static(path.resolve(__dirname, 'frontend', 'dist')))
+// Serve static files from the frontend dist folder
+app.use(express.static(path.join(__dirname, "frontend", "dist")));
+// app.use(express.static(path.resolve(__dirname, 'frontend', 'dist'), {
+//   setHeaders: (res, filePath) => {
+//     res.setHeader('Content-Type', 'application/javascript');
+//   }
+// }));
 
 // Defining api routes methods
 app.use('/api/auth', authRoutes)
@@ -45,16 +52,22 @@ app.use('/api/admin', checkSession, adminRoutes)
 app.use('/api/worker', checkSession, workerRoutes)
 
 // Frontend Routes for vercel
-app.get('*', (req, res) => {
-  res.sendFile(
-    path.join(__dirname, '/frontend/dist', '/index.html'),
-    function (err) {
-      if (err) {
-        res.status(500).send(err)
-      }
-    }
-  )
-})
+
+
+// Handle React routing, return index.html
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+});
+// app.get('*', (req, res) => {
+//   res.sendFile(
+//     path.join(__dirname, '/frontend/dist', '/index.html'),
+//     function (err) {
+//       if (err) {
+//         res.status(500).send(err)
+//       }
+//     }
+//   )
+// })
 
 // Error handler middleware
 app.use((err, req, res, next) => {
