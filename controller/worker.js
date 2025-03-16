@@ -297,6 +297,7 @@ const getAttendances = async (req, res) => {
       .from('attendance')
       .select(`*, attendance_for(*, location_id(*))`)
       .eq('worker_id', workerId)
+      .order('created_at', { ascending: false })
     if (error) {
       logger.error(error)
       throw new Error("Couldn't get all the attendances.")

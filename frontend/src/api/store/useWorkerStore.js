@@ -1,15 +1,12 @@
 import { create } from 'zustand'
-import { supabase } from '..'
 import { toast } from 'sonner'
 import {
   timestampToDate,
   jobDuration,
   formatLocationShort,
   timeToString,
-  formatLocationToGP
 } from '../../utils/dataFormating'
 import { genDates } from '../../utils/generate_date'
-import { distance } from '../../utils/getLocation'
 import { authStore } from './authStore'
 
 export const useWorkerStore = create((set, get) => ({
@@ -17,7 +14,7 @@ export const useWorkerStore = create((set, get) => ({
   loading: false,
   notifications: [],
   dataLoaded: false,
-  loadingAttendance: false,
+  loadingAttendance: true,
   isAttendanceActive: false,
   selectedAttendance: {},
   nearbyJobs: [],
@@ -35,7 +32,7 @@ export const useWorkerStore = create((set, get) => ({
   locations: [],
   payment: [],
   attendances: [],
-  attendanceDiversity: [],
+  selectedAttendances: [],
   totalPresent: 0,
   lastAttendance: {
     work_name: '',
@@ -128,33 +125,12 @@ export const useWorkerStore = create((set, get) => ({
       }
     })
   },
-  setLastAttendance: async () => {
-    try {
-      const { data: attendances, error } = await supabase
-        .from('job_enrollments')
-        .select(`*, location_id(*), job(*)`)
-        .eq('by_worker', get().profile.id)
-        .eq('status', 'enrolled')
-      if (error) throw error
-      if (attendances.length > 0) {
-        set({ totalPresent: attendances.length })
-        const lastPresence = {
-          work_name: attendances[0].job.job_name,
-          location: formatLocationShort(attendances[0].location_id)
-        }
-        set({ lastAttendance: lastPresence })
-        return attendances
-      }
-    } catch (error) {
-      console.log(error)
-      toast.error(error.message)
-      return error
-    }
-  },
+
   setAttendance: () => {
     return new Promise(async (resolve, reject) => {
       try {
         const { id } = get().profile
+        set({ loadingAttendance: true })
         const options = {
           method: 'POST',
           credentials: 'include',
@@ -167,19 +143,27 @@ export const useWorkerStore = create((set, get) => ({
         const res = await fetch('/api/worker/attendances', options)
         const { data, error } = await res.json()
         if (error) throw error
-        set({ loadingAttendance: false, attendances: data })
-        console.log(data)
 
         // Setting all the locations
+        let totalPresent = 0
         set({
-          locations: data.map(
-            attendance => attendance.attendance_for.location_id
-          )
+          locations: data.map(attendance => {
+            if (attendance.status === 'present') totalPresent += 1
+            return attendance.attendance_for.location_id
+          }),
+          attendances: data,
+          loadingAttendance: false
         })
+        set({ totalPresent: totalPresent })
+        const { location_id, job_name } = data[0].attendance_for
+        const lastPresence = {
+          work_name: job_name,
+          location: formatLocationShort(location_id)
+        }
+        set({ lastAttendance: lastPresence })
         resolve(data)
       } catch (err) {
         toast.error(err)
-        set({ loadingAttendance: false })
         reject(err)
       }
     })
@@ -187,71 +171,80 @@ export const useWorkerStore = create((set, get) => ({
   onAttendanceFilterChange: selectedLocation => {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log(selectedLocation)
-        console.log("locations: ", get().locations)
+        set({ selectedAttendances: [], loadingAttendance: true })
         const { state, district, block, panchayat } = selectedLocation
         const allAttendances = get().attendances
-        const [location] = allAttendances.filter((attendance, index) => {
-          const { location_id } = attendance.attendance_for
-          console.log(location_id)
-          if (!selectedLocation.state) {
-            console.log('no state')
-          } else {
-            if (
-              state === location_id.state &&
-              district === location_id.district &&
-              block === location_id.block &&
-              panchayat === location_id.panchayat
-            ) {
-              console.log(location_id.id)
+
+        let attendancesAtLocation = []
+        // Map the presence count with job id.
+        let presenceMap = new Map()
+        // Map everyday status to job id.
+        let everydayStatus = new Map()
+        let locationId = ''
+
+        if (!selectedLocation.state) throw new Error('State filter is empty.')
+        allAttendances.forEach((attendance, index) => {
+          const { location_id, job_id } = attendance.attendance_for
+          if (
+            state === location_id.state &&
+            district === location_id.district &&
+            block === location_id.block &&
+            panchayat === location_id.panchayat
+          ) {
+            locationId = location_id.id
+            if (!Array.isArray(attendance)) {
+              attendancesAtLocation.push(attendance)
             }
+
+            // Increase the present count w.r.t job id.
+            const { attendance_for: job } = attendance
+            presenceMap.set(job.job_id, 0)
+            if (attendance.status === 'present') {
+              const count = presenceMap.get(job.job_id)
+              presenceMap.set(job.job_id, count ? count + 1 : 1)
+            }
+            // Store the everyday status
+            const count = everydayStatus.get(job.job_id)
+            everydayStatus.set(
+              job.job_id,
+              count
+                ? count.push({
+                    [attendance.status]: timeToString(attendance.created_at)
+                  })
+                : [{ [attendance.status]: timeToString(attendance.created_at) }]
+            )
           }
         })
-        const jobs = get().nearbyJobs
-        const { data: locations } = await supabase
-          .from('locations')
-          .select('*')
-          .eq('state', locationSelected.state)
-          .eq('district', locationSelected.district)
-          .eq('block', locationSelected.block)
-          .eq('panchayat', locationSelected.panchayat)
-        const filteredJobs = jobs.filter(
-          job =>
-            job.location_id.id === locations[0]?.id &&
-            job.originalStatus === 'enrolled'
-        )
-        filteredJobs.forEach(async (job, index) => {
-          const { data } = await supabase
-            .from('attendance')
-            .select(`*, attendance_for(*, location_id(*))`)
-            .eq('worker_id', get().profile.id)
-            .eq('attendance_for', job.job_id)
-            .order('created_at', { ascending: false })
-          const presence = data.filter(item => item.status === 'present')
-          const dateStatus = data.map(item => {
-            return { [item.status]: timeToString(item.created_at) }
-          })
-          const previous = get().attendances
+        attendancesAtLocation.forEach((attendance, index) => {
+          const { attendance_for: job } = attendance
+          const presence = presenceMap.get(job.job_id)
+          const dateStatus = everydayStatus.get(job.job_id)
+          const previous = get().selectedAttendances
           set({
-            attendances: [
+            selectedAttendances: [
               ...previous,
               {
                 id: index,
                 dates: dateStatus,
-                attendances: data,
+                attendances: attendance,
                 Work: job.job_name,
                 Location: job.Location,
-                start: job.created_at,
+                start: job.job_start_date,
                 end: job.job_deadline,
                 Deadline: timestampToDate(job.job_deadline),
-                Presence: `${presence.length}/${job.Duration}`
+
+                Presence: `${presence}/${
+                  jobDuration(job.job_start_date, job.job_deadline).days
+                } days`
               }
             ]
           })
           set({ loadingAttendance: false })
-          resolve(get().attendances)
+          resolve(get().selectedAttendances)
         })
       } catch (err) {
+        console.log(err)
+        set({ loadingAttendance: false })
         reject(err)
       }
     })
@@ -328,73 +321,7 @@ export const useWorkerStore = create((set, get) => ({
       }
     })
   },
-  setLocations: async () => {
-    try {
-      const { data: jobs } = await supabase
-        .from('job_enrollments')
-        .select(`*, job(location_id(*))`)
-        .eq('by_worker', get().profile.id)
-      const result = jobs.map(item => item.job.location_id)
-      set({ locations: result })
-    } catch (error) {
-      console.log(error)
-      toast.error(error.message)
-      return error
-    }
-  },
 
-  // Helping functions
-  getLocation: async item => {
-    const { data: location, error } = await supabase
-      .from('locations')
-      .select(`*`)
-      .eq('id', item.jobs.location_id)
-    if (error) {
-      return error
-    }
-    return {
-      ...item,
-      Date: timestampToDate(item.created_at),
-      Work: item.jobs.job_name,
-      Status: item.status,
-      Location: location[0]
-    }
-  },
-  getEnrollment: async item => {
-    const { data, error } = await supabase
-      .from('job_enrollments')
-      .select('*')
-      .eq('job', item.job_id)
-      .eq('by_worker', get().profile.id)
-    if (error) {
-      return error
-    }
-    const distanceBtwCords = distance(item.geotag, item.location_id.geotag, 'K')
-    let status = ''
-    var deadline = new Date(item.job_deadline)
-    var now = new Date()
-    deadline.setHours(0, 0, 0, 0)
-    now.setHours(0, 0, 0, 0)
-    if (deadline < now) status = 'completed'
-    else if (!data.length > 0) status = 'unenrolled'
-    else status = data[0].status
-    return {
-      ...item,
-      Work: item.job_name,
-      time_period: data[0]?.time_period,
-      start: data[0]?.starting_date,
-      Location: `${formatLocationToGP(item.location_id)}`,
-      locationObj: {
-        dist: distanceBtwCords.toFixed(2),
-        gp: formatLocationToGP(item.location_id)
-      },
-      Status: status,
-      originalStatus: data[0]?.status,
-      Started: `${timestampToDate(item.created_at)}`,
-      Deadline: `${timestampToDate(item.job_deadline)}`,
-      Duration: `${jobDuration(item.created_at, item.job_deadline).days} Day`
-    }
-  },
   applyToJob: (
     jobId,
     sachivId,

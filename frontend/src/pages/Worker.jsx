@@ -22,8 +22,6 @@ export const Worker = () => {
     setLoading,
     setDataLoaded,
     setLastWork,
-    setLocations,
-    setLastAttendance,
     setAttendance
   } = useWorkerStore()
 
@@ -37,8 +35,6 @@ export const Worker = () => {
       await setJobs()
       await setAttendance()
       await setPayment()
-      await setLocations()
-      await setLastAttendance()
       await setNotifications()
       await setLastWork()
       setLoading(false)

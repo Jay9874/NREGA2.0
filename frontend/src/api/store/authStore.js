@@ -32,6 +32,7 @@ export const authStore = create((set, get) => ({
         set({ loading: false })
         resolve(data)
       } catch (err) {
+        console.log(err)
         set({ loading: false })
         reject(err)
       }

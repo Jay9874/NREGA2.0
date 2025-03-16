@@ -23,10 +23,8 @@ const tableHeading = [
 
 export default function Attendance () {
   const {
-    attendances,
-    setAttendance,
+    selectedAttendances,
     locations,
-    dataLoaded,
     loadingAttendance,
     setAttendancePopup,
     isAttendanceActive,
@@ -34,9 +32,8 @@ export default function Attendance () {
     setAttndPopupData,
     onAttendanceFilterChange
   } = useWorkerStore()
-  console.log('all the attendances are: ', attendances)
+
   const [filterInitialized, setFilterInitialized] = useState(false)
-  const [loadFilter, setLoadFilter] = useState(false)
   const [states, setStates] = useState([])
   const [districts, setDistricts] = useState([])
   const [blocks, setBlocks] = useState([])
@@ -47,6 +44,7 @@ export default function Attendance () {
     block: '',
     panchayat: ''
   })
+  const [changedFilter, setChangedFilter] = useState(null)
   const filterLoopcallback = [
     { callback: setDistricts },
     { callback: setBlocks },
@@ -66,16 +64,16 @@ export default function Attendance () {
         filterLoop[id].landmarkValue = value
         filterLoop[id].callback = filterLoopcallback[id].callback
         var selection = {
-          state: '',
-          district: '',
-          block: '',
-          panchayat: ''
+          state: selected.state,
+          district: selected.district,
+          block: selected.block,
+          panchayat: selected.panchayat
         }
         for (let i = id; i < 3; i++) {
           const landmarkValue =
             i === id ? value : filterLoop[i - 1].landmarkValue
           const newLocations = await filterData(i, landmarkValue)
-          const fetchedLandmarkData = await newLocations.map(
+          const fetchedLandmarkData = newLocations.map(
             location => location[filterLoop[i].toFetch]
           )
           filterLoopcallback[i].callback([...new Set(fetchedLandmarkData)])
@@ -97,50 +95,47 @@ export default function Attendance () {
 
   // Initialize filter
   async function initFilter () {
-    return new Promise((resolve, reject) => {
-      try {
-        const fetchedStates = locations.map(location => location.state)
-        setStates([...new Set(fetchedStates)])
-        var result = getLandmarkData(0, fetchedStates[0])
-        result.state = fetchedStates[0]
-        setSelected(result)
-        setFilterInitialized(true)
-        setLoadFilter(true)
-        resolve(result)
-      } catch (error) {
-        reject(error)
-      }
-    })
-  }
-  // Handle filter change
-  // async function handleChange (id, label, value) {
-  //   if (locations.length == 0) {
-  //     return toast.message('Cant move out of universe.')
-  //   } else {
-  //     setSelected(prev => ({ ...prev, [label]: value }))
-  //     await getLandmarkData(id, value)
-  //     setLoadFilter(true)
-  //   }
-  // }
-
-  // Handle any filter change
-  async function handleChange (id, label, value) {
     try {
-      console.log(id, label, value)
+      const fetchedStates = locations.map(location => location.state)
+      setStates([...new Set(fetchedStates)])
+      var result = await getLandmarkData(0, fetchedStates[0])
+      result.state = fetchedStates[0]
+      setSelected(result)
+      setFilterInitialized(true)
+      const data = await onAttendanceFilterChange(result)
+      return result
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  // Handle any filter change except panchayat
+  function handleChange (id, label, value) {
+    try {
+      setSelected(prev => ({ ...prev, [label]: value }))
+      setChangedFilter({ id, label, value })
     } catch (err) {
+      console.log(err)
       return err
     }
   }
+  // handle panchayat filter change
   async function handlePanchayatChange (id, label, value) {
-    if (locations.length == 0) {
-      return toast.message('Cant move out of universe.')
-    } else {
+    try {
+      if (locations.length == 0)
+        return toast.message('Cant move out of universe.')
+
       setSelected(prev => ({ ...prev, [label]: value }))
-      setLoadFilter(true)
+      const data = await onAttendanceFilterChange({
+        ...selected,
+        [label]: value
+      })
+    } catch (err) {
+      console.log(err)
     }
   }
 
-  // Handle row click
+  // Handle row click to view day wise attendance
   async function handleRowClick (e, row) {
     try {
       await setAttndPopupData(row)
@@ -152,29 +147,43 @@ export default function Attendance () {
     }
   }
 
+  async function handleFilterChange (id, label, value) {
+    try {
+      if (locations.length === 0)
+        return toast.message('Cant move out of universe.')
+      let selection = await getLandmarkData(id, value)
+      selection = { ...selection, [label]: value }
+      const data = await onAttendanceFilterChange(selection)
+    } catch (err) {
+      console.log(err)
+      return err
+    }
+  }
+
   useEffect(() => {
-    // if (locations.length == 0) {
-    //   setStates(['in a galaxy'])
-    //   setDistricts(['far'])
-    //   setBlocks(['far'])
-    //   setPanchayats(['away'])
-    //   setSelected({
-    //     state: 'in a galaxy',
-    //     district: 'far',
-    //     block: 'far',
-    //     panchayat: 'away'
-    //   })
-    // } else {
-    if (dataLoaded && !filterInitialized) {
-      initFilter()
-      setLoadFilter(true)
+    if (locations.length == 0) {
+      setStates(['in a galaxy'])
+      setDistricts(['far'])
+      setBlocks(['far'])
+      setPanchayats(['away'])
+      setSelected({
+        state: 'in a galaxy',
+        district: 'far',
+        block: 'far',
+        panchayat: 'away'
+      })
+    } else {
+      if (!loadingAttendance) initFilter()
     }
-    if (loadFilter) {
-      onAttendanceFilterChange(selected)
-      setLoadFilter(false)
+  }, [])
+
+  // side effects for filter change
+  useEffect(() => {
+    if (changedFilter) {
+      const { id, label, value } = changedFilter
+      handleFilterChange(id, label, value)
     }
-    // }
-  }, [dataLoaded, loadFilter])
+  }, [changedFilter])
 
   return (
     // The Attendance popup
@@ -200,7 +209,7 @@ export default function Attendance () {
         </div>
 
         {/* Filtering seletions */}
-        {dataLoaded && (
+        {filterInitialized && (
           <div className='mx-auto max-w-6xl px-4 sm:px-6 lg:px-8'>
             <div className='mt-2 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3'>
               <div className='relative z-50'>
@@ -236,7 +245,7 @@ export default function Attendance () {
                   label='panchayat'
                   selected={selected.panchayat}
                   id={3}
-                  onChange={handleChange}
+                  onChange={handlePanchayatChange}
                 />
               </div>
             </div>
@@ -255,9 +264,17 @@ export default function Attendance () {
               </p>
             </div>
           </div>
+        ) : locations.length === 0 ? (
+          <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
+            <div className='rounded-xl border-0 ring-1 ring-gray-100 h-24 flex items-center justify-center'>
+              <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
+                Turning on the hyper space mode...
+              </p>
+            </div>
+          </div>
         ) : (
           <DynamicTable
-            data={attendances}
+            data={selectedAttendances}
             headings={tableHeading}
             loading={loadingAttendance}
             rowNext={true}

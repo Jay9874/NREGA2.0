@@ -3,7 +3,7 @@ import { useWorkerStore } from '../../api/store'
 import DynamicTable from '../DynamicTable'
 import { useEffect, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
-import { formatLocationToGP, jobDuration, timestampToDate } from '../../utils/dataFormating'
+import { jobDuration, timestampToDate } from '../../utils/dataFormating'
 
 const tableHeading = [
   { name: 'Work', css_normal: '', css_list: '' },
