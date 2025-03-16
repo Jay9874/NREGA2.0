@@ -88,11 +88,11 @@ export default function Payment () {
         </div>
       </div>
       {/* Recent Payments */}
-      <h2 className='mx-auto mt-8 max-w-6xl px-4 text-lg font-medium leading-6 text-gray-900 sm:px-6 lg:px-8'>
+      <h2 className='mx-auto px-4 sm:px-6 lg:px-8 mt-8 max-w-6xl text-lg font-medium leading-6 text-gray-900'>
         All transactions
       </h2>
       {payment?.length === 0 ? (
-        <div className='mx-auto max-w-7xl px-12 text-center pt-4'>
+        <div className='mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl text-center pt-4'>
           <div className='rounded-xl border ring-gray-100 h-24 flex items-center justify-center'>
             <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
               Seems no recent activity, check back soon.

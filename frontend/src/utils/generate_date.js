@@ -23,13 +23,13 @@ const monthNames = [
 var genDates = function (selectedAttnd) {
   return new Promise((resolve, reject) => {
     try {
-      const { start, end, attendances } = selectedAttnd
+      const { start, end, dates } = selectedAttnd
       const startDate = new Date(start)
       const endDate = new Date(end)
       const datesStatus = new Map()
-      attendances.forEach(attnd => {
-        const dateStr = getDateStr(attnd.created_at)
-        datesStatus.set(dateStr, attnd.status)
+      dates.forEach(attnDate => {
+        const dateStr = getDateStr(attnDate.created_at)
+        datesStatus.set(dateStr, attnDate.status)
       })
       const months = new Map()
       const monthlyDates = new Map()

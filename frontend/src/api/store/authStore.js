@@ -33,6 +33,7 @@ export const authStore = create((set, get) => ({
         resolve(data)
       } catch (err) {
         console.log(err)
+        toast.error(err)
         set({ loading: false })
         reject(err)
       }
@@ -64,8 +65,9 @@ export const authStore = create((set, get) => ({
       toast.success('Login successful!')
       navigate(`/${data.type}/dashboard`)
     } catch (err) {
-      toast.error(err)
       toast.dismiss()
+      console.log(err)
+      toast.error(err)
       set({ loading: false })
       return err
     }
@@ -257,6 +259,29 @@ export const authStore = create((set, get) => ({
       } catch (err) {
         console.log(err)
         toast.error(err)
+        reject(err)
+      }
+    })
+  },
+  subscribeRealtime: table => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const options = {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            Accept: 'Application/json',
+            'Content-Type': 'Application/json'
+          },
+          body: JSON.stringify({ table })
+        }
+        const res = await fetch('/api/subscribe-realtime', options)
+        const { data, error } = await res.json()
+        toast.dismiss()
+        if (error) throw error
+        resolve(data)
+      } catch (err) {
+        console.log(err)
         reject(err)
       }
     })

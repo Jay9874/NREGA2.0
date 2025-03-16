@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { authStore, useWorkerStore } from '../api/store'
 // Importing all the components
 import { Sidebar, TopNavbar } from '../components'
-import { supabase } from '../api'
 
 // Constants imports
 import { workerNavigation } from '../utils/sidelinks'
@@ -25,7 +24,7 @@ export const Worker = () => {
     setAttendance
   } = useWorkerStore()
 
-  const { user, notifications, setNotifications, addToNotifications } =
+  const { user, notifications, setNotifications, subscribeRealtime } =
     authStore()
 
   async function handleSetup () {
@@ -36,6 +35,7 @@ export const Worker = () => {
       await setAttendance()
       await setPayment()
       await setNotifications()
+      await subscribeRealtime('worker_notifications')
       await setLastWork()
       setLoading(false)
       setDataLoaded(true)
@@ -49,18 +49,6 @@ export const Worker = () => {
 
   useEffect(() => {
     handleSetup()
-    // Supabase Realtime
-    const handleInserts = payload => {
-      addToNotifications(payload.new)
-    }
-    supabase
-      .channel('job_application')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'worker_notifications' },
-        handleInserts
-      )
-      .subscribe()
   }, [])
 
   return (

@@ -8,7 +8,6 @@ const nodeEnv = process.env.NODE_ENV
 const __dirname = path.resolve()
 import cookieParser from 'cookie-parser'
 const PORT = process.env.PORT || 8080
-import fs from 'fs'
 
 // Importing routes and custom middlewares
 import { adminRoutes } from './routes/admin.js'
@@ -16,20 +15,26 @@ import { workerRoutes } from './routes/worker.js'
 import { authRoutes } from './routes/auth.js'
 import { checkSession } from './middleware/checkSession.js'
 import { commonRoutes } from './routes/common.js'
+import { rateLimiter } from './middleware/rateLimiter.js'
 
 const app = express()
 app.use(
   cors({
-    origin: nodeEnv == 'production' ? '' : 'http://localhost:5173',
+    origin:
+      nodeEnv == 'production'
+        ? 'https://nrega-2-0.vercel.app'
+        : 'http://localhost:5173',
     credentials: true
   })
 )
 
 // Middlewares
 app.use(cookieParser())
+app.use(rateLimiter)
 app.use(express.json({ limit: '25mb' }))
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 app.use(bodyParser.json({ limit: '50mb' }))
+
 // Static files like css, img, js and more
 app.use(express.static(path.resolve(__dirname, 'frontend', 'dist')))
 

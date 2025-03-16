@@ -2,7 +2,6 @@ import { Outlet } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Sidebar, TopNavbar} from '../components'
 import { authStore, useAdminStore } from '../api/store'
-import { supabase } from '../api'
 // Constants imports
 import { adminTopNavigation } from '../utils/dashboard_toplink'
 import { adminNavigation } from '../utils/sidelinks'
@@ -20,7 +19,7 @@ export const Admin = () => {
     setLoading,
     payout
   } = useAdminStore()
-  const { user, notifications, setNotifications, addToNotifications } =
+  const { user, notifications, setNotifications,  subscribeRealtime} =
     authStore()
 
   async function handleSetup () {
@@ -31,6 +30,7 @@ export const Admin = () => {
       await setEmployees()
       await payout()
       await setNotifications()
+      await subscribeRealtime('sachiv_notifications')
       setLoading(false)
     } catch (error) {
       return error
@@ -39,19 +39,6 @@ export const Admin = () => {
 
   useEffect(() => {
     handleSetup()
-
-     // Supabase Realtime
-    const handleInserts = payload => {
-      addToNotifications(payload.new)
-    }
-    supabase
-      .channel('job_application')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'sachiv_notifications' },
-        handleInserts
-      )
-      .subscribe()
   }, [])
 
   return (

@@ -60,11 +60,11 @@ export default function Calendar () {
 
 
   return isFormatingPopup ? (
-    <div className=' bg-white text-center shadow-md px-6 py-6 rounded-md border-1 border-gray-200'>
+    <div className=' bg-white mt-6  text-center shadow-md px-6 py-6 rounded-md border-1 border-gray-200'>
       <DataTable />
     </div>
   ) : (
-    <div className='px-6 py-6'>
+    <div className='px-0 sm:px-6 py-6'>
       <div className='bg-white shadow-md px-6 py-6 rounded-md border-1 border-gray-200'>
         <div className='text-md font-bold text-gray-900'>
           Daily Attendances
@@ -78,6 +78,11 @@ export default function Calendar () {
             at{' '}
             <span className='text-gray-600 font-medium'>
               {selectedAttendance.Location}
+            </span>
+            <br />
+            started{' '}
+            <span className='text-gray-600 font-medium'>
+              {selectedAttendance.Started}
             </span>
           </p>
         </div>
@@ -193,53 +198,3 @@ export default function Calendar () {
     </div>
   )
 }
-
-// <div className='w-full text-gray-700'>
-//   <div className='flex justify-between'>
-//     <div className=''>
-// {selectedMonth?.idx >= 1 && (
-//         <button
-//           type='button'
-//           onClick={e => handleMonthChange(e, 'P')}
-//           className='calendar-prev-btn rounded-full bg-gray-200 flex flex-none items-center justify-center text-gray-900 hover:bg-gray-100'
-//         >
-//           <span className='sr-only'>Previous month</span>
-//           <ChevronLeftIcon className='h-6 w-6' aria-hidden='true' />
-//         </button>
-//       )}
-//     </div>
-//     <div ref={monthCont} className='static-str-container'>
-//       <div
-//         ref={monthStr}
-//         className='month-str-container font-semibold'
-//       >
-//         {months?.map((element, index) => (
-//           <div
-//             className={` ${
-//               active === index ? 'active' : ''
-//             }`}
-//             id={`month-${index}`}
-//             key={index}
-//           >
-//             <div className='flex items-center justify-center h-full'>
-//               <p className='text-sm'>{element.str}</p>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-
-//     <div className=''>
-//       {selectedMonth?.idx < months?.length - 1 && (
-//         <button
-//           type='button'
-//           onClick={e => handleMonthChange(e, 'N')}
-//           className='calendar-nxt-btn rounded-full bg-gray-200 flex flex-none items-center justify-center text-gray-900 hover:bg-gray-100'
-//         >
-//           <span className='sr-only'>Next month</span>
-//           <ChevronRightIcon className='h-6 w-6' aria-hidden='true' />
-//         </button>
-//       )}
-//     </div>
-//   </div>
-// </div>

@@ -3,8 +3,7 @@ import { toast } from 'sonner'
 import {
   timestampToDate,
   jobDuration,
-  formatLocationShort,
-  timeToString,
+  formatLocationShort
 } from '../../utils/dataFormating'
 import { genDates } from '../../utils/generate_date'
 import { authStore } from './authStore'
@@ -178,11 +177,14 @@ export const useWorkerStore = create((set, get) => ({
         let attendancesAtLocation = []
         // Map the presence count with job id.
         let presenceMap = new Map()
+        // for unique jobs only
+        let uniqueJob = new Map()
         // Map everyday status to job id.
         let everydayStatus = new Map()
-        let locationId = ''
 
         if (!selectedLocation.state) throw new Error('State filter is empty.')
+
+        // extracting attendances at currently selected location (with filter)
         allAttendances.forEach((attendance, index) => {
           const { location_id, job_id } = attendance.attendance_for
           if (
@@ -191,8 +193,9 @@ export const useWorkerStore = create((set, get) => ({
             block === location_id.block &&
             panchayat === location_id.panchayat
           ) {
-            locationId = location_id.id
-            if (!Array.isArray(attendance)) {
+            // keeping only the unique jobs
+            if (!uniqueJob.has(job_id)) {
+              uniqueJob.set(job_id, 1)
               attendancesAtLocation.push(attendance)
             }
 
@@ -204,17 +207,41 @@ export const useWorkerStore = create((set, get) => ({
               presenceMap.set(job.job_id, count ? count + 1 : 1)
             }
             // Store the everyday status
-            const count = everydayStatus.get(job.job_id)
-            everydayStatus.set(
-              job.job_id,
-              count
-                ? count.push({
-                    [attendance.status]: timeToString(attendance.created_at)
-                  })
-                : [{ [attendance.status]: timeToString(attendance.created_at) }]
-            )
+            const hasDateArray = everydayStatus.has(job.job_id)
+            if (hasDateArray) {
+              let dateArr = everydayStatus.get(job.job_id)
+              everydayStatus.set(job_id, [
+                ...dateArr,
+                {
+                  status: attendance.status,
+                  created_at: attendance.created_at
+                }
+              ])
+            } else {
+              everydayStatus.set(job.job_id, [
+                {
+                  status: attendance.status,
+                  created_at: attendance.created_at
+                }
+              ])
+            }
+            // everydayStatus.set(
+            //   job.job_id,
+            //   dateArr
+            //     ? dateArr.push({
+            //         status: attendance.status,
+            //         created_at: attendance.created_at
+            //       })
+            //     : [
+            //         {
+            //           status: attendance.status,
+            //           created_at: attendance.created_at
+            //         }
+            //       ]
+            // )
           }
         })
+
         attendancesAtLocation.forEach((attendance, index) => {
           const { attendance_for: job } = attendance
           const presence = presenceMap.get(job.job_id)
@@ -228,11 +255,11 @@ export const useWorkerStore = create((set, get) => ({
                 dates: dateStatus,
                 attendances: attendance,
                 Work: job.job_name,
-                Location: job.Location,
+                Location: formatLocationShort(job.location_id),
                 start: job.job_start_date,
+                Started: timestampToDate(job.job_start_date),
                 end: job.job_deadline,
                 Deadline: timestampToDate(job.job_deadline),
-
                 Presence: `${presence}/${
                   jobDuration(job.job_start_date, job.job_deadline).days
                 } days`

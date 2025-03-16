@@ -197,7 +197,7 @@ export default function Attendance () {
       {/* Attendance filter */}
       <main className='flex-1 pb-8 relative z-10 px-4'>
         <div className='px-4 py-6 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8'>
-          <div className='border-b border-gray-200 pb-5'>
+          <div className='pb-5'>
             <h3 className='text-lg font-medium leading-6 text-gray-900'>
               Your Attendance
             </h3>
@@ -254,12 +254,12 @@ export default function Attendance () {
 
         {/* Filter Results */}
         <h2 className='mx-auto mt-8 max-w-6xl px-4 text-lg font-medium leading-6 text-gray-900 sm:px-6 lg:px-8'>
-          Found Attendance
+          Found attendance
         </h2>
         {loadingAttendance ? (
           <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
             <div className='rounded-xl border-0 ring-1 ring-gray-100 h-24 flex items-center justify-center'>
-              <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
+              <p className='mt-2 text-lg font-medium text-black text-opacity-50 animate-pulse'>
                 Fetching attendance...
               </p>
             </div>
@@ -267,7 +267,7 @@ export default function Attendance () {
         ) : locations.length === 0 ? (
           <div className='mx-auto max-w-7xl px-6 text-center pt-4'>
             <div className='rounded-xl border-0 ring-1 ring-gray-100 h-24 flex items-center justify-center'>
-              <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
+              <p className='mt-2 text-lg font-medium text-black text-opacity-50 animate-pulse'>
                 Turning on the hyper space mode...
               </p>
             </div>
