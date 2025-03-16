@@ -52,22 +52,20 @@ app.use('/api/admin', checkSession, adminRoutes)
 app.use('/api/worker', checkSession, workerRoutes)
 
 // Frontend Routes for vercel
-
-
 // Handle React routing, return index.html
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
-});
-// app.get('*', (req, res) => {
-//   res.sendFile(
-//     path.join(__dirname, '/frontend/dist', '/index.html'),
-//     function (err) {
-//       if (err) {
-//         res.status(500).send(err)
-//       }
-//     }
-//   )
-// })
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+// });
+app.get('*', (req, res) => {
+  res.sendFile(
+    path.join(__dirname, '/frontend/dist', '/index.html'),
+    function (err) {
+      if (err) {
+        res.status(500).send(err)
+      }
+    }
+  )
+})
 
 // Error handler middleware
 app.use((err, req, res, next) => {
