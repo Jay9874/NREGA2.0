@@ -8,10 +8,7 @@
   "routes": [
     {
       "dest": "index.js",
-      "src": "/(.*)\\.(js|mjs)",
-      "headers": {
-        "Content-Type": "application/javascript"
-      }
+      "src": "/(.*)\\.(js|mjs)"
     }
   ]
 }
