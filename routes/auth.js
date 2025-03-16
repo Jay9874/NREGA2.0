@@ -1,14 +1,15 @@
-import express from 'express'
-const router = express.Router()
-import {
+const express = require('express');
+const router = express.Router();
+
+const {
   login,
   logout,
   pageRefresh,
   recoverUser,
   resetPassword,
   verify
-} from '../controller/auth.js'
-import { checkSession } from '../middleware/checkSession.js'
+} = require('../controller/auth.js');
+
 
 // Login route
 /**
@@ -58,4 +59,5 @@ router.post('/logout', logout)
  **/
 router.post('/verify', verify)
 
-export { router as authRoutes }
+module.exports = { authRoutes: router };
+

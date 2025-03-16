@@ -1,5 +1,6 @@
-import { createClient } from '../lib/supabase.js'
-import { logger } from '../utils/logger.js'
+const { createClient } = require('../lib/supabase.js')
+const { logger } = require('../utils/logger.js')
+
 const getNotification = async (req, res) => {
   try {
     const { userId, type } = req.body
@@ -10,7 +11,7 @@ const getNotification = async (req, res) => {
       .from(table)
       .select('*')
       .eq('user_id', userId)
-    if (error) throw error
+    if (error) throw new Error("Couldn't get the notifications.")
     return res.status(200).send({
       data: data,
       error: null
@@ -19,7 +20,7 @@ const getNotification = async (req, res) => {
     console.log(err)
     return res.status(500).send({
       data: null,
-      error: err
+      error: err.message
     })
   }
 }
@@ -34,7 +35,7 @@ const clearANotification = async (req, res) => {
       .delete()
       .eq('id', notificationId)
       .select()
-    if (error) throw error
+    if (error) throw new Error("Couldn't clear the notification.")
     return res.status(200).send({
       data: data,
       error: null
@@ -43,7 +44,7 @@ const clearANotification = async (req, res) => {
     console.log(err)
     return res.status(501).send({
       data: null,
-      error: err
+      error: err.message
     })
   }
 }
@@ -77,4 +78,8 @@ const subscribeRealtime = async (req, res) => {
   }
 }
 
-export { clearANotification, getNotification, subscribeRealtime }
+module.exports = {
+  clearANotification,
+  getNotification,
+  subscribeRealtime
+}

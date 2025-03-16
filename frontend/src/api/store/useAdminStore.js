@@ -68,7 +68,7 @@ export const useAdminStore = create((set, get) => ({
       } catch (error) {
         console.log(error)
         toast.dismiss()
-        toast.error(error.message)
+        toast.error(error)
         reject(error)
       }
     })
@@ -175,7 +175,7 @@ export const useAdminStore = create((set, get) => ({
         resolve(data)
       } catch (error) {
         toast.dismiss()
-        toast.error(error.message)
+        toast.error(error)
         reject(error)
       }
     })
@@ -208,7 +208,7 @@ export const useAdminStore = create((set, get) => ({
         console.log(err)
         set({ loading: false })
         toast.dismiss()
-        toast.error('Something went wrong.')
+        toast.error(err)
         reject(err)
       }
     })
@@ -236,7 +236,7 @@ export const useAdminStore = create((set, get) => ({
         const { data, error } = await res.json()
         if (error) {
           console.log(error)
-          return toast.error(error.message)
+          return toast.error(error)
         }
         const newMap = new Map()
         data.enrollments.forEach((enrollment, index) => {
@@ -319,7 +319,7 @@ export const useAdminStore = create((set, get) => ({
     } catch (err) {
       console.log(err)
       toast.dismiss()
-      toast.error(err.message)
+      toast.error(err)
     }
   },
   enrollWorker: (applicationId, notification) => {
@@ -349,7 +349,7 @@ export const useAdminStore = create((set, get) => ({
       } catch (err) {
         set({ loading: false })
         toast.dismiss()
-        toast.error('Something went wrong.')
+        toast.error(err)
         console.log(err)
         reject(err)
       }
@@ -382,7 +382,7 @@ export const useAdminStore = create((set, get) => ({
         set({ loading: false })
         reject(err)
         toast.dismiss()
-        toast.error('Something went wrong.')
+        toast.error(err)
       }
     })
   },
@@ -411,7 +411,7 @@ export const useAdminStore = create((set, get) => ({
         console.error(err)
         set({ loading: false })
         toast.dismiss()
-        toast.error('Something went wrong.')
+        toast.error(err)
         reject(err)
       }
     })
@@ -438,7 +438,7 @@ export const useAdminStore = create((set, get) => ({
         resolve(data)
       } catch (err) {
         console.log(err)
-        toast.error('Something went wrong.')
+        toast.error(err)
         reject(err)
       }
     })

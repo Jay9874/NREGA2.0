@@ -1,5 +1,6 @@
-import { createClient } from '../lib/supabase.js'
-import { logger } from '../utils/logger.js'
+const { createClient } = require('../lib/supabase.js');
+const { logger } = require('../utils/logger.js');
+
 
 const login = async (req, res) => {
   try {
@@ -208,4 +209,12 @@ const recoverUser = async (req, res) => {
   }
 }
 
-export { login, logout, pageRefresh, verify, resetPassword, recoverUser }
+module.exports = {
+  login,
+  logout,
+  pageRefresh,
+  verify,
+  resetPassword,
+  recoverUser
+};
+

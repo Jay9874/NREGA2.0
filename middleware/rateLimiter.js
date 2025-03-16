@@ -1,5 +1,5 @@
 const rateLimit = {} // Store request counts
-import { createClient } from '../lib/supabase.js'
+const { createClient } = require('../lib/supabase.js')
 
 const rateLimiter = async (req, res, next) => {
   try {
@@ -9,7 +9,7 @@ const rateLimiter = async (req, res, next) => {
     }
     const now = Date.now()
     const timeWindow = 60 * 1000 // 1 minute
-    const maxRequests = 15 // 15 requests per minute
+    const maxRequests = 60 // 60 requests per minute
 
     if (now - rateLimit[ip].lastRequest > timeWindow) {
       rateLimit[ip] = { count: 0, lastRequest: now }
@@ -21,12 +21,14 @@ const rateLimiter = async (req, res, next) => {
     if (rateLimit[ip].count > maxRequests) {
       const { error } = await supabase.auth.signOut()
       if (error) throw new Error("Couldn't sign you out.")
-      return res.status(429).send({ data: null, error: 'Too Many Requests, try after 60 seconds.' })
+      return res
+        .status(429)
+        .send({ data: null, error: 'Too Many Requests, try after 60 seconds.' })
     }
     next()
   } catch (err) {
-    next(err)
+    return next(err)
   }
 }
 
-export { rateLimiter }
+module.exports = { rateLimiter }

@@ -1,5 +1,6 @@
-import { createLogger, transports } from 'winston'
-import winston from 'winston'
+const winston = require('winston');
+const { createLogger, transports } = winston;
+
 
 // Define log level colors
 const logColors = {
@@ -80,7 +81,8 @@ logger.log = function (level, msg, ...args) {
 }
 
 // Export logger (CommonJS style)
-export { logger }
+module.exports = { logger };
+
 
 /* LOGGER EXAMPLES
   const log = require('./log.js');

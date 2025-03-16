@@ -87,7 +87,7 @@ export default function Attendance () {
         }
         resolve(selection)
       } catch (error) {
-        toast.error(error.message)
+        toast.error(error)
         reject(error)
       }
     })

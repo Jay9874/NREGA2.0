@@ -1,11 +1,12 @@
-import {
+const {
   formatLocationToGP,
   jobDuration,
   timestampToDate
-} from '../frontend/src/utils/dataFormating.js'
-import { distance } from '../frontend/src/utils/getLocation.js'
-import { createClient } from '../lib/supabase.js'
-import { logger } from '../utils/logger.js'
+} = require('../utils/dataFormating.js')
+const { distance } = require('../utils/distance.js')
+
+const { createClient } = require('../lib/supabase.js')
+const { logger } = require('../utils/logger.js')
 
 const setProfile = async (req, res) => {
   try {
@@ -15,7 +16,7 @@ const setProfile = async (req, res) => {
       .from('worker')
       .select(`*, address(*)`)
       .eq('id', workerId)
-    if (error) throw error
+    if (error) throw new Error("Couldn't get your profile.")
     return res.status(200).send({
       data: profile[0],
       error: null
@@ -23,7 +24,7 @@ const setProfile = async (req, res) => {
   } catch (err) {
     return res.status(500).send({
       data: null,
-      error: err
+      error: err.message
     })
   }
 }
@@ -59,7 +60,7 @@ const applyToJob = async (req, res) => {
       .from('job_enrollments')
       .upsert(detail)
       .select()
-    if (error) throw error
+    if (error) throw new Error("Couldn't apply to the job.")
     const { data: notification, error: errAtNotification } = await supabase
       .from('sachiv_notifications')
       .insert({
@@ -77,7 +78,8 @@ const applyToJob = async (req, res) => {
         application_id: detail.application_id
       })
       .select()
-    if (errAtNotification) throw errAtNotification
+    if (errAtNotification)
+      throw new Error("Couldn't create notification for worker.")
     const { data: workerNotification, error: errAtWorkerNotification } =
       await supabase
         .from('worker_notifications')
@@ -92,7 +94,8 @@ const applyToJob = async (req, res) => {
           application_id: detail.application_id
         })
         .select()
-    if (errAtWorkerNotification) throw errAtWorkerNotification
+    if (errAtWorkerNotification)
+      throw new Error("Couldn't create notification for sachiv.")
     return res.status(200).json({
       data: data,
       error: null
@@ -101,7 +104,7 @@ const applyToJob = async (req, res) => {
     console.log('error: ', err)
     return res.status(500).json({
       data: null,
-      error: err
+      error: err.message
     })
   }
 }
@@ -114,7 +117,7 @@ const entitlement = async (req, res) => {
       .from('households')
       .select('quota')
       .eq('family_id', familyId)
-    if (error) throw error
+    if (error) throw new Error("Couldn't get entitlement.")
     return res.status(200).send({
       data: { entitlement: data[0].quota },
       error: null
@@ -123,7 +126,7 @@ const entitlement = async (req, res) => {
     console.log(err)
     return res.status(500).json({
       data: null,
-      error: err
+      error: err.message
     })
   }
 }
@@ -242,7 +245,7 @@ const workingOn = async (req, res) => {
       .select(`*, job(*, location_id(*))`)
       .eq('by_worker', workerId)
       .eq('status', 'working on')
-    if (error) throw error
+    if (error) throw new Error("Couldn't get enrollment status.")
     if (enrollment.length == 0) throw new Error('Not working on any job.')
     const job = enrollment[0]?.job
     const deadline = timestampToDate(job.job_deadline)
@@ -255,7 +258,7 @@ const workingOn = async (req, res) => {
       .eq('worker_id', workerId)
       .eq('status', 'present')
       .eq('attendance_for', job.job_id)
-    if (errAtAttendance) throw errAtAttendance
+    if (errAtAttendance) throw new Error("Couldn't get attendance.")
 
     // Getting number of labours working on the job with the worker
     const { data: labours, error: errAtLabour } = await supabase
@@ -263,7 +266,7 @@ const workingOn = async (req, res) => {
       .select('id')
       .eq('status', 'working on')
       .eq('job', job.job_id)
-    if (errAtLabour) throw errAtLabour
+    if (errAtLabour) throw new Error("Couldn't get workers associated.")
 
     const lastWork = {
       location: job.location_id,
@@ -283,7 +286,7 @@ const workingOn = async (req, res) => {
     console.log(err)
     return res.status(500).send({
       data: null,
-      error: err
+      error: err.message
     })
   }
 }
@@ -298,10 +301,8 @@ const getAttendances = async (req, res) => {
       .select(`*, attendance_for(*, location_id(*))`)
       .eq('worker_id', workerId)
       .order('created_at', { ascending: false })
-    if (error) {
-      logger.error(error)
-      throw new Error("Couldn't get all the attendances.")
-    }
+    if (error) throw new Error("Couldn't get all the attendances.")
+
     return res.status(200).send({
       data: attendances,
       error: null
@@ -315,7 +316,7 @@ const getAttendances = async (req, res) => {
   }
 }
 
-export {
+module.exports = {
   applyToJob,
   entitlement,
   getJobs,

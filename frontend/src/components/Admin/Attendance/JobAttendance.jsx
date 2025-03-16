@@ -49,7 +49,7 @@ export default function JobAttendance () {
     } catch (err) {
       console.log(err)
       toast.dismiss()
-      return toast.error(err.message)
+      return toast.error(err)
     }
   }
 

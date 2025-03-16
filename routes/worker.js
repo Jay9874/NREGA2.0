@@ -1,7 +1,8 @@
 // Requiring all the packages
-import express from 'express'
-const router = express.Router()
-import {
+const express = require('express');
+const router = express.Router();
+
+const {
   applyToJob,
   entitlement,
   getAttendances,
@@ -9,7 +10,7 @@ import {
   payments,
   setProfile,
   workingOn
-} from '../controller/worker.js'
+} = require('../controller/worker.js');
 
 // Defining the routes
 /**
@@ -61,4 +62,5 @@ router.post('/payments', payments)
  **/
 router.post('/entitlement', entitlement)
 
-export { router as workerRoutes }
+module.exports = { workerRoutes: router };
+

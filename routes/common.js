@@ -1,10 +1,11 @@
-import express from 'express'
-import {
+const express = require('express');
+const router = express.Router();
+
+const {
   clearANotification,
   getNotification,
   subscribeRealtime
-} from '../controller/common.js'
-const router = express.Router()
+} = require('../controller/common.js');
 
 // get notification for both users (admin and worker)
 /**
@@ -30,4 +31,5 @@ router.post('/clear-notification', clearANotification)
  **/
 router.post('/subscribe-realtime', subscribeRealtime)
 
-export { router as commonRoutes }
+module.exports = { commonRoutes: router };
+

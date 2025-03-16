@@ -1,21 +1,22 @@
 // Requiring all the packages
-import 'dotenv/config'
-import express from 'express'
-import cors from 'cors'
-import path from 'path'
-import bodyParser from 'body-parser'
+require('dotenv/config')
+const express = require('express')
+const cors = require('cors')
+const path = require('path')
+const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
+
 const nodeEnv = process.env.NODE_ENV
-const __dirname = path.resolve()
-import cookieParser from 'cookie-parser'
 const PORT = process.env.PORT || 8080
 
 // Importing routes and custom middlewares
-import { adminRoutes } from './routes/admin.js'
-import { workerRoutes } from './routes/worker.js'
-import { authRoutes } from './routes/auth.js'
-import { checkSession } from './middleware/checkSession.js'
-import { commonRoutes } from './routes/common.js'
-import { rateLimiter } from './middleware/rateLimiter.js'
+const { adminRoutes } = require('./routes/admin.js')
+const { workerRoutes } = require('./routes/worker.js')
+const { authRoutes } = require('./routes/auth.js')
+const { checkSession } = require('./middleware/checkSession.js')
+const { commonRoutes } = require('./routes/common.js')
+const { rateLimiter } = require('./middleware/rateLimiter.js')
+const { logger } = require('./utils/logger.js')
 
 const app = express()
 app.use(
@@ -36,14 +37,7 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 app.use(bodyParser.json({ limit: '50mb' }))
 
 // Static files like css, img, js and more
-// app.use(express.static(path.resolve(__dirname, 'frontend', 'dist')))
-// Serve static files from the frontend dist folder
-app.use(express.static(path.join(__dirname, "frontend", "dist")));
-// app.use(express.static(path.resolve(__dirname, 'frontend', 'dist'), {
-//   setHeaders: (res, filePath) => {
-//     res.setHeader('Content-Type', 'application/javascript');
-//   }
-// }));
+app.use(express.static(path.resolve(__dirname, 'frontend', 'dist')))
 
 // Defining api routes methods
 app.use('/api/auth', authRoutes)
@@ -52,10 +46,6 @@ app.use('/api/admin', checkSession, adminRoutes)
 app.use('/api/worker', checkSession, workerRoutes)
 
 // Frontend Routes for vercel
-// Handle React routing, return index.html
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
-// });
 app.get('*', (req, res) => {
   res.sendFile(
     path.join(__dirname, '/frontend/dist', '/index.html'),
@@ -69,14 +59,14 @@ app.get('*', (req, res) => {
 
 // Error handler middleware
 app.use((err, req, res, next) => {
-  console.error(err)
+  logger.error(err)
   res.status(500).send({
     data: null,
     error: 'Something went wrong.'
   })
 })
 
-// Listenning for requests
+// Listening for requests
 app.listen(PORT, () => {
   console.log(`listening for requests on port: ${PORT}`)
 })

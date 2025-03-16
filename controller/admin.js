@@ -1,6 +1,6 @@
-import { createClient } from '../lib/supabase.js'
-import { decode } from 'base64-arraybuffer'
-import { logger } from '../utils/logger.js'
+const { createClient } = require('../lib/supabase.js')
+const { decode } = require('base64-arraybuffer')
+const { logger } = require('../utils/logger.js')
 
 const setProfile = async (req, res) => {
   try {
@@ -281,7 +281,7 @@ const addAttendance = async (req, res) => {
         cacheControl: '3600',
         upsert: true
       })
-    if (errAtFile) throw errAtFile
+    if (errAtFile) throw new Error("Couldn't upload the progress photo.")
     // Storing the workers group photo for today
     const { data: ulr, error: errAtupload } = await supabase.storage
       .from('job_progress')
@@ -290,7 +290,7 @@ const addAttendance = async (req, res) => {
         cacheControl: '3600',
         upsert: true
       })
-    if (errAtupload) throw errAtupload
+    if (errAtupload) throw new Error("Couldn't upload the workers group photo.")
 
     // Saving the attendance
     const workersArr = Object.keys(workers).map((id, index) => ({
@@ -304,14 +304,14 @@ const addAttendance = async (req, res) => {
       .from('attendance')
       .upsert(workersArr)
       .select()
-    if (error) throw error
+    if (error) throw new Error("Couldn't add attendance.")
     return res.status(200).send({
       data: data,
       error: null
     })
   } catch (err) {
     logger.error(err)
-    return res.status(500).send({ data: null, error: err })
+    return res.status(500).send({ data: null, error: err.message })
   }
 }
 
@@ -323,12 +323,12 @@ const payout = async (req, res) => {
       .from('payments')
       .select('*, payment_to(*)')
       .eq('GPO_id', adminId)
-    if (error) throw error
+    if (error) throw new Error("Couldn't get payment details.")
     const { data: gpoDetail, error: errAtGpo } = await supabase
       .from('panchayats')
       .select('*')
       .eq('location', locationId)
-    if (errAtGpo) throw errAtGpo
+    if (errAtGpo) throw new Error("Couldn't get panchayat details.")
     return res.status(200).send({
       data: { gpo: gpoDetail, payments: data },
       error: null
@@ -337,21 +337,7 @@ const payout = async (req, res) => {
     logger.error(err)
     return res.status(501).send({
       data: null,
-      error: err
-    })
-  }
-}
-
-const jobEnrollment = async (req, res) => {
-  try {
-    const { jobId, sachivId, startDate, jobDays } = req.body
-    const supabase = createClient({ req, res })
-    const { data, error } = await supabase.from('job_application').insert()
-  } catch (err) {
-    logger.error(err)
-    return res.status(err.status).json({
-      data: null,
-      error: err
+      error: err.message
     })
   }
 }
@@ -365,7 +351,7 @@ const enrollWorker = async (req, res) => {
       .update({ status: 'enrolled', remark: 'Enrolled successfully.' })
       .eq('application_id', applicationId)
       .select()
-    if (error) throw error
+    if (error) throw new Error("Couldn't enroll the worker in job.")
 
     // Reducing the family quota from 100 days guaranteed job
     const { family_id: fam_id, duration } = notification
@@ -376,7 +362,7 @@ const enrollWorker = async (req, res) => {
         fam_id
       }
     )
-    if (errAtQuota) throw errAtQuota
+    if (errAtQuota) throw new Error("Couldn't reduce the family quota.")
 
     // Delete the last notification about this application from admin panel.
     const { data: deletionData, error: errAtDeletion } = await supabase
@@ -384,7 +370,8 @@ const enrollWorker = async (req, res) => {
       .delete()
       .eq('application_id', applicationId)
       .select()
-    if (errAtDeletion) throw errAtDeletion
+    if (errAtDeletion)
+      throw new Error("Couldn't delete the notification for sachiv.")
 
     // add a new acceptation notification to worker panel.
     const { data: acceptedNotification, error: errAtAccept } = await supabase
@@ -400,7 +387,8 @@ const enrollWorker = async (req, res) => {
         application_id: applicationId
       })
       .select()
-    if (errAtAccept) throw errAtAccept
+    if (errAtAccept)
+      throw new Error("Couldn't send application notification to worker.")
     return res.status(200).send({
       data: data,
       error: null
@@ -409,7 +397,7 @@ const enrollWorker = async (req, res) => {
     logger.error(err)
     return res.status(501).send({
       data: null,
-      error: err
+      error: err.message
     })
   }
 }
@@ -426,7 +414,7 @@ const rejectApplication = async (req, res) => {
       .update({ status: 'rejected', remark: remark })
       .eq('application_id', notification.application_id)
       .select()
-    if (error) throw error
+    if (error) throw new Error("Couldn't reject the application.")
 
     // update the last notification about this application for worker
     const { data: notificationUpdate, error: errAtUpdate } = await supabase
@@ -442,7 +430,8 @@ const rejectApplication = async (req, res) => {
         application_id: Application_id
       })
       .select()
-    if (errAtUpdate) throw errAtUpdate
+    if (errAtUpdate)
+      throw new Error("Couldn't send the application notification to worker.")
     return res.status(200).send({
       data: data,
       error: null
@@ -451,7 +440,7 @@ const rejectApplication = async (req, res) => {
     logger.error(err)
     return res.status(501).send({
       data: null,
-      error: err
+      error: err.message
     })
   }
 }
@@ -466,7 +455,7 @@ const addJob = async (req, res) => {
       .from('jobs')
       .insert(jobDetails)
       .select()
-    if (error) throw error
+    if (error) throw new Error("Couldn't create the job.")
     // Upload the initial photo to job progress bucket for ML process
     const base64String = photo
     const base64 = base64String.split('base64,')[1]
@@ -480,7 +469,7 @@ const addJob = async (req, res) => {
         cacheControl: '3600',
         upsert: true
       })
-    if (errAtFile) throw errAtFile
+    if (errAtFile) throw new Error("Couldn't upload the progress photo.")
     return res.status(200).send({
       data: data,
       error: null
@@ -489,7 +478,7 @@ const addJob = async (req, res) => {
     logger.error(err)
     return res.status(500).send({
       data: null,
-      error: err
+      error: err.message
     })
   }
 }
@@ -498,7 +487,7 @@ const fetchRandomAadhaar = async (req, res) => {
   try {
     const supabase = createClient({ req, res })
     const { data, error } = await supabase.rpc('get_unreferenced_aadhaar')
-    if (error) throw error
+    if (error) throw new Error("Couldn't get a random aadhaar number.")
     const randInt = Math.floor(Math.random() * (data.length - 1 - 0 + 1) + 0)
     return res.status(200).send({
       data: data[randInt],
@@ -508,7 +497,7 @@ const fetchRandomAadhaar = async (req, res) => {
     logger.error(err)
     return res.status(500).send({
       data: null,
-      error: err
+      error: err.message
     })
   }
 }
@@ -519,7 +508,7 @@ const fetchRandomFamily = async (req, res) => {
       .from('households')
       .select('*')
       .is('members', null)
-    if (error) throw error
+    if (error) throw new Error("Couldn't ge a random family id.")
     const randInt = Math.floor(Math.random() * (data.length - 1 - 0 + 1) + 0)
     return res.status(200).send({
       data: data[randInt],
@@ -529,7 +518,7 @@ const fetchRandomFamily = async (req, res) => {
     logger.error(err)
     return res.status(500).send({
       data: null,
-      error: err
+      error: err.message
     })
   }
 }
@@ -542,7 +531,7 @@ const checkNregaIDAvailability = async (req, res) => {
       .from('worker')
       .select('mgnrega_id')
       .eq('mgnrega_id', id)
-    if (error) throw error
+    if (error) throw new Error("Couldn't get new NREGA ID.")
     if (data.length > 0) throw new Error('Worker exists with this MGNREGA ID.')
     return res.status(200).send({
       data: `${id} is available.`,
@@ -568,7 +557,7 @@ const resendLink = async (req, res) => {
         emailRedirectTo: redirectUrl
       }
     })
-    if (error) throw error
+    if (error) throw new Error("Couldn't send account activation link.")
     return res.status(200).send({
       data: 'Successfully sent email',
       error: null
@@ -577,7 +566,7 @@ const resendLink = async (req, res) => {
     logger.error(err)
     return res.status(500).send({
       data: null,
-      error: err
+      error: err.message
     })
   }
 }
@@ -593,7 +582,7 @@ const setPayout = async (req, res) => {
       .select('status')
       .eq('GPO_id', id)
       .or('status.eq.failed, status.eq.processing')
-    if (error) throw error
+    if (error) throw new Error("Couldn't get payment details.")
 
     // Getting pending applications
     const { data: pendingApp, error: errAtApp } = await supabase
@@ -601,7 +590,7 @@ const setPayout = async (req, res) => {
       .select('*')
       .eq('status', 'applied')
       .eq('to_sachiv', id)
-    if (errAtApp) throw errAtApp
+    if (errAtApp) throw new Error("Couldn't find pending applications.")
     return res.status(200).send({
       data: { pending: pendingApp, payments: data },
       error: null
@@ -610,11 +599,11 @@ const setPayout = async (req, res) => {
     logger.error(err)
     return res.status(500).send({
       data: null,
-      error: err
+      error: err.message
     })
   }
 }
-export {
+module.exports = {
   setProfile,
   createUser,
   resendLink,
@@ -625,7 +614,6 @@ export {
   dashboardData,
   addAttendance,
   payout,
-  jobEnrollment,
   enrollWorker,
   rejectApplication,
   addJob,

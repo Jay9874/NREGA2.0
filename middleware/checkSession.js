@@ -1,4 +1,4 @@
-import { createClient } from '../lib/supabase.js'
+const { createClient } = require('../lib/supabase.js')
 
 async function checkSession (req, res, next) {
   try {
@@ -7,11 +7,11 @@ async function checkSession (req, res, next) {
     const access_token = decodedCookie.access_token
     const supabase = createClient({ req, res })
     const { data, error } = await supabase.auth.getUser(access_token)
-    if (error) throw error
+    if (error) throw new Error("Could'nt get valid session.")
     next()
   } catch (err) {
     console.log(err)
     next(err)
   }
 }
-export { checkSession }
+module.exports = { checkSession }

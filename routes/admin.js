@@ -1,7 +1,7 @@
-// Requiring all the packages
-import express from 'express'
-const router = express.Router()
-import {
+const express = require('express');
+const router = express.Router();
+
+const {
   createUser,
   fetchAadhaar,
   createEmployee,
@@ -19,7 +19,8 @@ import {
   checkNregaIDAvailability,
   resendLink,
   setPayout
-} from '../controller/admin.js'
+} = require('../controller/admin.js');
+
 
 // Defining the routes
 /**
@@ -146,4 +147,5 @@ router.post('/resend-link', resendLink)
  **/
 router.post('/set-payout', setPayout)
 
-export { router as adminRoutes }
+module.exports = { adminRoutes: router };
+

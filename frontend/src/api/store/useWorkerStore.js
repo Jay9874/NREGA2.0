@@ -71,7 +71,7 @@ export const useWorkerStore = create((set, get) => ({
         set({ profile: data })
         resolve(data)
       } catch (error) {
-        toast.error(error.message)
+        toast.error(error)
         reject(error)
       }
     })
@@ -95,7 +95,7 @@ export const useWorkerStore = create((set, get) => ({
         set({ nearbyJobs: data.nearbyJobs, jobs: data.allJobs })
         resolve(data)
       } catch (error) {
-        toast.error(error.message)
+        toast.error(error)
         reject(error)
       }
     })
