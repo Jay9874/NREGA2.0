@@ -1,16 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { authStore } from '../../api/store/authStore'
-import HCaptcha from '@hcaptcha/react-hcaptcha'
 import PasswordInput from '../PasswordInput'
-const sitekey = import.meta.env.VITE_CAPTCHA_SITE_KEY
 
 export default function SignInForm () {
-  const { loginUser, demoLogin, setCaptchaToken } = authStore()
-  const [showPassword, setShowPassword] = useState(false)
+  const { loginUser, demoLogin} = authStore()
   const crossRef = useRef(null)
   const navigate = useNavigate()
-  const captcha = useRef()
   const [loginInfo, setLoginInfo] = useState({
     email: '',
     password: ''
@@ -34,14 +30,6 @@ export default function SignInForm () {
     }
   }, [])
 
-  function handleEyeBtn (e) {
-    console.log('clicked eye')
-    if (showPassword) {
-      setShowPassword(false)
-    } else {
-      setShowPassword(true)
-    }
-  }
 
   return (
     <div className='flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>

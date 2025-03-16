@@ -7,7 +7,6 @@ import PasswordInput from '../PasswordInput'
 export default function ResetPass () {
   const [searchParams] = useSearchParams()
   const [token, setToken] = useState('')
-  const code = searchParams.get('code')
   const navigate = useNavigate()
   const { resetPassword, loading } = authStore()
   const [password, setPassword] = useState({
