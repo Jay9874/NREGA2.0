@@ -1,4 +1,3 @@
-import { authStore } from '../frontend/src/api/store/authStore.js'
 import { createClient } from '../lib/supabase.js'
 import { logger } from '../utils/logger.js'
 const getNotification = async (req, res) => {
