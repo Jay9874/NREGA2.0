@@ -12,7 +12,8 @@ const login = async (req, res) => {
       email: email,
       password: password
     })
-    if (error) throw new Error("Couldn't sign in to your account.")
+    if (error)
+      throw new Error(`Couldn't sign in to your account. ${error.message}`)
     const { data: profile, error: errAtProfile } = await supabase
       .from('profiles')
       .select('*')

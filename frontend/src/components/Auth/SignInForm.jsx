@@ -4,7 +4,7 @@ import { authStore } from '../../api/store/authStore'
 import PasswordInput from '../PasswordInput'
 
 export default function SignInForm () {
-  const { loginUser, demoLogin} = authStore()
+  const { loginUser, demoLogin, loading } = authStore()
   const crossRef = useRef(null)
   const navigate = useNavigate()
   const [loginInfo, setLoginInfo] = useState({
@@ -29,7 +29,6 @@ export default function SignInForm () {
       crossRef.current.style.strokeDasharray = len
     }
   }, [])
-
 
   return (
     <div className='flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
@@ -85,7 +84,12 @@ export default function SignInForm () {
               </div>
               <button
                 type='submit'
-                className='flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+                disabled={loading}
+                className={`${
+                  loading
+                    ? 'bg-indigo-300 cursor-wait'
+                    : 'bg-indigo-600 hover:bg-indigo-700'
+                } flex w-full justify-center rounded-md border border-transparent py-2 px-4 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
               >
                 Sign in
               </button>
@@ -106,22 +110,37 @@ export default function SignInForm () {
             </span>
           </div>
         </div>
-        <div className='mt-4 mb-4 '>
-          <Link
-            onClick={() => handleDemo('jayprakashsharma225@gmail.com', 'admin')}
+
+        {/* Demo options */}
+        <button
+          type='button'
+          disabled={loading}
+          className='w-full mt-4'
+          onClick={() => handleDemo('jayprakashsharma225@gmail.com', 'admin')}
+        >
+          <div
+            className={` ${
+              loading ? 'cursor-wait' : ''
+            } text-center relative rounded-full py-1 px-3 text-sm leading-6 text-gray-600 ring-1 ring-black/10 hover:ring-black/20`}
           >
-            <div className='text-center relative rounded-full py-1 px-3 text-sm leading-6 text-gray-600 ring-1 ring-black/10 hover:ring-black/20'>
-              as a Sachiv
-            </div>
-          </Link>
-        </div>
-        <div className=''>
-          <Link onClick={() => handleDemo('jay.gdsc@gmail.com', 'worker')}>
-            <div className='text-center relative rounded-full py-1 px-3 text-sm leading-6 text-gray-600 ring-1 ring-black/10 hover:ring-black/20'>
-              as a Worker
-            </div>
-          </Link>
-        </div>
+            as a Sachiv
+          </div>
+        </button>
+
+        <button
+          type='button'
+          disabled={loading}
+          className='w-full mt-4'
+          onClick={() => handleDemo('jay.gdsc@gmail.com', 'worker')}
+        >
+          <div
+            className={` ${
+              loading ? 'cursor-wait' : ''
+            } text-center relative rounded-full py-1 px-3 text-sm leading-6 text-gray-600 ring-1 ring-black/10 hover:ring-black/20`}
+          >
+            as a Worker
+          </div>
+        </button>
       </div>
     </div>
   )
