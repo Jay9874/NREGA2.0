@@ -209,11 +209,12 @@ const payments = async (req, res) => {
   try {
     const { userId } = req.body
     const supabase = createClient({ req, res })
-    const { data: payments } = await supabase
+    const { data: payments, error } = await supabase
       .from('payments')
       .select(`*, payment_for(*)`)
       .eq('payment_to', userId)
       .order('created_at', { ascending: false })
+    if (error) throw new Error("Couldn't get your payment details.")
     const updatedPayments = payments.map((payment, index) => ({
       ...payment,
       Transaction: payment.payment_title,
@@ -226,7 +227,7 @@ const payments = async (req, res) => {
       error: null
     })
   } catch (err) {
-    console.error(err)
+    logger.error(err)
     return res.status(500).send({
       data: null,
       error: 'Something went wrong while getting payments.'
@@ -283,7 +284,7 @@ const workingOn = async (req, res) => {
       error: null
     })
   } catch (err) {
-    console.log(err)
+    logger.error(err)
     return res.status(500).send({
       data: null,
       error: err.message

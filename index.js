@@ -22,7 +22,7 @@ const app = express()
 app.use(
   cors({
     origin:
-      nodeEnv == 'production'
+      nodeEnv === 'production'
         ? 'https://nrega-2-0.vercel.app'
         : 'http://localhost:5173',
     credentials: true
@@ -31,7 +31,11 @@ app.use(
 
 // Middlewares
 app.use(cookieParser())
-app.use(rateLimiter)
+
+// Use rate limiter in production only
+if (nodeEnv === 'production') {
+  app.use(rateLimiter)
+}
 app.use(express.json({ limit: '25mb' }))
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 app.use(bodyParser.json({ limit: '50mb' }))

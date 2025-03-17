@@ -225,20 +225,6 @@ export const useWorkerStore = create((set, get) => ({
                 }
               ])
             }
-            // everydayStatus.set(
-            //   job.job_id,
-            //   dateArr
-            //     ? dateArr.push({
-            //         status: attendance.status,
-            //         created_at: attendance.created_at
-            //       })
-            //     : [
-            //         {
-            //           status: attendance.status,
-            //           created_at: attendance.created_at
-            //         }
-            //       ]
-            // )
           }
         })
 

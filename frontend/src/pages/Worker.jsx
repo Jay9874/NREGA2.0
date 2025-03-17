@@ -39,11 +39,12 @@ export const Worker = () => {
       await setLastWork()
       setLoading(false)
       setDataLoaded(true)
-    } catch (error) {
+    } catch (err) {
       setLoading(false)
       setDataLoaded(true)
-      toast.error('Something went wrong while getting your data.')
-      return error
+      console.log(err)
+      toast.error(err)
+      return err
     }
   }
 

@@ -15,7 +15,7 @@ export default function RecentPayment ({ heading, recentActivity }) {
     <div className='mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl text-center pt-4'>
       <div className='rounded-xl border ring-gray-100 h-24 flex items-center justify-center'>
         <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
-          Seems no recent activity, check back soon.
+          Seems no recent activities, check back soon.
         </p>
       </div>
     </div>

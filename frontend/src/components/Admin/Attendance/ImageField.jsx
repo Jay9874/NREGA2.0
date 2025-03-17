@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import exifr from 'exifr'
+import { toast } from 'sonner'
 
 export default function ImageField ({
   onChange,
@@ -24,6 +25,7 @@ export default function ImageField ({
       }
       reader.readAsDataURL(selectedFile) //represented as a base64string
       reader.onload = () => {
+        console.log("result: ", reader)
         setPreview(reader.result)
         exifr.parse(selectedFile).then(output => {
           onChange(imgName, reader.result, output)
@@ -43,7 +45,7 @@ export default function ImageField ({
     // I've kept this example simple by using the first image instead of multiple
     const image = e.target.files[0]
     const imageSize = image.size / 1048576
-    if (imageSize > 1) {
+    if (imageSize > 5) {
       toast.warning('Image size is large, keep it within 1 MB.')
       setSelectedFile(null)
     } else {
