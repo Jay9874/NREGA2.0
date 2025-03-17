@@ -153,7 +153,6 @@ const resetPassword = async (req, res) => {
     if (errAtUpdate)
       throw new Error(`Could not update the password. ${errAtUpdate.message}`)
     const { user } = userData
-    console.log('user: ', user.id)
     const { data: profile, error: errAtProfile } = await supabase
       .from('profiles')
       .select('*')
