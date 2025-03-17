@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { toast } from 'sonner'
+const prod = import.meta.env.PROD
 
 export const authStore = create((set, get) => ({
   user: { email: '', type: '', id: '', photo: '' },
@@ -116,6 +117,9 @@ export const authStore = create((set, get) => ({
     return new Promise(async (resolve, reject) => {
       try {
         set({ loading: true })
+        let redirectURL = ''
+        if (prod) redirectURL = 'https://nrega-2-0.vercel.app/auth/reset'
+        else redirectURL = 'http://localhost:5173/auth/reset'
         toast.loading('Sending recovery email...', { duration: Infinity })
         const options = {
           method: 'POST',
@@ -124,7 +128,7 @@ export const authStore = create((set, get) => ({
             'Content-Type': 'Application/json',
             Accept: 'Application/json'
           },
-          body: JSON.stringify({ email: email })
+          body: JSON.stringify({ email, redirectURL })
         }
         const res = await fetch('/api/auth/recover-user', options)
         const { data, error } = await res.json()

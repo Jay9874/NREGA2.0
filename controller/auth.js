@@ -1,6 +1,5 @@
-const { createClient } = require('../lib/supabase.js');
-const { logger } = require('../utils/logger.js');
-
+const { createClient } = require('../lib/supabase.js')
+const { logger } = require('../utils/logger.js')
 
 const login = async (req, res) => {
   try {
@@ -181,11 +180,7 @@ const resetPassword = async (req, res) => {
 
 const recoverUser = async (req, res) => {
   try {
-    const redirectURL =
-      process.env.NODE_ENV == 'production'
-        ? process.env.RECOVER_URL_PROD
-        : process.env.RECOVER_URL_DEV
-    const { email } = req.body
+    const { email, redirectURL } = req.body
     const supabase = createClient({ req, res })
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectURL
@@ -216,5 +211,4 @@ module.exports = {
   verify,
   resetPassword,
   recoverUser
-};
-
+}
