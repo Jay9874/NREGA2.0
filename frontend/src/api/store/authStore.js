@@ -1,6 +1,5 @@
 import { create } from 'zustand'
 import { toast } from 'sonner'
-const prod = import.meta.env.PROD
 
 export const authStore = create((set, get) => ({
   user: { email: '', type: '', id: '', photo: '' },
@@ -40,8 +39,6 @@ export const authStore = create((set, get) => ({
   },
   loginUser: async (email, password, navigate) => {
     try {
-      if (!window.navigator.onLine)
-        return toast.error('No internet connection.')
       set({ loading: true })
       const body = { email: email, password: password }
       var headers = new Headers()
@@ -73,14 +70,19 @@ export const authStore = create((set, get) => ({
     }
   },
   checkSession: async navigate => {
-    const user = get().user
-    if (user.email !== '') {
-      navigate(`/${user.type}/dashboard`)
-      toast.success('Login successful!', { duration: 500 })
+    try {
+      const user = get().user
+      if (user.email !== '') {
+        navigate(`/${user.type}/dashboard`)
+        toast.success('Login successful!', { duration: 500 })
+        return null
+      }
+      navigate('/auth/login')
       return null
+    } catch (err) {
+      console.log(err)
+      return toast.error(err)
     }
-    navigate('/auth/login')
-    return null
   },
   logoutUser: async navigate => {
     try {
@@ -117,9 +119,6 @@ export const authStore = create((set, get) => ({
     return new Promise(async (resolve, reject) => {
       try {
         set({ loading: true })
-        let redirectURL = ''
-        if (prod) redirectURL = 'https://nrega-2-0.vercel.app/auth/reset'
-        else redirectURL = 'http://localhost:5173/auth/reset'
         toast.loading('Sending recovery email...', { duration: Infinity })
         const options = {
           method: 'POST',
@@ -128,7 +127,7 @@ export const authStore = create((set, get) => ({
             'Content-Type': 'Application/json',
             Accept: 'Application/json'
           },
-          body: JSON.stringify({ email, redirectURL })
+          body: JSON.stringify({ email })
         }
         const res = await fetch('/api/auth/recover-user', options)
         const { data, error } = await res.json()
@@ -142,11 +141,11 @@ export const authStore = create((set, get) => ({
         console.log(err)
         set({ loading: false })
         toast.error(err)
-        reject()
+        reject(err)
       }
     })
   },
-  resetPassword: (new_password, code) => {
+  resetPassword: (new_password, searchParams) => {
     return new Promise(async (resolve, reject) => {
       try {
         toast.loading('Changing the password...', { duration: Infinity })
@@ -158,7 +157,7 @@ export const authStore = create((set, get) => ({
             'Content-Type': 'Application/json',
             Accept: 'Application/json'
           },
-          body: JSON.stringify({ newPassword: new_password, code: code })
+          body: JSON.stringify({ newPassword: new_password, ...searchParams })
         }
         const res = await fetch('/api/auth/reset-password', options)
         const { data, error } = await res.json()
@@ -176,15 +175,19 @@ export const authStore = create((set, get) => ({
     })
   },
   demoLogin: async (email, type, navigate) => {
-    if (!window.navigator.onLine) return toast.error('No internet connection.')
-    const loginUser = get().loginUser
-    let password = ''
-    if (type === 'worker') {
-      password = import.meta.env.VITE_WORKER_PASSWORD
-    } else if (type === 'admin') {
-      password = import.meta.env.VITE_ADMIN_PASSWORD
+    try {
+      const loginUser = get().loginUser
+      let password = ''
+      if (type === 'worker') {
+        password = import.meta.env.VITE_WORKER_PASSWORD
+      } else if (type === 'admin') {
+        password = import.meta.env.VITE_ADMIN_PASSWORD
+      }
+      await loginUser(email, password, navigate)
+    } catch (err) {
+      console.log(err)
+      return toast.error(err)
     }
-    await loginUser(email, password, navigate)
   },
   setNotifications: async () => {
     return new Promise(async (resolve, reject) => {
@@ -205,9 +208,7 @@ export const authStore = create((set, get) => ({
         set({ notifications: data })
         resolve(data)
       } catch (err) {
-        console.log(err)
-        toast.error(err)
-        reject(null)
+        resolve(null)
       }
     })
   },

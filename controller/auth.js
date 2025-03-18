@@ -1,5 +1,7 @@
+require('dotenv/config')
 const { createClient } = require('../lib/supabase.js')
 const { logger } = require('../utils/logger.js')
+const { resetRedirectURL } = require('../utils/nodeEnv.js')
 
 const login = async (req, res) => {
   try {
@@ -52,7 +54,7 @@ const logout = async (req, res) => {
     logger.error(err)
     return res.status(500).send({
       data: null,
-      error: err
+      error: err.message
     })
   }
 }
@@ -69,7 +71,10 @@ const pageRefresh = async (req, res) => {
       data: { user },
       error
     } = await supabase.auth.getUser(access_token)
-    if (error) throw new Error("Couldn't get the user.")
+    if (error) {
+      logger.error(error)
+      throw new Error("Couldn't get the user.")
+    }
 
     // Getting the profile for this user
     const { data: profile, error: errAtProfile } = await supabase
@@ -95,7 +100,7 @@ const pageRefresh = async (req, res) => {
     if (error) {
       return res.status(403).send({
         data: null,
-        error: 'Could not sing you out.'
+        error: 'You are unauthorized, please login first.'
       })
     }
     return res.status(200).send({
@@ -107,13 +112,25 @@ const pageRefresh = async (req, res) => {
 
 const verify = async (req, res) => {
   try {
-    const { token_hash, type } = req.body
+    const { token_hash, email, type } = req.body
+    if (type !== 'email')
+      throw new Error('The link is invalid for verification purpose.')
+
+    // Recheck if user exists
+    const { data: checkEmail, error: errAtEmailCheck } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('email', email)
+    if (errAtEmailCheck) throw new Error("Couldn't confirm your email exists.")
+    if (checkEmail.length === 0) throw new Error('The email does not exists.')
+    if (checkEmail[0].email !== email)
+      throw new Error('The email does not exists.')
     const supabase = createClient({ req, res })
-    let {
-      data: { session, user },
+    const {
+      data: { user },
       error
     } = await supabase.auth.verifyOtp({ token_hash, type })
-    if (error) throw new Error('Could not verify the link.')
+    if (error || !user) throw new Error('Could not verify the link.')
     const { data: profile, error: errAtProfile } = await supabase
       .from('profiles')
       .select('*')
@@ -141,11 +158,26 @@ const verify = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   try {
-    const { newPassword, code } = req.body
+    const { newPassword, token_hash, email, type } = req.body
+    if (type !== 'recovery')
+      throw new Error('The link is invalid for recovery purpose.')
     const supabase = createClient({ req, res })
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-    if (error)
+
+    // Recheck if user exits
+    const { data: checkEmail, error: errAtEmailCheck } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('email', email)
+    if (errAtEmailCheck)
+      throw new Error("Couldn't confirm if your email exists.")
+    if (checkEmail.length === 0) throw new Error('The email does not exists.')
+    if (checkEmail[0].email !== email)
+      throw new Error('The email does not exists.')
+
+    const { data, error } = await supabase.auth.verifyOtp({ token_hash, type })
+    if (error || !data.user)
       throw new Error('The link has been expired, create a new request.')
+
     const { data: userData, error: errAtUpdate } =
       await supabase.auth.updateUser({
         password: newPassword
@@ -180,10 +212,20 @@ const resetPassword = async (req, res) => {
 
 const recoverUser = async (req, res) => {
   try {
-    const { email, redirectURL } = req.body
+    const { email } = req.body
     const supabase = createClient({ req, res })
+    // Check if the user exists
+    const { data: profile, error: errAtProfile } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('email', email)
+    if (errAtProfile) throw new Error("Couldn't confirm your email exists.")
+    if (profile.length === 0) throw new Error('The email does not exists.')
+    if (profile[0].email !== email)
+      throw new Error('The email does not exists.')
+
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: redirectURL
+      redirectTo: resetRedirectURL
     })
     if (error) {
       logger.error(error)
@@ -191,6 +233,7 @@ const recoverUser = async (req, res) => {
         `Could not send email. ${error.message ? error.message : ''}`
       )
     }
+
     return res.status(200).send({
       data: 'Sent email with a link, check it.',
       error: null

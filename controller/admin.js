@@ -1,7 +1,9 @@
 const { createClient } = require('../lib/supabase.js')
 const { decode } = require('base64-arraybuffer')
 const { logger } = require('../utils/logger.js')
+const { verifyRedirectURL } = require('../utils/nodeEnv.js')
 
+// API to set up the profile info in sachiv panel
 const setProfile = async (req, res) => {
   try {
     const { sachivId } = req.body
@@ -10,7 +12,8 @@ const setProfile = async (req, res) => {
       .from('sachiv')
       .select(`*, location_id(*)`)
       .eq('id', sachivId)
-    if (error) throw new Error("Couldn't get the profile info.")
+    if (error || profile.length === 0)
+      throw new Error("Couldn't get the profile info.")
     return res.status(200).send({
       data: profile[0],
       error: null
@@ -24,10 +27,11 @@ const setProfile = async (req, res) => {
   }
 }
 
+// API to create a new user by logged in sachiv
 const createUser = async (req, res) => {
   try {
     const supabase = createClient({ req, res })
-    const { email, password, redirectUrl } = req.body
+    const { email, password } = req.body
     const { data: user, error: err } = await supabase
       .from('profiles')
       .select('*')
@@ -39,7 +43,7 @@ const createUser = async (req, res) => {
       email: email,
       password: password,
       options: {
-        emailRedirectTo: redirectUrl
+        emailRedirectTo: verifyRedirectURL
       }
     })
     if (error) throw new Error("Couldn't create a new user.")
@@ -56,6 +60,7 @@ const createUser = async (req, res) => {
   }
 }
 
+// API to get all teh employees at a location ID
 const fetchEmployees = async (req, res) => {
   try {
     const { locationId } = req.body
@@ -77,6 +82,8 @@ const fetchEmployees = async (req, res) => {
     })
   }
 }
+
+// API to create a new employee mapping to a user created already.
 const createEmployee = async (req, res) => {
   try {
     const supabase = createClient({ req, res })
@@ -166,9 +173,12 @@ const updateWorker = async (req, res) => {
       // Delete the image field from the update details.
       delete updatedDetails.updatedImage
     }
+
+    // extracting field to update
+    const { mobile_no } = updatedDetails
     const { data: newProfile, error: errAtUpdate } = await supabase
       .from('worker')
-      .update(updatedDetails)
+      .update({ mobile_no: mobile_no }) // update only the mobile number
       .eq('id', updatedDetails.id)
       .select()
     if (errAtUpdate) throw new Error("Couldn't update worker details.")
@@ -185,6 +195,7 @@ const updateWorker = async (req, res) => {
   }
 }
 
+// Get a random aadhaar card number by sachiv
 const fetchAadhaar = async (req, res) => {
   try {
     const { aadhaar: aadhaarNo } = req.body
@@ -548,16 +559,26 @@ const checkNregaIDAvailability = async (req, res) => {
 
 const resendLink = async (req, res) => {
   try {
-    const { workerEmail, redirectUrl } = req.body
+    const { workerEmail } = req.body
     const supabase = createClient({ req, res })
+    const { data: profile, error: errAtProfile } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('email', workerEmail)
+    if (errAtProfile) throw new Error("Couldn't confirm your email exists.")
+    if (profile.length === 0) throw new Error('The email does not exists.')
+    if (profile[0].email !== email)
+      throw new Error('The email does not exists.')
+
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email: workerEmail,
       options: {
-        emailRedirectTo: redirectUrl
+        emailRedirectTo: verifyRedirectURL
       }
     })
-    if (error) throw new Error("Couldn't send account activation link.")
+    if (error) throw new Error("Couldn't resend activation link.")
+
     return res.status(200).send({
       data: 'Successfully sent email',
       error: null

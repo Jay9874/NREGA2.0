@@ -9,6 +9,7 @@ const {
   resetPassword,
   verify
 } = require('../controller/auth.js');
+const { checkSession } = require('../middleware/checkSession.js');
 
 
 // Login route
@@ -25,7 +26,7 @@ router.post('/login', login)
  * @description validate session and new session on expire
  * @access public
  **/
-router.post('/validate', pageRefresh)
+router.post('/validate', checkSession, pageRefresh)
 
 // Reset the password for logged user.
 /**

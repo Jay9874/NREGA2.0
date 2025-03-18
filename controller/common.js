@@ -1,3 +1,4 @@
+require('dotenv/config')
 const { createClient } = require('../lib/supabase.js')
 const { logger } = require('../utils/logger.js')
 
@@ -12,12 +13,13 @@ const getNotification = async (req, res) => {
       .select('*')
       .eq('user_id', userId)
     if (error) throw new Error("Couldn't get the notifications.")
+    if (data.length === 0) throw new Error('No notifications.')
     return res.status(200).send({
       data: data,
       error: null
     })
   } catch (err) {
-    console.log(err)
+    logger.error(err)
     return res.status(500).send({
       data: null,
       error: err.message
@@ -41,7 +43,7 @@ const clearANotification = async (req, res) => {
       error: null
     })
   } catch (err) {
-    console.log(err)
+    logger.error(err)
     return res.status(501).send({
       data: null,
       error: err.message

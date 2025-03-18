@@ -65,7 +65,7 @@ export default function ForgotPass () {
                       size='large'
                       name='arrow-back-circle-outline'
                     ></ion-icon>
-                    Go Back
+                    Back to login
                   </Link>
                 </div>
               </div>

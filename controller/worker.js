@@ -1,3 +1,4 @@
+require('dotenv/config')
 const {
   formatLocationToGP,
   jobDuration,
@@ -16,7 +17,8 @@ const setProfile = async (req, res) => {
       .from('worker')
       .select(`*, address(*)`)
       .eq('id', workerId)
-    if (error) throw new Error("Couldn't get your profile.")
+    if (error || profile.length === 0)
+      throw new Error("Couldn't get your profile.")
     return res.status(200).send({
       data: profile[0],
       error: null
@@ -117,7 +119,7 @@ const entitlement = async (req, res) => {
       .from('households')
       .select('quota')
       .eq('family_id', familyId)
-    if (error) throw new Error("Couldn't get entitlement.")
+    if (error || data.length === 0) throw new Error("Couldn't get entitlement.")
     return res.status(200).send({
       data: { entitlement: data[0].quota },
       error: null
@@ -141,7 +143,7 @@ const getJobs = async (req, res) => {
       .from('jobs')
       .select(`*, location_id(*)`)
       .eq('location_id', locationId)
-    if (error) throw new Error("Couldn't get all jobs.")
+    if (error || allJobs.length === 0) throw new Error("Couldn't get all jobs.")
 
     // Get all the enrollment status w.r.t workerID and locationID (or panchayat)
     const { data: enrollments, error: errorAtEnroll } = await supabase
@@ -214,7 +216,8 @@ const payments = async (req, res) => {
       .select(`*, payment_for(*)`)
       .eq('payment_to', userId)
       .order('created_at', { ascending: false })
-    if (error) throw new Error("Couldn't get your payment details.")
+    if (error || payments.length === 0)
+      throw new Error("Couldn't get your payment details.")
     const updatedPayments = payments.map((payment, index) => ({
       ...payment,
       Transaction: payment.payment_title,
@@ -259,7 +262,8 @@ const workingOn = async (req, res) => {
       .eq('worker_id', workerId)
       .eq('status', 'present')
       .eq('attendance_for', job.job_id)
-    if (errAtAttendance) throw new Error("Couldn't get attendance.")
+    if (errAtAttendance || attendance.length === 0)
+      throw new Error("Couldn't get attendance.")
 
     // Getting number of labours working on the job with the worker
     const { data: labours, error: errAtLabour } = await supabase
@@ -267,7 +271,8 @@ const workingOn = async (req, res) => {
       .select('id')
       .eq('status', 'working on')
       .eq('job', job.job_id)
-    if (errAtLabour) throw new Error("Couldn't get workers associated.")
+    if (errAtLabour || labours.length === 0)
+      throw new Error("Couldn't get workers associated.")
 
     const lastWork = {
       location: job.location_id,
@@ -302,7 +307,8 @@ const getAttendances = async (req, res) => {
       .select(`*, attendance_for(*, location_id(*))`)
       .eq('worker_id', workerId)
       .order('created_at', { ascending: false })
-    if (error) throw new Error("Couldn't get all the attendances.")
+    if (error || attendances.length === 0)
+      throw new Error("Couldn't get all the attendances.")
 
     return res.status(200).send({
       data: attendances,

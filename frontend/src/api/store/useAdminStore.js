@@ -2,11 +2,6 @@ import { create } from 'zustand'
 import { calculateAge, timestampToDate } from '../../utils/dataFormating'
 import { authStore } from './authStore'
 import { toast } from 'sonner'
-const NODE_ENV = import.meta.env.MODE
-const redirectUrl =
-  NODE_ENV === 'development'
-    ? 'http://localhost:5173/'
-    : 'https://nrega-2-0.vercel.app/'
 
 export const useAdminStore = create((set, get) => ({
   user: authStore.getState().user,
@@ -79,8 +74,7 @@ export const useAdminStore = create((set, get) => ({
       //This data will be sent to the server with the POST request.
       const userData = {
         email: user.email,
-        password: user.password,
-        redirectUrl: redirectUrl
+        password: user.password
       }
       const options = {
         method: 'POST',
@@ -500,8 +494,7 @@ export const useAdminStore = create((set, get) => ({
             Accept: 'Application/json'
           },
           body: JSON.stringify({
-            workerEmail: workerEmail,
-            redirectUrl: redirectUrl
+            workerEmail: workerEmail
           })
         }
         const res = await fetch('/api/admin/resend-link', options)

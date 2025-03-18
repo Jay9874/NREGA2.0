@@ -30,6 +30,7 @@ import {
 // Auth components
 import { SignInForm, ForgotPass, ResetPass } from './components/Auth'
 import EnrollJob from './components/Worker/EnrollJob'
+import Verify from './components/Auth/Verify'
 
 export default function App () {
   return (
@@ -39,6 +40,7 @@ export default function App () {
         <Route path='/auth' element={<Auth />}>
           <Route path='login' element={<SignInForm />} />
           <Route path='recovery' element={<ForgotPass />} />
+          <Route path='verify' element={<Verify />} />
           <Route element={<ValidLink />}>
             <Route path='reset' element={<ResetPass />} />
           </Route>

@@ -1,6 +1,5 @@
-const winston = require('winston');
-const { createLogger, transports } = winston;
-
+const winston = require('winston')
+const { createLogger, transports } = winston
 
 // Define log level colors
 const logColors = {
@@ -75,14 +74,12 @@ logger.log = function (level, msg, ...args) {
   if (msg instanceof Error) {
     origLog.call(logger, level, msg.stack, ...args)
   } else {
-    console.log('in the else part')
     origLog.call(logger, level, msg, ...args)
   }
 }
 
 // Export logger (CommonJS style)
-module.exports = { logger };
-
+module.exports = { logger }
 
 /* LOGGER EXAMPLES
   const log = require('./log.js');

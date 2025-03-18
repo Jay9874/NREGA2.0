@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { authStore } from '../../api/store/authStore'
 import { toast } from 'sonner'
 import PasswordInput from '../PasswordInput'
 
 export default function ResetPass () {
   const [searchParams] = useSearchParams()
-  const [token, setToken] = useState('')
+  const [params, setParams] = useState({})
   const navigate = useNavigate()
   const { resetPassword, loading } = authStore()
   const [password, setPassword] = useState({
@@ -24,28 +24,32 @@ export default function ResetPass () {
         toast.error('Passwords do not match', { duration: 1000 })
         return null
       }
-      if (!token || token === '') {
+      if (!params) {
         return toast.error('Invalid token, try creating a new one.')
       }
-      const data = await resetPassword(password.new_password, token)
+      const data = await resetPassword(password.new_password, params)
       navigate(`/${data.type}/dashboard`)
     } catch (err) {
+      console.log(err)
       toast.error(err)
     }
   }
 
   useEffect(() => {
-    const code = searchParams.get('code')
+    const token_hash = searchParams.get('token_hash')
     const error = searchParams.get('error')
     if (error) {
       const error_desc = searchParams.get('error_description')
       toast.error(error_desc)
-      setToken('')
-    } else if (!code) {
+      setParams(null)
+    } else if (!token_hash) {
       toast.error('Link is invalid, create a new one.')
-      setToken('')
-    } else if (code !== '') {
-      setToken(code)
+      setParams(null)
+    } else if (token_hash !== '') {
+      const token_hash = searchParams.get('token_hash')
+      const email = searchParams.get('email')
+      const type = searchParams.get('type')
+      setParams({ token_hash, email, type })
     }
   }, [searchParams])
   return (
@@ -83,7 +87,21 @@ export default function ResetPass () {
                   parentClass='mt-2'
                 />
               </div>
-              <input hidden name='token' value={token} required readOnly />
+              <input hidden name='token' value={params} required readOnly />
+              <div className='flex items-center justify-between'>
+                <div className='text-sm'>
+                  <Link
+                    to='/auth/login'
+                    className='flex justify-center items-center gap-2 font-medium text-indigo-600 hover:text-indigo-500'
+                  >
+                    <ion-icon
+                      size='large'
+                      name='arrow-back-circle-outline'
+                    ></ion-icon>
+                    Back to login
+                  </Link>
+                </div>
+              </div>
               <div>
                 <button
                   type='submit'

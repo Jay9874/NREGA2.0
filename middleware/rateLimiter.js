@@ -9,7 +9,7 @@ const rateLimiter = async (req, res, next) => {
     }
     const now = Date.now()
     const timeWindow = 60 * 1000 // 1 minute
-    const maxRequests = 60 // 60 requests per minute
+    const maxRequests = 30 // 60 requests per minute
 
     if (now - rateLimit[ip].lastRequest > timeWindow) {
       rateLimit[ip] = { count: 0, lastRequest: now }

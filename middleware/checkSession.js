@@ -6,8 +6,19 @@ async function checkSession (req, res, next) {
     const decodedCookie = decodeURIComponent(encodedCookie)
     const access_token = decodedCookie.access_token
     const supabase = createClient({ req, res })
-    const { data, error } = await supabase.auth.getUser(access_token)
-    if (error) throw new Error("Could'nt get valid session.")
+    const { data, error: errAtCheckingSession } = await supabase.auth.getUser(
+      access_token
+    )
+    if (errAtCheckingSession) {
+      const { error } = await supabase.auth.signOut()
+      if (error) throw new Error("Couldn't sign you out.")
+      return res
+        .status(403)
+        .send({
+          data: null,
+          error: 'You are unauthorized, please login first.'
+        })
+    }
     next()
   } catch (err) {
     console.log(err)
