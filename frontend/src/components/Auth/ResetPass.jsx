@@ -25,6 +25,7 @@ export default function ResetPass () {
         return null
       }
       if (!params) {
+        console.log(params)
         return toast.error('Invalid token, try creating a new one.')
       }
       const data = await resetPassword(password.new_password, params)
@@ -43,7 +44,7 @@ export default function ResetPass () {
       toast.error(error_desc)
       setParams(null)
     } else if (!token_hash) {
-      toast.error('Link is invalid, create a new one.')
+      toast.warning('Missing verification code in link.')
       setParams(null)
     } else if (token_hash !== '') {
       const token_hash = searchParams.get('token_hash')
@@ -55,9 +56,27 @@ export default function ResetPass () {
   return (
     <div className='flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
       <div className='mx-auto w-full max-w-sm lg:w-96'>
+        <Link
+          to='/auth/login'
+          title='Go back to login page.'
+          className='flex items-center stroke-indigo-600 hover:stroke-indigo-500 font-medium text-indigo-600 hover:text-indigo-500'
+        >
+          <div className='h-8 w-8'>
+            <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'>
+              <path
+                fill='none'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='24'
+                d='M128 384 L12 256 l128 -128 M12 256 h448'
+              />
+            </svg>
+          </div>
+          <p> back to login</p>
+        </Link>
         <div>
           <h2 className='mt-6 text-3xl font-bold tracking-tight text-gray-900'>
-            Recover Your Account
+            Set a new password
           </h2>
         </div>
 
@@ -87,21 +106,6 @@ export default function ResetPass () {
                   parentClass='mt-2'
                 />
               </div>
-              <input hidden name='token' value={params} required readOnly />
-              <div className='flex items-center justify-between'>
-                <div className='text-sm'>
-                  <Link
-                    to='/auth/login'
-                    className='flex justify-center items-center gap-2 font-medium text-indigo-600 hover:text-indigo-500'
-                  >
-                    <ion-icon
-                      size='large'
-                      name='arrow-back-circle-outline'
-                    ></ion-icon>
-                    Back to login
-                  </Link>
-                </div>
-              </div>
               <div>
                 <button
                   type='submit'
@@ -112,7 +116,7 @@ export default function ResetPass () {
                       : 'bg-indigo-600 hover:bg-indigo-700'
                   } flex w-full justify-center rounded-md border border-transparent py-2 px-4 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
                 >
-                  Confirm
+                  Confirm Password
                 </button>
               </div>
             </form>

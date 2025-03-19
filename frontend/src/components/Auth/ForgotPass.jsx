@@ -26,8 +26,10 @@ export default function ForgotPass () {
       <div className='mx-auto w-full max-w-sm lg:w-96'>
         <div className='flex items-center justify-between'>
           <div className='text-sm'>
+            {/* back to login link */}
             <Link
               to='/auth/login'
+              title='Go back to login page.'
               className='flex items-center stroke-indigo-600 hover:stroke-indigo-500 font-medium text-indigo-600 hover:text-indigo-500'
             >
               <div className='h-8 w-8'>
@@ -47,18 +49,18 @@ export default function ForgotPass () {
         </div>
         <div>
           <h2 className='mt-6 text-3xl font-bold tracking-tight text-gray-900'>
-            Recover Your Account
+            Recover your account
           </h2>
         </div>
 
-        <div className='mt-4'>
+        <div className='mt-6'>
           <form className='space-y-6' onSubmit={handleSubmit}>
             <div>
               <label
                 htmlFor='email'
                 className='block text-sm font-medium text-gray-700'
               >
-                Your Email
+                Your registered email
               </label>
               <div className='mt-1'>
                 <input

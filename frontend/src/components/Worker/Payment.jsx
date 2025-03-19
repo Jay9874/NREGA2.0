@@ -1,10 +1,8 @@
 import { useWorkerStore } from '../../api/store'
 import { timestampToDate } from '../../utils/dataFormating'
 import DynamicTable from '../DynamicTable'
+import HighlightGrid from '../highlightGrid'
 
-function classNames (...classes) {
-  return classes.filter(Boolean).join(' ')
-}
 const statusStyles = {
   successful: 'bg-green-100 text-green-800',
   processing: 'bg-yellow-100 text-yellow-800',
@@ -37,7 +35,7 @@ export default function Payment () {
         ? timestampToDate(payment[0]?.created_at)
         : 'End of Universe'
     },
-    { label: 'Transc. ID', value: payment[0]?.transaction_id},
+    { label: 'Transc. ID', value: payment[0]?.transaction_id },
     { label: 'Status', value: payment[0]?.status }
   ]
 
@@ -52,40 +50,8 @@ export default function Payment () {
             for {payment[0]?.payment_for.job_name}
           </p>
         </div>
-        <div className=' bg-white pb-1 sm:pb-4 border-gray-200'>
-          <div className='relative'>
-            <div className='relative mx-auto max-w-7xl px-6 lg:px-8'>
-              <div className='mx-auto max-w-100 px-6'>
-                <div className='sm:[&>*:nth-child(2)]:rounded-tr-2xl lg:[&>*:nth-child(3)]:rounded-none lg:[&>*:nth-child(2)]:rounded-none sm:[&>*:nth-child(3)]:rounded-bl-2xl mt-2 grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-4'>
-                  {highlights.map((card, index) => (
-                    <div
-                      key={index}
-                      className='first:rounded-t-2xl sm:first:rounded-tr-none last:rounded-b-2xl sm:last:rounded-bl-none sm:first:rounded-tl-2xl lg:first:rounded-l-2xl sm: lg:last:rounded-r-2xl sm:last:rounded-br-2xl flex flex-col bg-white border p-6 text-center'
-                    >
-                      <dt className='truncate text-md font-medium text-gray-700 order-1 mt-2leading-6 '>
-                        {card.label}
-                      </dt>
-                      <dd className='text-md font-medium text-gray-500 order-2 tracking-tight'>
-                        {card.label == 'Status' ? (
-                          <span
-                            className={classNames(
-                              statusStyles[card.value],
-                              'px-3 rounded-3xl capitalize text-md'
-                            )}
-                          >
-                            {card.value}
-                          </span>
-                        ) : (
-                          card.value
-                        )}
-                      </dd>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Highlights for this tab */}
+        <HighlightGrid highlights={highlights} statusStyles={statusStyles} />
       </div>
       {/* Recent Payments */}
       <h2 className='mx-auto px-4 sm:px-6 lg:px-8 mt-8 max-w-6xl text-lg font-medium leading-6 text-gray-900'>

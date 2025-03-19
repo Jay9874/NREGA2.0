@@ -4,6 +4,7 @@ import DynamicTable from '../DynamicTable'
 import { useEffect, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { jobDuration, timestampToDate } from '../../utils/dataFormating'
+import HighlightGrid from '../highlightGrid'
 
 const tableHeading = [
   { name: 'Work', css_normal: '', css_list: '' },
@@ -114,29 +115,8 @@ const Jobs = () => {
               )}
             </p>
           </div>
-          <div className=' bg-white pb-1 sm:pb-4 border-gray-200'>
-            <div className='relative'>
-              <div className='relative mx-auto max-w-7xl px-6 lg:px-8'>
-                <div className='mx-auto max-w-100 px-6'>
-                  <div className='sm:[&>*:nth-child(2)]:rounded-tr-2xl lg:[&>*:nth-child(3)]:rounded-none lg:[&>*:nth-child(2)]:rounded-none sm:[&>*:nth-child(3)]:rounded-bl-2xl mt-2 grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-4'>
-                    {highlight.map((card, index) => (
-                      <div
-                        key={index}
-                        className='first:rounded-t-2xl sm:first:rounded-tr-none last:rounded-b-2xl sm:last:rounded-bl-none sm:first:rounded-tl-2xl lg:first:rounded-l-2xl sm: lg:last:rounded-r-2xl sm:last:rounded-br-2xl flex flex-col bg-white border p-6 text-center'
-                      >
-                        <dt className='truncate text-md font-medium text-gray-700 order-1 mt-2leading-6 '>
-                          {card.label}
-                        </dt>
-                        <dd className='text-md font-medium text-gray-500 order-2 tracking-tight'>
-                          {card.value}
-                        </dd>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Highlights of this tab */}
+          <HighlightGrid highlights={highlight} statusStyles={statusStyles} />
         </div>
         {/* Nearby Jobs within 15km */}
         <h2 className='mx-auto mt-8 max-w-6xl px-4 text-lg font-medium leading-6 text-gray-900 sm:px-6 lg:px-8'>

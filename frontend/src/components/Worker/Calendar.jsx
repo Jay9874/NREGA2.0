@@ -89,7 +89,7 @@ export default function Calendar () {
 
         {/* The calendar codes */}
         <div className='mt-2 text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:mt-9 xl:col-start-9'>
-          <div className='relative w-full overflow-hidden rounded-2xl'>
+          <div className='relative p-2 w-full overflow-hidden rounded-2xl'>
             <div
               className='flex transition-transform duration-500 ease-in-out'
               style={{
@@ -115,7 +115,8 @@ export default function Calendar () {
                     prevIndex => (prevIndex - 1 + months.length) % months.length
                   )
                 }
-                className='absolute flex justify-center items-center left-0 top-1/2 transform -translate-y-1/2 bg-gray-200 hover:bg-gray-100 text-white p-2 rounded-full'
+                // className='absolute flex justify-center items-center left-0 top-1/2 transform -translate-y-1/2 bg-gray-200 hover:bg-gray-100 text-white p-2 rounded-full'
+               className='absolute flex justify-center items-center left-2 top-1/2 transform -translate-y-1/2  rounded-full bg-white p-2 shadow-md transition-colors hover:bg-gray-100 disabled:opacity-50'
               >
                 <ion-icon name='chevron-back-outline'></ion-icon>
               </button>
@@ -126,7 +127,8 @@ export default function Calendar () {
                 onClick={e =>
                   setCurrentIndex(prevIndex => (prevIndex + 1) % months.length)
                 }
-                className='absolute flex justify-center items-center right-0 top-1/2 transform -translate-y-1/2 rounded-full bg-gray-200 hover:bg-gray-100 text-white p-2'
+                // className='absolute flex justify-center items-center right-0 top-1/2 transform -translate-y-1/2 rounded-full bg-gray-200 hover:bg-gray-100 text-white p-2'
+                className='absolute flex justify-center items-center right-2 top-1/2 transform -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-colors hover:bg-gray-100 disabled:opacity-50'
               >
                 <ion-icon name='chevron-forward-outline'></ion-icon>
               </button>

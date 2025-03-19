@@ -12,8 +12,8 @@ function classNames (...classes) {
 
 export default function RecentPayment ({ heading, recentActivity }) {
   return recentActivity?.length === 0 ? (
-    <div className='mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl text-center pt-4'>
-      <div className='rounded-xl border ring-gray-100 h-24 flex items-center justify-center'>
+    <div className='mx-auto px-4 max-w-6xl sm:px-6 lg:px-8 text-center pt-4'>
+      <div className='rounded-xl p-2 overflow-scroll border ring-gray-100 h-24 flex items-center justify-center'>
         <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
           Seems no recent activities, check back soon.
         </p>

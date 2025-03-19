@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useAdminStore } from '../../api/store'
 import DynamicTable from '../DynamicTable'
+import HighlightGrid from '../highlightGrid'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
@@ -37,7 +38,7 @@ export default function Payout () {
   async function getData () {
     try {
       const data = await setPayout()
-      console.log(data)
+      // console.log(data)
     } catch (err) {
       console.log(err)
     }
@@ -62,40 +63,9 @@ export default function Payout () {
             </i>
           </p>
         </div>
-        <div className=' bg-white pb-1 sm:pb-4 border-gray-200'>
-          <div className='relative'>
-            <div className='relative mx-auto max-w-7xl px-6 lg:px-8'>
-              <div className='mx-auto max-w-100 px-6'>
-                <div className='sm:[&>*:nth-child(2)]:rounded-tr-2xl lg:[&>*:nth-child(3)]:rounded-none lg:[&>*:nth-child(2)]:rounded-none sm:[&>*:nth-child(3)]:rounded-bl-2xl mt-2 grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-4'>
-                  {highlights.map((card, index) => (
-                    <div
-                      key={index}
-                      className='first:rounded-t-2xl sm:first:rounded-tr-none last:rounded-b-2xl sm:last:rounded-bl-none sm:first:rounded-tl-2xl lg:first:rounded-l-2xl sm: lg:last:rounded-r-2xl sm:last:rounded-br-2xl flex flex-col bg-white border p-6 text-center'
-                    >
-                      <dt className='truncate text-md font-medium text-gray-700 order-1 mt-2leading-6 '>
-                        {card.label}
-                      </dt>
-                      <dd className='text-md font-medium text-gray-500 order-2 tracking-tight'>
-                        {card.label == 'Status' ? (
-                          <span
-                            className={classNames(
-                              statusStyles[card.value],
-                              'px-3 rounded-3xl capitalize text-md'
-                            )}
-                          >
-                            {card.value}
-                          </span>
-                        ) : (
-                          card.value
-                        )}
-                      </dd>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+
+        {/* Highlights of this tab */}
+        <HighlightGrid highlights={highlights} statusStyles={statusStyles} />
       </div>
       {/* Recent Payments */}
       <div className='mx-auto mt-8 max-w-6xl'>
@@ -107,8 +77,8 @@ export default function Payout () {
         </p>
       </div>
       {payments?.length === 0 ? (
-        <div className='mx-auto max-w-7xl px-12 text-center pt-4'>
-          <div className='rounded-xl border ring-gray-100 h-24 flex items-center justify-center'>
+        <div className='mx-auto max-w-6xl text-center pt-4'>
+          <div className='rounded-xl px-2 border ring-gray-100 h-24 flex items-center justify-center'>
             <p className='mt-2 text-lg font-medium text-black text-opacity-50'>
               Seems no recent activity, check back soon.
             </p>

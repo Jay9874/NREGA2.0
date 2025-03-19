@@ -10,6 +10,7 @@ import {
   CalendarDaysIcon
 } from '@heroicons/react/20/solid'
 import { Link } from 'react-router-dom'
+import OverviewCards from '../OverviewCards'
 
 export default function Dashboard () {
   const { profile, payment, lastAttendance, totalPresent } = useWorkerStore()
@@ -102,53 +103,19 @@ export default function Dashboard () {
           <h2 className='text-lg font-medium leading-6 text-gray-900'>
             Overview
           </h2>
-          <div className='mt-2 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3'>
-            {/* Card */}
-            {cards.map(card => (
-              <div
-                key={card.name}
-                className='overflow-hidden rounded-lg bg-white shadow flex flex-col justify-between'
-              >
-                <div className='p-5'>
-                  <div className='flex items-center'>
-                    <div className='flex-shrink-0'>
-                      <card.icon
-                        className='h-6 w-6 text-gray-400'
-                        aria-hidden='true'
-                      />
-                    </div>
-                    <div className='ml-5 w-0 flex-1'>
-                      <dl>
-                        <dt className='text-sm font-medium text-gray-700'>
-                          {card.name}
-                        </dt>
-                        <dd>
-                          <div className='text-sm font-medium text-gray-500'>
-                            {card.value}
-                          </div>
-                        </dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-                <div className='bg-gray-50 px-5 py-3'>
-                  <div className='text-sm'>
-                    <Link
-                      to={card.href}
-                      className='font-medium text-cyan-700 hover:text-cyan-900'
-                    >
-                      View all
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          {/* overview of Dashboard */}
+          <OverviewCards cards={cards} />
         </div>
 
         {/* Recent activity */}
         <h2 className='mx-auto flex justify-between items-center mt-8 mb-4 max-w-6xl px-4 text-lg font-medium leading-6 text-gray-900 sm:px-6 lg:px-8'>
-          <span>Recent payments</span><Link to='/worker/payment' className='text-sm text-cyan-700 hover:text-cyan-900 font-semibold'>View all</Link>
+          <span>Recent payments</span>
+          <Link
+            to='/worker/payment'
+            className='text-sm text-cyan-700 hover:text-cyan-900 font-semibold'
+          >
+            View all
+          </Link>
         </h2>
         <RecentPayment heading={'Recent Activity'} recentActivity={payment} />
       </div>
