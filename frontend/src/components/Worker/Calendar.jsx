@@ -115,7 +115,6 @@ export default function Calendar () {
                     prevIndex => (prevIndex - 1 + months.length) % months.length
                   )
                 }
-                // className='absolute flex justify-center items-center left-0 top-1/2 transform -translate-y-1/2 bg-gray-200 hover:bg-gray-100 text-white p-2 rounded-full'
                className='absolute flex justify-center items-center left-2 top-1/2 transform -translate-y-1/2  rounded-full bg-white p-2 shadow-md transition-colors hover:bg-gray-100 disabled:opacity-50'
               >
                 <ion-icon name='chevron-back-outline'></ion-icon>
@@ -127,7 +126,6 @@ export default function Calendar () {
                 onClick={e =>
                   setCurrentIndex(prevIndex => (prevIndex + 1) % months.length)
                 }
-                // className='absolute flex justify-center items-center right-0 top-1/2 transform -translate-y-1/2 rounded-full bg-gray-200 hover:bg-gray-100 text-white p-2'
                 className='absolute flex justify-center items-center right-2 top-1/2 transform -translate-y-1/2 rounded-full bg-white p-2 shadow-md transition-colors hover:bg-gray-100 disabled:opacity-50'
               >
                 <ion-icon name='chevron-forward-outline'></ion-icon>

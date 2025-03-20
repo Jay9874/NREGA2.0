@@ -38,6 +38,7 @@ const Jobs = () => {
   const { lastWork, nearbyJobs, currentlyEnrolled } = useWorkerStore()
   const [updatedJobs, setUpdatedJobs] = useState()
   const navigate = useNavigate()
+
   const highlight = [
     {
       label: 'Your presence',

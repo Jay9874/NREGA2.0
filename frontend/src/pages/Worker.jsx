@@ -31,18 +31,17 @@ export const Worker = () => {
     try {
       setLoading(true)
       await setProfile()
+      await setLastWork()
       await setJobs()
       await setAttendance()
+      await subscribeRealtime('worker_notifications')
       await setPayment()
       await setNotifications()
-      await subscribeRealtime('worker_notifications')
-      await setLastWork()
       setLoading(false)
       setDataLoaded(true)
     } catch (err) {
       setLoading(false)
       setDataLoaded(true)
-      console.log(err)
       toast.error(err)
       return err
     }
