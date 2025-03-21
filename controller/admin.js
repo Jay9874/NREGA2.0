@@ -592,28 +592,54 @@ const resendLink = async (req, res) => {
   }
 }
 
+// Fetching all the data required for payment tab for admin.
 const setPayout = async (req, res) => {
   try {
-    const { id } = req.body
+    const { sachivId, locationId } = req.body
     const supabase = createClient({ req, res })
 
-    // Getting the payment data
-    const { data, error } = await supabase
+    // Getting the panchayat financial data
+    const { data: gpo, error: errAtGpo } = await supabase
+      .from('panchayats')
+      .select('*')
+      .eq('location', locationId)
+    if (errAtGpo)
+      throw new Error('Could not find gram panchayat financial info.')
+    console.log('gpo: ', gpo)
+    // Getting all the successful transactions
+    const { data: successfulPayments, error: errAtPayment } = await supabase
+      .from('payments')
+      .select('*')
+      .eq('status', 'successful')
+    if (errAtPayment) throw new Error("Couldn't get successful payments.")
+
+    console.log('payments are: ', successfulPayments)
+
+    // Getting the payments which failed or got processing
+    const { data: unsuccessfulPayments, error } = await supabase
       .from('payments')
       .select('status')
-      .eq('GPO_id', id)
+      .eq('GPO_id', sachivId)
       .or('status.eq.failed, status.eq.processing')
     if (error) throw new Error("Couldn't get payment details.")
+    console.log('unsuccessful payments: ', unsuccessfulPayments)
 
     // Getting pending applications
     const { data: pendingApp, error: errAtApp } = await supabase
       .from('job_enrollments')
       .select('*')
       .eq('status', 'applied')
-      .eq('to_sachiv', id)
+      .eq('to_sachiv', sachivId)
     if (errAtApp) throw new Error("Couldn't find pending applications.")
+
+    console.log('pending applications are: ', pendingApp)
     return res.status(200).send({
-      data: { pending: pendingApp, payments: data },
+      data: {
+        gpo: gpo,
+        pending: pendingApp,
+        successful: successfulPayments,
+        unsuccessful: unsuccessfulPayments
+      },
       error: null
     })
   } catch (err) {

@@ -1,7 +1,7 @@
 import { authStore, useAdminStore } from '../../api/store'
-export default function AdminProfile() {
+export default function AdminProfile () {
   const { profile } = useAdminStore()
-  const {user} = authStore()
+  const { user } = authStore()
 
   return (
     <main>
@@ -36,12 +36,20 @@ export default function AdminProfile() {
               <dt className='text-sm font-medium text-gray-500'>Age</dt>
               <dd className='mt-1 text-sm text-gray-900'>{profile.age}</dd>
             </div>
-          
+
             <div className='sm:col-span-1'>
-              <dt className='text-sm font-medium text-gray-500'>Panchayat Office</dt>
+              <dt className='text-sm font-medium text-gray-500'>Sex</dt>
+              <dd className='mt-1 text-sm text-gray-900'>{profile.sex}</dd>
+            </div>
+
+            <div className='sm:col-span-1'>
+              <dt className='text-sm font-medium text-gray-500'>
+                Panchayat Office
+              </dt>
               <dd className='mt-1 text-sm text-gray-900'>
-                {profile?.location_id?.panchayat}, {profile?.location_id?.block},{' '}
-                {profile?.location_id?.district}, {profile?.location_id?.state}
+                {profile?.location_id?.panchayat}, {profile?.location_id?.block}
+                , {profile?.location_id?.district},{' '}
+                {profile?.location_id?.state}
               </dd>
             </div>
             <div className='sm:col-span-1'>
@@ -69,8 +77,8 @@ export default function AdminProfile() {
                 Please Note*
               </dt>
               <dd className='mt-1 text-sm text-gray-900'>
-                If there is any wrong information here, please contact your Block
-                Level Office for correction.
+                If there is any wrong information here, please contact your
+                Block Level Office for correction.
               </dd>
             </div>
           </dl>

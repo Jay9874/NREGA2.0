@@ -17,7 +17,6 @@ export const Admin = () => {
     setDashboard,
     loading,
     setLoading,
-    payout
   } = useAdminStore()
   const { user, notifications, setNotifications,  subscribeRealtime} =
     authStore()
@@ -28,7 +27,6 @@ export const Admin = () => {
       await setProfile()
       await setDashboard()
       await setEmployees()
-      await payout()
       await setNotifications()
       await subscribeRealtime('sachiv_notifications')
       setLoading(false)

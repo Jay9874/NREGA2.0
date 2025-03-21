@@ -1,7 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAdminStore } from '../../api/store'
 import DynamicTable from '../DynamicTable'
 import HighlightGrid from '../highlightGrid'
+import PaymentTab from '../Skeleton/PaymentTab'
 
 function classNames (...classes) {
   return classes.filter(Boolean).join(' ')
@@ -24,30 +25,43 @@ const tableHeading = [
 ]
 
 export default function Payout () {
-  const { payments, gpo, setPayout, loading } = useAdminStore()
-  const highlights = [
+  const { payments, gpo, setPayout } = useAdminStore()
+  const [loadedData, setLoadedData] = useState(false)
+  const [highlights, setHighlights] = useState([
     {
       label: 'Budget',
       value: `₹${gpo?.budget} lakh`
     },
-    { label: 'Balance', value: `₹4.5 lakh` },
-    { label: 'Unpaid', value: `₹50,000 / 20 workers` },
-    { label: 'Compensation', value: '₹36,000' }
-  ]
+    { label: 'Balance', value: `₹${gpo?.acc_bln} lakh` },
+    { label: 'Unpaid', value: `₹ / # workers` },
+    { label: 'Compensation', value: '₹' }
+  ])
 
   async function getData () {
     try {
+      setLoadedData(false)
       const data = await setPayout()
-      // console.log(data)
+      const { unsuccessfulPayments } = data
+      // getting unpaid workers
+      const unpaidLabours = unsuccessfulPayments.length
+      
+      console.log(data)
+      setLoadedData(true)
     } catch (err) {
+      setLoadedData(true)
       console.log(err)
     }
   }
 
   useEffect(() => {
-    if (!loading) getData()
-  }, [loading])
-  return (
+    if (!payments) getData()
+  }, [])
+
+  return !loadedData ? (
+    <div className='px-4 py-6 sm:px-6 lg:px-8'>
+      <PaymentTab />
+    </div>
+  ) : (
     <main className='px-4 py-6 sm:px-6 lg:px-8'>
       <div>
         <div className=' pb-2'>
