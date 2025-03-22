@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { Sidebar, TopNavbar} from '../components'
+import { Sidebar, TopNavbar } from '../components'
 import { authStore, useAdminStore } from '../api/store'
 // Constants imports
 import { adminTopNavigation } from '../utils/dashboard_toplink'
@@ -11,14 +11,9 @@ import NotificationPanel from '../components/NotificationPanel'
 export const Admin = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  const {
-    setProfile,
-    setEmployees,
-    setDashboard,
-    loading,
-    setLoading,
-  } = useAdminStore()
-  const { user, notifications, setNotifications,  subscribeRealtime} =
+  const { setProfile, setEmployees, setDashboard, loading, setLoading } =
+    useAdminStore()
+  const { user, notifications, setNotifications, subscribeRealtime } =
     authStore()
 
   async function handleSetup () {
@@ -27,6 +22,7 @@ export const Admin = () => {
       await setProfile()
       await setDashboard()
       await setEmployees()
+      await setPayout()
       await setNotifications()
       await subscribeRealtime('sachiv_notifications')
       setLoading(false)

@@ -637,8 +637,8 @@ const setPayout = async (req, res) => {
       data: {
         gpo: gpo,
         pending: pendingApp,
-        successful: successfulPayments,
-        unsuccessful: unsuccessfulPayments
+        successfulPayments: successfulPayments ? successfulPayments : [],
+        unsuccessfulPayments: unsuccessfulPayments ? successfulPayments : []
       },
       error: null
     })

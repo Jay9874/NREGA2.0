@@ -22,7 +22,11 @@ export default function Dashboard () {
     acc += duration
     return acc
   }, 0)
-  const updatedPayment = payments.map((itm, indx) => {
+
+  const { successfulPayments, unsuccessfulPayments } = payments
+  console.log('payments: ', successfulPayments)
+  const allPayments = [...successfulPayments, ...unsuccessfulPayments]
+  const updatedPayment = allPayments.map((itm, indx) => {
     const payment_title = itm.payment_title + ' To ' + itm.payment_to.first_name
     const newItm = {
       ...itm,
