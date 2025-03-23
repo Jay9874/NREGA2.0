@@ -23,17 +23,24 @@ export default function Dashboard () {
     return acc
   }, 0)
 
-  const { successfulPayments, unsuccessfulPayments } = payments
-  console.log('payments: ', successfulPayments)
-  const allPayments = [...successfulPayments, ...unsuccessfulPayments]
-  const updatedPayment = allPayments.map((itm, indx) => {
-    const payment_title = itm.payment_title + ' To ' + itm.payment_to.first_name
-    const newItm = {
-      ...itm,
-      payment_title: payment_title
-    }
-    return newItm
-  })
+  // if (payments.has(successfulPayments)) {
+  //   const { successfulPayments, unsuccessfulPayments } = payments
+  //   console.log('payments: ', payments)
+
+  let updatedPayment = []
+  if (payments['successfulPayments'] !== undefined) {
+    const allPayments = [...successfulPayments, ...unsuccessfulPayments]
+    allPayments.map((itm, indx) => {
+      const payment_title =
+        itm.payment_title + ' To ' + itm.payment_to.first_name
+      const newItm = {
+        ...itm,
+        payment_title: payment_title
+      }
+      return newItm
+    })
+    updatedPayment = allPayments
+  }
 
   const cards = [
     {
