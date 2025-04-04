@@ -64,7 +64,7 @@ export const authStore = create((set, get) => ({
       console.log(err)
       toast.dismiss()
       console.log(err)
-      toast.error(err)
+      toast.error(`Something went wrong, ${err}`)
       set({ loading: false })
       return err
     }

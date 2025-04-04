@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react'
 import { Transition } from '@headlessui/react'
 import { timestampToDate } from '../utils/dataFormating'
 import { authStore, useAdminStore } from '../api/store'
+import DynamicCalendarSVG from './DynamicCalendarSVG'
 
 export default function NotificationCard ({ notification, type }) {
   const [show, setShow] = useState(true)
@@ -47,8 +48,8 @@ export default function NotificationCard ({ notification, type }) {
                         <span>{notification?.details[header]}</span>
                       </p>
                     ))}
-                    <div className='mt-1 text-sm text-gray-500 flex items-center gap-1'>
-                      <ion-icon name='calendar-outline'></ion-icon>
+                    <div className='mt-4 text-sm text-gray-500 flex items-center gap-1'>
+                      <DynamicCalendarSVG dateObj={notification.created_at} />
                       {timestampToDate(notification?.created_at)}
                     </div>
                   </div>

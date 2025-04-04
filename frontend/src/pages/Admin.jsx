@@ -20,10 +20,10 @@ export const Admin = () => {
     try {
       setLoading(true)
       await setProfile()
+      await setNotifications()
       await setDashboard()
       await setEmployees()
       await setPayout()
-      await setNotifications()
       await subscribeRealtime('sachiv_notifications')
       setLoading(false)
     } catch (error) {

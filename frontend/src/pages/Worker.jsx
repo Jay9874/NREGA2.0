@@ -31,12 +31,12 @@ export const Worker = () => {
     try {
       setLoading(true)
       await setProfile()
+      await setNotifications()
       await setLastWork()
       await setJobs()
       await setAttendance()
       await subscribeRealtime('worker_notifications')
       await setPayment()
-      await setNotifications()
       setLoading(false)
       setDataLoaded(true)
     } catch (err) {
