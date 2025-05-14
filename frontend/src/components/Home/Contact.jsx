@@ -25,7 +25,14 @@ export default function Contact () {
               <div className='mt-6'>
                 <dt className='sr-only'>Phone number</dt>
                 <dd className='flex'>
-                  <ion-icon size='large' name='git-branch-outline'></ion-icon>
+                  <svg
+                    className='fill-gray-500'
+                    width={36}
+                    height={36}
+                    viewBox='0 0 512 512'
+                  >
+                    <path d='M416 160a64 64 0 10-96.27 55.24c-2.29 29.08-20.08 37-75 48.42-17.76 3.68-35.93 7.45-52.71 13.93v-126.2a64 64 0 10-64 0v209.22a64 64 0 1064.42.24c2.39-18 16-24.33 65.26-34.52 27.43-5.67 55.78-11.54 79.78-26.95 29-18.58 44.53-46.78 46.36-83.89A64 64 0 00416 160zM160 64a32 32 0 11-32 32 32 32 0 0132-32zm0 384a32 32 0 1132-32 32 32 0 01-32 32zm192-256a32 32 0 1132-32 32 32 0 01-32 32z' />
+                  </svg>
                   <a href='https://github.com/Jay9874/NREGA2.0'>
                     <span className='ml-3 hover:text-gray-600'>
                       Update on GitHub
@@ -36,7 +43,29 @@ export default function Contact () {
               <div className='mt-3'>
                 <dt className='sr-only'>Email</dt>
                 <dd className='flex'>
-                  <ion-icon size='large' name='mail-outline'></ion-icon>
+                  <svg
+                    height={36}
+                    width={36}
+                    className='fill-none stroke-gray-500'
+                    strokeWidth="28"
+                    viewBox='0 0 512 512'
+                  >
+                    <rect
+                      x={48}
+                      y={96}
+                      width={416}
+                      height={320}
+                      rx={40}
+                      ry={40}
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                    />
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      d='M112 160l144 112 144-112'
+                    />
+                  </svg>
                   <span className='ml-3'>jayprakashsharma225@gmail.com</span>
                 </dd>
               </div>

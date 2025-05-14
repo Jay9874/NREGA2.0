@@ -32,7 +32,7 @@ export default function ResetPass () {
       navigate(`/${data.type}/dashboard`)
     } catch (err) {
       console.log(err)
-      toast.error(err)
+      toast.error("Something went wrong.")
     }
   }
 

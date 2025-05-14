@@ -42,7 +42,7 @@ export const Worker = () => {
     } catch (err) {
       setLoading(false)
       setDataLoaded(true)
-      toast.error(err)
+      toast.error("Something went wrong.")
       return err
     }
   }

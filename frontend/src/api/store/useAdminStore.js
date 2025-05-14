@@ -94,7 +94,7 @@ export const useAdminStore = create((set, get) => ({
       return data
     } catch (err) {
       console.log(err)
-      toast.error(err)
+      toast.error('Something went wrong.')
     }
   },
   setAadhaarData: async aadhaarNo => {
@@ -169,7 +169,7 @@ export const useAdminStore = create((set, get) => ({
         resolve(data)
       } catch (error) {
         toast.dismiss()
-        toast.error(error)
+        toast.error("Something went wrong.")
         reject(error)
       }
     })
@@ -202,7 +202,7 @@ export const useAdminStore = create((set, get) => ({
         console.log(err)
         set({ loading: false })
         toast.dismiss()
-        toast.error(err)
+        toast.error("Something went wrong.")
         reject(err)
       }
     })
@@ -313,7 +313,7 @@ export const useAdminStore = create((set, get) => ({
     } catch (err) {
       console.log(err)
       toast.dismiss()
-      toast.error(err)
+      toast.error("Something went wrong.")
     }
   },
   enrollWorker: (applicationId, notification) => {
@@ -343,7 +343,7 @@ export const useAdminStore = create((set, get) => ({
       } catch (err) {
         set({ loading: false })
         toast.dismiss()
-        toast.error(err)
+        toast.error("Something went wrong.")
         console.log(err)
         reject(err)
       }
@@ -376,7 +376,7 @@ export const useAdminStore = create((set, get) => ({
         set({ loading: false })
         reject(err)
         toast.dismiss()
-        toast.error(err)
+        toast.error("Something went wrong.")
       }
     })
   },
@@ -405,7 +405,7 @@ export const useAdminStore = create((set, get) => ({
         console.error(err)
         set({ loading: false })
         toast.dismiss()
-        toast.error(err)
+        toast.error("Something went wrong.")
         reject(err)
       }
     })
@@ -432,7 +432,7 @@ export const useAdminStore = create((set, get) => ({
         resolve(data)
       } catch (err) {
         console.log(err)
-        toast.error(err)
+        toast.error("Something went wrong.")
         reject(err)
       }
     })

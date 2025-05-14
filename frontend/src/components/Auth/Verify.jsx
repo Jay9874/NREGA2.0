@@ -25,7 +25,7 @@ export default function Verify () {
     } catch (err) {
       console.log(err)
       loading(false)
-      toast.error(err)
+      toast.error('Something went wrong.')
       setIsAuthorized(false)
     }
   }
@@ -44,7 +44,7 @@ export default function Verify () {
       const token_hash = searchParams.get('token_hash')
       const email = searchParams.get('email')
       const type = searchParams.get('type')
-      setParams({ token_hash, email, type})
+      setParams({ token_hash, email, type })
       verifyLink(searchParams)
     }
   }, [searchParams])

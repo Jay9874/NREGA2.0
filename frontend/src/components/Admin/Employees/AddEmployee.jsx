@@ -88,7 +88,7 @@ export default function AddEmployee () {
       }
     } catch (err) {
       toast.dismiss()
-      toast.error(err)
+      toast.error("Something went wrong.")
       setUniqueId('not available')
     }
   }

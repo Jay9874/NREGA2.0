@@ -71,7 +71,7 @@ export const useWorkerStore = create((set, get) => ({
         set({ profile: data })
         resolve(data)
       } catch (error) {
-        toast.error(error)
+        toast.error("Something went wrong.")
         reject(error)
       }
     })
@@ -95,7 +95,7 @@ export const useWorkerStore = create((set, get) => ({
         set({ nearbyJobs: data.nearbyJobs, jobs: data.allJobs })
         resolve(data)
       } catch (error) {
-        toast.error(error)
+        toast.error("Something went wrong.")
         reject(error)
       }
     })
@@ -119,7 +119,7 @@ export const useWorkerStore = create((set, get) => ({
         set({ payment: data })
         resolve(data)
       } catch (error) {
-        toast.error(error)
+        toast.error("Something went wrong.")
         reject(error)
       }
     })
@@ -162,7 +162,7 @@ export const useWorkerStore = create((set, get) => ({
         set({ lastAttendance: lastPresence })
         resolve(data)
       } catch (err) {
-        toast.error(err)
+        toast.error('Something went wrong.')
         reject(err)
       }
     })

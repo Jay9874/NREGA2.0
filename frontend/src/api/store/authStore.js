@@ -64,7 +64,7 @@ export const authStore = create((set, get) => ({
       console.log(err)
       toast.dismiss()
       console.log(err)
-      toast.error(`Something went wrong, ${err}`)
+      toast.error(`Something went wrong.`)
       set({ loading: false })
       return err
     }
@@ -81,7 +81,7 @@ export const authStore = create((set, get) => ({
       return null
     } catch (err) {
       console.log(err)
-      return toast.error(err)
+      return toast.error('Something went wrong.')
     }
   },
   logoutUser: async navigate => {
@@ -140,7 +140,7 @@ export const authStore = create((set, get) => ({
         toast.dismiss()
         console.log(err)
         set({ loading: false })
-        toast.error(err)
+        toast.error("Something went wrong")
         reject(err)
       }
     })
@@ -186,7 +186,7 @@ export const authStore = create((set, get) => ({
       await loginUser(email, password, navigate)
     } catch (err) {
       console.log(err)
-      return toast.error(err)
+      return toast.error("Something went wrong.")
     }
   },
   setNotifications: async () => {
@@ -262,7 +262,7 @@ export const authStore = create((set, get) => ({
         resolve(data)
       } catch (err) {
         console.log(err)
-        toast.error(err)
+        toast.error("Something went wrong.")
         reject(err)
       }
     })
