@@ -1,10 +1,6 @@
-from pathlib import Path
-
 import psycopg
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -68,12 +64,6 @@ def askAI(user_input: str) -> str:
     # Get the clean generated text directly
     text = response.output_text
     return text
-
-
-# supabase = create_client(
-#     SUPABASE_URL,
-#     SUPABASE_SERVICE_ROLE_KEY,
-# )
 
 
 # ============================================================
