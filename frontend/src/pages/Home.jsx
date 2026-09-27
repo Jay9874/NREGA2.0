@@ -8,6 +8,7 @@ import { authStore } from '../api/store'
 import { useNavigate } from 'react-router-dom'
 import { Feature, Contact, Footer } from '../components/Home'
 import { toast } from 'sonner'
+import ChatWidget from '../components/Chat/ChatWidget'
 
 const navigation = [
   { name: 'Features', href: '#feature' },
@@ -75,6 +76,8 @@ export default function Home () {
   }
   return (
     <>
+      {/* The chat widget */}
+      <ChatWidget />
       <div className='relative isolate overflow-hidden bg-gray-900'>
         <div className='min-h-[100vh]'>
           <div className='relative px-6 min-h-[100vh]'>

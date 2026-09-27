@@ -160,3 +160,32 @@ out
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Python ignores
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Vercel
+.vercel/
+
+# Logs
+*.log

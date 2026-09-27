@@ -35,6 +35,7 @@ import Verify from './components/Auth/Verify'
 export default function App () {
   return (
     <BrowserRouter>
+    
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/auth' element={<Auth />}>
