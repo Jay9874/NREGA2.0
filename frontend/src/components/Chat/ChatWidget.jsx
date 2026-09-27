@@ -37,7 +37,7 @@ export default function ChatWidget () {
     setError(null)
 
     try {
-      const res = await fetch('http://localhost:8000/api/chat', {
+      const res = await fetch('api/chat', {
         method: 'POST',
         credentials: 'include',
         headers: {
