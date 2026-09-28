@@ -38,7 +38,7 @@ export default function ChatWidget () {
 
     try {
       const API_URL = import.meta.env.DEV
-        ? 'http://localhost:8000/api/chat'
+        ? '/api/chat'
         : 'https://nregaagent.vercel.app/api/chat'
       const res = await fetch(API_URL, {
         method: 'POST',

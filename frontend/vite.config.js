@@ -7,11 +7,16 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
+      '/api/chat': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false
+      },
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,
-        secure: false,
-      },
-    },
-  },
+        secure: false
+      }
+    }
+  }
 })
