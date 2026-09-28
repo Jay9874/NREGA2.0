@@ -52,7 +52,10 @@ export default function ChatWidget () {
         })
       })
 
-      if (!res.ok) throw new Error(`Request failed: ${res.status}`)
+      if (!res.ok) {
+        console.log('something went wrong: ', res)
+        throw new Error(`Request failed: ${res.status}`)
+      }
 
       const data = await res.json()
       console.log('data: ', data)
